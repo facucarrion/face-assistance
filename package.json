@@ -1,0 +1,13 @@
+{
+  "name": "face_assistance",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev:frontend": "cd ./frontend && pnpm dev",
+    "dev:backend": "cd ./backend && uvicorn main:app --reload"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
