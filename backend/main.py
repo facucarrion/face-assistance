@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends
-from schemas.Users import UserBase, RolBase
+from schemas.Users import UserBase, UserWithRole
 import models.Users as models
 from config.database import engine, SessionLocal
 from sqlalchemy.orm import Session
@@ -15,11 +15,15 @@ def get_db():
     db.close()
 
 
-@app.get("/users", response_model=list[UserBase])
+@app.get("/users", response_model=list[UserWithRole])
 async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
   users = (db
-      .query(models.User)
-      .join(models.Roles, models.Roles.id_rol == models.User.id_rol)
+      .query(
+        models.User.id_user,
+        models.User.username,
+        models.Roles.rol
+      )
+      .join(models.Roles, models.User.id_rol == models.Roles.id_rol)
       .offset(skip)
       .limit(limit)
       .all()
