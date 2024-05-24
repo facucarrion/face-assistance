@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends
-from schemas.Users import UserBase, UserWithRole
+from schemas.UsersSchema import UserBase, UserWithRole
 import models.Users as models
 from config.database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from routes.AuthRouter import auth_router
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -14,6 +15,7 @@ def get_db():
   finally:
     db.close()
 
+app.include_router(auth_router)
 
 @app.get("/users", response_model=list[UserWithRole])
 async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
