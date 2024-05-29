@@ -1,38 +1,30 @@
-from fastapi import FastAPI, Depends
-from schemas.UsersSchema import UserBase, UserWithRole
+from fastapi import FastAPI, Depends, Response
+from fastapi.middleware import Middleware
+from fastapi.middleware.cors import CORSMiddleware
+from schemas.UsersSchema import UserWithRole
 import models.Users as models
-from config.database import engine, SessionLocal
+from config.database import engine, get_db
 from sqlalchemy.orm import Session
 from routes.AuthRouter import auth_router
+import lib.auth.crud as AuthCrud
 
 app = FastAPI()
-models.Base.metadata.create_all(bind=engine)
 
-def get_db():
-  db = SessionLocal()
-  try:
-    yield db
-  finally:
-    db.close()
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins = ["*"],
+  allow_methods = ["*"],
+  allow_headers = ["*"]
+)
+
+models.Base.metadata.create_all(bind = engine)
 
 app.include_router(auth_router)
 
 @app.get("/users", response_model=list[UserWithRole])
 async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-  users = (db
-      .query(
-        models.User.id_user,
-        models.User.username,
-        models.Roles.rol
-      )
-      .join(models.Roles, models.User.id_rol == models.Roles.id_rol)
-      .offset(skip)
-      .limit(limit)
-      .all()
-    )
-  return users
+  return AuthCrud.get_users(db, skip, limit)
 
-@app.get("/users/{id_user}", response_model=UserBase)
+@app.get("/users/{id_user}", response_model=UserWithRole)
 async def get_users(id_user: int, db: Session = Depends(get_db)):
-  user = db.query(models.User).filter(models.User.id_user == id_user).first()
-  return user
+  return AuthCrud.get_user_by_id(db, id_user)

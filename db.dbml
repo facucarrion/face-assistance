@@ -1,0 +1,62 @@
+Table people {
+  id_person int [pk, increment]
+  firstname varchar(50)
+  lastname varchar(50)
+  document varchar(8)
+  image varchar(255)
+  
+  id_group int [ref: > groups.id_group]
+}
+
+Table groups {
+  id_group int [pk, increment]
+  name varchar(40)
+}
+
+Table roles {
+  id_rol int [pk, increment]
+  rol varchar(9)
+}
+
+Table users {
+  id_user int [pk, increment]
+  username varchar(20)
+  password varchar(60)
+
+  id_rol int [ref: > roles.id_rol]
+}
+
+Table users_group {
+  id_user_group int [pk, increment]
+  id_user int [ref: > users.id_user]
+  id_group int [ref: > groups.id_group]
+}
+
+Table assistance {
+  id_asistencia int [pk, increment]
+  id_person int [ref: > people.id_person]
+  date date
+  time time
+}
+
+Table schedules {
+  id_schedule int [pk, increment]
+  id_group int [ref: > groups.id_group]
+  id_day int [ref: > days.id_day]
+  start_time time
+  end_time time
+}
+
+Table schedule_exceptions {
+  id_schedule_exception int [pk, increment]
+  id_group int [ref: > groups.id_group]
+  date date
+  is_class bool
+  start_time time [null]
+  end_time time [null]
+}
+
+Table days {
+  id_day int [pk, increment]
+  day varchar(9)
+}
