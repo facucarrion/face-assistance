@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from schemas.AuthSchema import LoginSchema, RegisterSchema
 from schemas.ApiMessages import ApiMessageSchema
-from lib.auth.crud import get_user_by_username
 from config.database import get_db
+from lib.auth.crud import get_user_by_username
 from lib.auth.password import hash_password, verify_password
 
 auth_router = APIRouter(
@@ -33,7 +33,10 @@ async def login(user: LoginSchema, db: Session = Depends(get_db)):
         "status": 200,
         "message": "User logged in successfully",
         "data": {
-            "token": "1234567890"
+            "id_user": userInDatabase.id_user,
+            "username": userInDatabase.username,
+            "password": userInDatabase.password,
+            "rol": userInDatabase.rol
         }
     }
 

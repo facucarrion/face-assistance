@@ -1,9 +1,7 @@
-from fastapi import FastAPI, Depends, Response
-from fastapi.middleware import Middleware
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from schemas.UsersSchema import UserWithRole
-import models.Users as models
-from config.database import engine, get_db
+from config.database import get_db
 from sqlalchemy.orm import Session
 from routes.AuthRouter import auth_router
 import lib.auth.crud as AuthCrud
@@ -16,8 +14,6 @@ app.add_middleware(
   allow_methods = ["*"],
   allow_headers = ["*"]
 )
-
-models.Base.metadata.create_all(bind = engine)
 
 app.include_router(auth_router)
 

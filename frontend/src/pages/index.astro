@@ -9,7 +9,7 @@ import Layout from '../layout/Layout.astro'
       <div class='flex flex-col'>
         <label class='text-black-500 font-semibold'>Usuario</label>
         <input
-          class='border-2 rounded-lg focus:outline-none'
+          class='border-2 px-2 text-lg rounded-lg focus:outline-none'
           type='text'
           name='username'
           id='username'
@@ -20,7 +20,7 @@ import Layout from '../layout/Layout.astro'
       <div class='flex flex-col'>
         <label class='text-black-500 font-semibold'>Contraseña</label>
         <input
-          class='border-2 rounded-lg focus:outline-none'
+          class='border-2 px-2 text-lg rounded-lg focus:outline-none'
           type='password'
           name='password'
           id='password'
@@ -57,12 +57,14 @@ import Layout from '../layout/Layout.astro'
       body: JSON.stringify(data)
     })
 
+    console.log(response)
+
     const responseData = await response.json()
 
     console.log(responseData)
 
     if (responseData.success) {
-      window.location.href = '/login'
+      localStorage.setItem('user', JSON.stringify(responseData.data))
     } else {
       alert('Error al iniciar sesión')
     }
