@@ -9,7 +9,7 @@ groups_router = APIRouter(
 )
 
 
-@groups_router.get("/login", response_model=list[GroupsBase])
+@groups_router.get("/homepage", response_model=list[GroupsBase])
 async def read_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     groups = get_group(db, skip=skip, limit=limit)
     return groups
