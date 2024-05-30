@@ -3,11 +3,56 @@ import Layout from '../layout/Layout.astro'
 ---
 
 <Layout>
-  <h1 id='greeting' class='text-3xl text-red-500 font-bold'></h1>
+  <header class="flex justify-between items-center p-4 bg-gray-200">
+    
+    <button class="flex items-center text-white">
+      <img src="/logo.svg" alt="Logo" class="h-20 mr-4" />
+    </button>
+
+    <div class="flex space-x-2">
+      <button id="button1" class="bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400">Buscar alumnos</button>
+      <button id="button2" class="bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400">Gestionar</button>
+    </div>
+  </header>
+
+  <h1 id='greeting' class='text-3xl text-black-500 font-bold'></h1>
+
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">Cursos</h2>
+    <ul id="groups-list" class="space-y-4"></ul>
+  </section>
 </Layout>
 
 <script>
   const greeting = document.getElementById('greeting') as HTMLHeadingElement
   const user = JSON.parse(localStorage.getItem('user') as string)
-  greeting.textContent = `Hello, ${user?.username}`
+  greeting.textContent = `Bienvenido, ${user?.username}`
+
+  async function fetchGroups() {
+    try {
+      const response = await fetch('http://localhost:8000/groups')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      const groups = await response.json()
+      renderGroups(groups)
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error)
+    }
+  }
+
+  function renderGroups(groups) {
+    const groupsList = document.getElementById('groups-list')
+    groupsList.innerHTML = ''
+    groups.forEach(group => {
+      const listItem = document.createElement('li')
+      listItem.textContent = group.name
+      listItem.classList.add('bg-white', 'p-4', 'rounded-lg', 'shadow-md')
+      groupsList.appendChild(listItem)
+    })
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchGroups)
+
 </script>
+

@@ -4,7 +4,10 @@ from schemas.UsersSchema import UserWithRole
 from config.database import get_db
 from sqlalchemy.orm import Session
 from routes.AuthRouter import auth_router
+from routes.GroupsRouter import groups_router
 import lib.auth.crud as AuthCrud
+import lib.groups.crud as GroupCrud
+from schemas.GroupsSchemas import GroupsBase
 
 app = FastAPI()
 
@@ -16,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(groups_router)
 
 @app.get("/users", response_model=list[UserWithRole])
 async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -24,3 +28,7 @@ async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 @app.get("/users/{id_user}", response_model=UserWithRole)
 async def get_users(id_user: int, db: Session = Depends(get_db)):
   return AuthCrud.get_user_by_id(db, id_user)
+
+@app.get("/groups", response_model=list[GroupsBase])
+async def get_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return GroupCrud.get_group(db, skip, limit)
