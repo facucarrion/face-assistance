@@ -25,3 +25,4 @@ class RolBase(BaseModel):
 
 class RolCreate(RolBase):
   pass
+
