@@ -1,12 +1,32 @@
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/logo.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Face Assistance</title>
-	</head>
-	<body class="">
-		<slot />
-	</body>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <link rel='icon' type='image/svg+xml' href='/logo.svg' />
+    <meta name='viewport' content='width=device-width' />
+    <meta name='generator' content={Astro.generator} />
+    <title>Face Assistance</title>
+
+    <script>
+      import { verifyJwt } from '../lib/auth/jwt/verify'
+
+      verifyJwt()
+    </script>
+  </head>
+  <body class=''>
+    <slot />
+
+    <script>
+      import { userToken } from '../stores/tokenStore'
+
+      userToken.subscribe(token => {
+        if (token) {
+          localStorage.setItem('user', token)
+        } else {
+          localStorage.removeItem('user')
+        }
+      })
+
+      console.log(userToken)
+    </script>
+  </body>
 </html>

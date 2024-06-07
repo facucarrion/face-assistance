@@ -41,6 +41,8 @@ import Layout from '../layout/Layout.astro'
 </Layout>
 
 <script>
+  import { userToken } from '../stores/tokenStore'
+
   const form = document.getElementById('form') as HTMLFormElement
 
   form.addEventListener('submit', async e => {
@@ -64,7 +66,8 @@ import Layout from '../layout/Layout.astro'
     console.log(responseData)
 
     if (responseData.success) {
-      localStorage.setItem('user', JSON.stringify(responseData.data))
+      userToken.set(responseData.data.token)
+      location.href = '/login'
     } else {
       alert('Error al iniciar sesión')
     }

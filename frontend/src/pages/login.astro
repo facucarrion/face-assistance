@@ -1,13 +1,10 @@
 ---
 import Layout from '../layout/Layout.astro'
+import { userToken } from '../stores/tokenStore'
+
+userToken.set('')
 ---
 
 <Layout>
   <h1 id='greeting' class='text-3xl text-red-500 font-bold'></h1>
 </Layout>
-
-<script>
-  const greeting = document.getElementById('greeting') as HTMLHeadingElement
-  const user = JSON.parse(localStorage.getItem('user') as string)
-  greeting.textContent = `Hello, ${user?.username}`
-</script>
