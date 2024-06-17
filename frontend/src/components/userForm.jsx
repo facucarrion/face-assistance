@@ -10,7 +10,7 @@ const UserForm = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/users/');
+            const response = await fetch('http://127.0.0.1:8000/auth/');
             const usersData = await response.json();
             setUsers(usersData);
         } catch (error) {
@@ -26,7 +26,7 @@ const UserForm = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/users/', {
+            const response = await fetch('http://127.0.0.1:8000/auth/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ const UserForm = () => {
 
     const handleDeleteUser = async (id_user) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/users/${id_user}`, {
+            const response = await fetch(`http://127.0.0.1:8000/auth/${id_user}`, {
                 method: 'DELETE',
             });
 

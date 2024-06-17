@@ -40,26 +40,26 @@ def get_user_by_username(db: Session, username: str):
 
 def create_user(db: Session, user: UserCreate):
     hashed_password = hash_password(user.password)
-    db_user = User(username=user.username, password=hashed_password, id_rol=user.id_rol)
-    db.add(db_user)
+    user = User(username=user.username, password=hashed_password, id_rol=user.id_rol)
+    db.add(user)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(user)
+    return user
 
 def update_user(db: Session, id_user: int, user_update: UserUpdate):
-    db_user = db.query(User).filter(User.id_user == id_user).first()
-    if not db_user:
+    user = db.query(User).filter(User.id_user == id_user).first()
+    if not user:
         return None
     for key, value in user_update.dict(exclude_unset=True).items():
-        setattr(db_user, key, value)
+        setattr(user, key, value)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(user)
+    return user
 
 def delete_user(db: Session, id_user: int):
-    db_user = db.query(User).filter(User.id_user == id_user).first()
-    if not db_user:
+    user = db.query(User).filter(User.id_user == id_user).first()
+    if not user:
         return None
-    db.delete(db_user)
+    db.delete(user)
     db.commit()
-    return db_user
+    return user
