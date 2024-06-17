@@ -1,24 +1,9 @@
 ---
-import Layout from '../layout/Layout.astro'
-import GroupForm from '../components/groupForm.astro'
-import UserForm from '../components/userForm.astro'
-import PersonForm from '../components/peopleForm.astro'
+import Layout from '../layout/Layout.astro';
+import ManageComponent from '../components/ManageComponent.jsx';
 ---
 
 <Layout>
-    <header class="flex justify-between items-center p-4 bg-gray-200">
-        <button id="home-button" class="flex items-center text-white">
-            <img src="/logo.svg" alt="Logo" class="h-20 mr-4" />
-        </button>
-    </header>
-    <main class="p-4">
-        <h1 class="text-2xl mb-4">Gestionar Usuarios, Alumnos y Cursos</h1>
-
-        <section class="mb-8">
-            <h2 class="text-xl mb-2">Gestionar Cursos</h2>
-            <GroupForm />
-        </section>
-
-        
-    </main>
+  <ManageComponent />
 </Layout>
+
