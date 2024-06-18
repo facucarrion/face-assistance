@@ -10,7 +10,7 @@ const UserForm = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/auth/');
+            const response = await fetch('http://127.0.0.1:8000/users/');
             const usersData = await response.json();
             setUsers(usersData);
         } catch (error) {
@@ -26,7 +26,7 @@ const UserForm = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/auth/', {
+            const response = await fetch('http://127.0.0.1:8000/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ const UserForm = () => {
 
     const handleDeleteUser = async (id_user) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/auth/${id_user}`, {
+            const response = await fetch(`http://127.0.0.1:8000/users/${id_user}`, {
                 method: 'DELETE',
             });
 
@@ -118,6 +118,10 @@ const UserForm = () => {
                                     className="bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Eliminar
                                 </button>
+                                <button onClick={() => handleUpdateUser(user.id_user)}
+                                    className="bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                    Editar
+                                </button>
                             </td>
                         </tr>
                     ))}
@@ -126,5 +130,4 @@ const UserForm = () => {
         </div>
     );
 };
-
 export default UserForm;
