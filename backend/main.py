@@ -7,7 +7,7 @@ from routes.GroupsRouter import groups_router
 from routes.UsersRouter import users_router
 import lib.auth.crud as AuthCrud
 import lib.groups.crud as GroupCrud
-from schemas.GroupsSchemas import GroupsBase, GroupCreate
+from schemas.GroupsSchemas import GroupsBase
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
 
 
@@ -32,9 +32,9 @@ async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 async def get_users(id_user: int, db: Session = Depends(get_db)):
     return AuthCrud.get_user_by_id(db, id_user)
 
-# @app.get("/groups", response_model=list[GroupsBase])
-# async def get_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     return GroupCrud.get_group(db, skip, limit)
+@app.get("/groups", response_model=list[GroupsBase])
+async def get_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+     return GroupCrud.get_group(db, skip, limit)
 
 # @app.post("/api/groups")
 # async def create_group(group: GroupCreate, db: Session = Depends(get_db)):

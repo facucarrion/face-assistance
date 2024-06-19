@@ -22,6 +22,10 @@ const UserForm = () => {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+        console.log(users)
+    }, [users])
+
     const handleCreateUser = async (event) => {
         event.preventDefault();
 
