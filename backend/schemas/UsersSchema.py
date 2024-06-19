@@ -8,20 +8,27 @@ class UserBase(BaseModel):
   class Config:
     from_attributes = True
 
-class UserCreate(UserBase):
-  pass
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    id_rol: int
 
-class UserWithRole(BaseModel):
-  id_user: int
-  username: str
-  rol: str
+class UserUpdate(BaseModel):
+    username: Optional[str]
+    password: Optional[str]
+    id_rol: Optional[int]
+
+class UserWithRole(UserBase):
+    rol: str
 
 class RolBase(BaseModel):
-  id_rol: int
-  rol: str
+    id_rol: int
+    rol: str
 
-  class Config:
-    from_attributes = True
+    class Config:
+        orm_mode = True
 
 class RolCreate(RolBase):
-  pass
+    pass
+
+
