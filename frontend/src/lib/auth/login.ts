@@ -1,3 +1,5 @@
+import { userToken } from '../../stores/tokenStore'
+
 const form = document.getElementById('form') as HTMLFormElement
 
 form.addEventListener('submit', async e => {
@@ -14,13 +16,11 @@ form.addEventListener('submit', async e => {
     body: JSON.stringify(data)
   })
 
-  console.log(response)
-
   const responseData = await response.json()
 
   if (responseData.success) {
-    localStorage.setItem('user', responseData.data.token)
-    window.location.href = '/login'
+    userToken.set(responseData.data.token)
+    location.href = '/'
   } else {
     alert('Error al iniciar sesión')
   }

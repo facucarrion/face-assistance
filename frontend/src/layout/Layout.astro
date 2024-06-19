@@ -8,8 +8,16 @@
 
     <script>
       import { verifyJwt } from '../lib/auth/jwt/verify'
+      import { userToken } from '../stores/tokenStore'
 
-      verifyJwt()
+      if (!location.href.includes('login')) {
+        console.log('a')
+        if (await verifyJwt()) {
+          userToken.set(localStorage.getItem('user'))
+        } else {
+          location.href = '/login'
+        }
+      }
     </script>
   </head>
   <body class=''>
@@ -25,8 +33,6 @@
           localStorage.removeItem('user')
         }
       })
-
-      console.log(userToken)
     </script>
   </body>
 </html>

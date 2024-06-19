@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 TOKEN_SECRET = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvd25lcnMiOlsiZmFjdSJdLCJpYXQiOjE3MTc3NTkwMDd9.IS-b1sl51lAO5MKAN4ci6u0ehbmJ-nKWz-UM_FrMSp0"
 TOKEN_ALGORITHM = "HS256"
-TOKEN_EXPIRATION_TIME = 1440
+TOKEN_EXPIRATION_TIME = 2
 
 def create_access_token(data: dict):
     to_encode = data.copy()
