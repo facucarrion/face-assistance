@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import GroupForm from './groupForm.astro';
+import GroupForm from './groupForm.jsx';
 import UserForm from './userForm.jsx';
-import PersonForm from './peopleForm.astro';
+import PersonForm from './peopleForm.jsx';
 
 const ManageComponent = () => {
   const [view, setView] = useState('users');
