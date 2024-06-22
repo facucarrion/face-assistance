@@ -155,7 +155,7 @@ const PeopleForm = () => {
                             <td className="py-2">{people.lastname}</td>
                             <td className="py-2">{people.document}</td>
                             <td className="py-2">
-                                <button onClick={() => handleDeletePeople(person.id_person)}
+                                <button onClick={() => handleDeletePeople(people.id_person)}
                                     className="bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Eliminar
                                 </button>
