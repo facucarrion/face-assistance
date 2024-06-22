@@ -14,7 +14,7 @@ const UserForm = () => {
             const usersData = await response.json();
             setUsers(usersData);
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error('Error al recuperar usuarios:', error);
         }
     };
 
@@ -39,13 +39,13 @@ const UserForm = () => {
             });
 
             if (response.ok) {
-                alert('User created successfully!');
+                alert('¡Usuario creado exitosamente!');
                 fetchUsers();
             } else {
-                alert('Failed to create user');
+                alert('No se pudo crear el usuario');
             }
         } catch (error) {
-            console.error('Error creating user:', error);
+            console.error('Error al crear usuario:', error);
         }
     };
 
@@ -56,13 +56,13 @@ const UserForm = () => {
             });
 
             if (response.ok) {
-                alert('User deleted successfully!');
+                alert('¡Usuario eliminado exitosamente!');
                 fetchUsers();
             } else {
-                alert('Failed to delete user');
+                alert('No se pudo eliminar el usuario');
             }
         } catch (error) {
-            console.error('Error deleting user:', error);
+            console.error('Error al eliminar usuario:', error);
         }
     };
 

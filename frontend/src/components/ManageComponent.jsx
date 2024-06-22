@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import UserForm from './userForm.jsx';
+import GroupsForm from './groupsForm.jsx';
+import PeopleForm from './peopleForm.jsx';
 
 
 const ManageComponent = () => {
   const [view, setView] = useState('users');
+
 
   return (
     <div>
@@ -33,11 +36,12 @@ const ManageComponent = () => {
         </div>
 
         {view === 'users' && <UserForm />}
-        {view === 'groups' && <GroupForm />}
-        {view === 'people' && <PersonForm />}
+        {view === 'groups' && <GroupsForm />}
+        {view === 'people' && <PeopleForm />}
       </main>
     </div>
   );
+
 };
 
 export default ManageComponent;
