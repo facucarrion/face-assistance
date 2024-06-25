@@ -5,6 +5,7 @@ from schemas.ApiMessages import ApiMessageSchema
 from config.database import get_db
 from lib.auth.crud import get_user_by_username
 from lib.auth.password import hash_password, verify_password
+from lib.auth.token import create_access_token
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -27,16 +28,21 @@ async def login(user: LoginSchema, db: Session = Depends(get_db)):
             "status": 401,
             "message": "Incorrect password"
         }
+    
+    user_dict = {
+        "id_user": userInDatabase.id_user,
+        "username": userInDatabase.username,
+        "password": userInDatabase.password,
+        "rol": userInDatabase.rol
+    }
 
     return {
         "success": True,
         "status": 200,
         "message": "User logged in successfully",
         "data": {
-            "id_user": userInDatabase.id_user,
-            "username": userInDatabase.username,
-            "password": userInDatabase.password,
-            "rol": userInDatabase.rol
+            "id_user": user_dict["id_user"],
+            "token": create_access_token(user_dict)
         }
     }
 
