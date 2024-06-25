@@ -11,7 +11,6 @@
       import { userToken } from '../stores/tokenStore'
 
       if (!location.href.includes('login')) {
-        console.log('a')
         if (await verifyJwt()) {
           userToken.set(localStorage.getItem('user'))
         } else {
