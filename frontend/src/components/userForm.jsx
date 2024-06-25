@@ -105,7 +105,7 @@ const UserForm = () => {
             <table className="min-w-full bg-white shadow-md rounded">
                 <thead>
                     <tr>
-                        <th className="py-2">ID</th>
+                        
                         <th className="py-2">Username</th>
                         <th className="py-2">Rol</th>
                         <th className="py-2">Acciones</th>
@@ -114,7 +114,7 @@ const UserForm = () => {
                 <tbody>
                     {users.map(user => (
                         <tr key={user.id_user}>
-                            <td className="py-2">{user.id_user}</td>
+                            
                             <td className="py-2">{user.username}</td>
                             <td className="py-2">{user.rol}</td>
                             <td className="py-2">

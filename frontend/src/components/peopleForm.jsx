@@ -140,7 +140,7 @@ const PeopleForm = () => {
             <table className="min-w-full bg-white shadow-md rounded">
                 <thead>
                     <tr>
-                        <th className="py-2">ID</th>
+                       
                         <th className="py-2">Nombre</th>
                         <th className="py-2">Apellido</th>
                         <th className="py-2">Documento</th>
@@ -150,7 +150,7 @@ const PeopleForm = () => {
                 <tbody>
                     {people.map(people => (
                         <tr key={people.id_person}>
-                            <td className="py-2">{people.id_person}</td>
+                            
                             <td className="py-2">{people.firstname}</td>
                             <td className="py-2">{people.lastname}</td>
                             <td className="py-2">{people.document}</td>

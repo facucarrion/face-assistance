@@ -100,7 +100,7 @@ const GroupsForm = () => {
             <table className="min-w-full bg-white shadow-md rounded">
                 <thead>
                     <tr>
-                        <th className="py-2">ID</th>
+                        
                         <th className="py-2">Nombre</th>
                         <th className="py-2">Acciones</th>
                     </tr>
@@ -108,7 +108,7 @@ const GroupsForm = () => {
                 <tbody>
                     {groups.map(group => (
                         <tr key={group.id_group}>
-                            <td className="py-2">{group.id_group}</td>
+                            
                             <td className="py-2">{group.name}</td>
                             <td className="py-2">
                                 <button onClick={() => handleDeleteGroup(group.id_group)}
