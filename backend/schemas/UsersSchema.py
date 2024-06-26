@@ -11,6 +11,7 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     username: str
     password: str
+    repeat_password: str
     id_rol: int
 
 class UserUpdate(BaseModel):
@@ -19,6 +20,7 @@ class UserUpdate(BaseModel):
     id_rol: Optional[int]
 
 class UserWithRole(UserBase):
+    id_rol: int
     rol: str
 
 class RolBase(BaseModel):
