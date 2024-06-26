@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.UsersSchema import UserBase, UserCreate, UserUpdate, UserWithRole
 from config.database import get_db
 from lib.auth.crud import get_users, create_user, update_user, delete_user
+from lib.users_group.crud import delete_usergroup_by_user
 
 users_router = APIRouter(
     prefix="/users",
@@ -29,6 +30,7 @@ async def update_user_details(id_user: int, user_update: UserUpdate, db: Session
 
 @users_router.delete("/{id_user}", response_model=UserBase)
 async def delete_user_account(id_user: int, db: Session = Depends(get_db)):
+    db_user_group = delete_usergroup_by_user(db, id_user)
     db_user = delete_user(db, id_user)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")

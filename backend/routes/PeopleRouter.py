@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
 from config.database import get_db
 from lib.people.crud import get_people, create_people, update_people, delete_people
+from lib.assistance.crud import delete_assistance_by_person
 
 people_router = APIRouter(
     prefix="/people",
@@ -23,8 +24,9 @@ async def update_existing_people(id_person: int, people_update: PeopleUpdate, db
         raise HTTPException(status_code=404, detail="Alumno no encontrado")
     return db_people
 
-@people_router.delete("/{id_person}", response_model=PeopleBase)
+@people_router.delete("/{id_person}")
 async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
+    db_assistance = delete_assistance_by_person(db, id_person)
     db_people = delete_people(db, id_person)
     if not db_people:
         raise HTTPException(status_code=404, detail="Alumno no encontrado")
