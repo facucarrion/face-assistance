@@ -71,7 +71,7 @@ import Layout from '../layout/Layout.astro'
         'text-center'
       )
       listItem.onclick = () => {
-        window.location.href = `/groups?id_group=${group.id_group}`
+        window.location.href = `/groups/${group.id_group}`
       }
       groupsList.appendChild(listItem)
     })

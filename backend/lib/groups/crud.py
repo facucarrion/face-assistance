@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.Groups import Groups
+from models.People import People
 from schemas.GroupsSchemas import GroupCreate, GroupUpdate
 
 def get_group(db: Session, skip: int = 0, limit: int = 100):
@@ -28,3 +29,6 @@ def delete_group(db: Session, id_group: int):
     db.delete(db_group)
     db.commit()
     return db_group
+
+def get_people_in_group(db: Session, id_group: int):
+    return db.query(People).filter(People.id_group == id_group).all()

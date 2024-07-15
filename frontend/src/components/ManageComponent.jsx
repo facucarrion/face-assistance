@@ -11,17 +11,17 @@ const ManageComponent = () => {
       <header className="flex justify-between items-center p-4 bg-gray-200">
         <div className="flex items-center">
           <img src="/logo.svg" alt="Logo" className="h-20 ml-4" />
-          <a href="/homepage">
-            <button
-              className="bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400"
-            >
-              Volver a Inicio
-            </button>
-          </a>
         </div>
       </header>   
       <main className="p-4">
-      <h1 className="text-2xl mb-4">Panel de Gestión</h1>
+        <div className="flex items-center mb-4">
+        <a href="/homepage" className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10H17a1 1 0 110 2h-7.586l3.293 3.293a1 1 0 01-1.414 1.414l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          </a>
+          <h1 className="text-2xl ml-4">Panel de Gestión</h1>
+        </div>
         <div className="mb-8 flex space-x-4">
           <button
             onClick={() => setView('users')}

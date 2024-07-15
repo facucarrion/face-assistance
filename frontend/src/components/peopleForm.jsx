@@ -7,9 +7,15 @@ const PeopleForm = () => {
         lastname: '',
         document: '',
         image: '',
-        id_group: 0
+        id_group: null  
     });
     const [editPeopleId, setEditPeopleId] = useState(null);
+    const [groups, setGroups] = useState([]);
+
+    useEffect(() => {
+        fetchPeople();
+        fetchGroups();  
+    }, []);
 
     const fetchPeople = async () => {
         try {
@@ -17,19 +23,33 @@ const PeopleForm = () => {
             const peopleData = await response.json();
             setPeople(peopleData);
         } catch (error) {
-            console.error('Error al recuperar alumno:', error);
+            console.error('Error al recuperar alumnos:', error);
         }
     };
 
-    useEffect(() => {
-        fetchPeople();
-    }, []);
+    const fetchGroups = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/groups/');
+            const groupsData = await response.json();
+            console.log('Grupos:', groupsData);  
+            setGroups(groupsData);
+
+            if (groupsData.length > 0) {
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    id_group: groupsData[0].id_group
+                }));
+            }
+        } catch (error) {
+            console.error('Error al recuperar grupos:', error);
+        }
+    };
 
     const handleCreateOrUpdatePeople = async (event) => {
         event.preventDefault();
 
         try {
-            const url = editPeopleId 
+            const url = editPeopleId
                 ? `http://127.0.0.1:8000/people/${editPeopleId}`
                 : 'http://127.0.0.1:8000/people/';
             const method = editPeopleId ? 'PUT' : 'POST';
@@ -50,7 +70,7 @@ const PeopleForm = () => {
                     lastname: '',
                     document: '',
                     image: '',
-                    id_group: 0
+                    id_group: groups.length > 0 ? groups[0].id_group : ''
                 });
                 setEditPeopleId(null);
             } else {
@@ -97,82 +117,88 @@ const PeopleForm = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10">
-            <h2 className="text-2xl font-bold mb-4">{editPeopleId ? 'Editar Alumno' : 'Crear Alumno'}</h2>
-            <form onSubmit={handleCreateOrUpdatePeople} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="container mx-auto mt-10 flex">
+            <div className="w-1/2 pr-4">
+                <h2 className="text-2xl font-bold mb-4">{editPeopleId ? 'Editar Alumno' : 'Crear Alumno'}</h2>
+                <form onSubmit={handleCreateOrUpdatePeople} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div className="mb-4">
                     <label htmlFor="firstname" 
-                    className="block text-gray-700 text-sm font-bold mb-2">
-                    Nombre:
+                        className="block text-gray-700 text-sm font-bold mb-2">
+                            Nombre:
                     </label>
                     <input 
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    name="firstname"
-                    id="firstname" 
-                    placeholder="Ingrese el nombre del alumno" required
-                    value={formData.firstname} onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+                        name="firstname"
+                        id="firstname" 
+                        placeholder="Ingrese el nombre del alumno" required
+                        value={formData.firstname} onChange={handleChange} 
                     />
                 </div>
 
                 <div className="mb-4">
                     <label htmlFor="lastname" 
-                    className="block text-gray-700 text-sm font-bold mb-2">
-                    Apellido:
+                        className="block text-gray-700 text-sm font-bold mb-2">
+                            Apellido:
                     </label>
                     <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text" 
-                    name="lastname"
-                    id="lastname" 
-                    placeholder="Ingrese el apellido del alumno" required
-                    value={formData.lastname} onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text" 
+                        name="lastname"
+                        id="lastname" 
+                        placeholder="Ingrese el apellido del alumno" required
+                        value={formData.lastname} onChange={handleChange} 
                     />
                 </div>
 
                 <div className="mb-4">
                     <label htmlFor="document" 
-                    className="block text-gray-700 text-sm font-bold mb-2">
-                    Documento:
+                        className="block text-gray-700 text-sm font-bold mb-2">
+                            Documento:
                     </label>
                     <input 
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    name="document"
-                    id="document" 
-                    placeholder="Ingrese el documento del alumno" required
-                    value={formData.document} onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+                        name="document"
+                        id="document" 
+                        placeholder="Ingrese el documento del alumno" required
+                        value={formData.document} onChange={handleChange} 
                     />
                 </div>
 
                 <div className="mb-4">
                     <label htmlFor="image" 
-                    className="block text-gray-700 text-sm font-bold mb-2">
-                    Imagen:
+                       className="block text-gray-700 text-sm font-bold mb-2">
+                            Imagen:
                     </label>
                     <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    name="image"
-                    id="image" 
-                    placeholder="Ingrese la URL de la imagen del alumno" required
-                    value={formData.image} onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="text"
+                        name="image"
+                        id="image" 
+                        placeholder="Ingrese la URL de la imagen del alumno" required
+                        value={formData.image} onChange={handleChange} 
                     />
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="id_group" 
-                    className="block text-gray-700 text-sm font-bold mb-2">
-                    Grupo:
+                    <label htmlFor="id_group" className="block text-gray-700 text-sm font-bold mb-2">
+                        Curso:
                     </label>
-                    <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="number"
-                    name="id_group" 
-                    id="id_group"
-                    placeholder="Ingrese el ID del grupo" required
-                    value={formData.id_group} onChange={handleChange} 
-                    />
+                    <select
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        name="id_group"
+                        id="id_group"
+                        value={formData.id_group}
+                        onChange={handleChange}
+                        required
+                    >
+                        {groups.map(group => (
+                            <option key={group.id_group} value={group.id_group}>
+                                {group.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <button type="submit"
@@ -180,9 +206,12 @@ const PeopleForm = () => {
                     {editPeopleId ? 'Actualizar Alumno' : 'Crear Alumno'}
                 </button>
             </form>
+        </div>
 
+        <div className="w-1/2 pl-4">
             <h2 className="text-2xl font-bold mb-4">Lista de Alumnos</h2>
-            <table className="min-w-full bg-white shadow-md rounded mb-4">
+            <div className="max-h-96 overflow-y-auto">
+                <table className="min-w-full bg-white shadow-md rounded mb-4">
                 <thead>
                     <tr>
                         <th className="py-2 px-4 bg-gray-200 text-left">Nombre</th>
@@ -209,12 +238,14 @@ const PeopleForm = () => {
                                 <button onClick={() => handleEditPeople(people)}
                                     className="bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Editar
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                    </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };

@@ -30,3 +30,4 @@ async def delete_existing_group(id_group: int, db: Session = Depends(get_db)):
     if db_group is None:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     return db_group
+

@@ -1,14 +1,48 @@
 ---
 import Layout from '../layout/Layout.astro';
-
 ---
 
+<script>
+  import Layout from '../layout/Layout.astro';
+  
+
+  let people = [];
+
+  onMount(async () => {
+    const router = useRouter();
+    const { id_group } = router.params;
+
+    try {
+      const response = await fetch(`http://localhost:8000/groups/${id_group}/people`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      people = await response.json();
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  });
+</script>
+
 <Layout>
+  <!-- Header -->
   <header class="flex justify-between items-center p-4 bg-gray-200">
     <button id="home-button" class="flex items-center text-white">
       <img src="/logo.svg" alt="Logo" class="h-20 mr-4" />
     </button>
   </header>
+
+  <!-- Group Details -->
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">Personas en el Grupo</h2>
+    <ul class="grid grid-cols-3 gap-4">
+      {#each people as person}
+        <li class="bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition transform hover:scale-105 text-center">
+          <p>{person.firstname} {person.lastname}</p>
+          <p>{person.document}</p>
+          <img src="{person.image}" alt="{person.firstname} {person.lastname}" class="h-20 w-20 mx-auto mt-4 rounded-full" />
+        </li>
+      {/each}
+    </ul>
+  </section>
 </Layout>
-
-

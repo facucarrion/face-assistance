@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas.UsersSchema import UserBase, UserCreate, UserUpdate, UserWithRole
+from schemas.UsersSchema import UserBase, UserCreate, UserUpdate, UserWithRole, RolBase
 from config.database import get_db
 from lib.auth.crud import get_users, create_user, update_user, delete_user
 from lib.users_group.crud import delete_usergroup_by_user
+from models.Users import Roles
 
 users_router = APIRouter(
     prefix="/users",
@@ -36,3 +37,7 @@ async def delete_user_account(id_user: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+@users_router.get("/roles/", response_model=list[RolBase])
+async def get_roles(db: Session = Depends(get_db)):
+    roles = db.query(Roles).all()
+    return roles

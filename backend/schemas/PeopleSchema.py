@@ -11,7 +11,7 @@ class PeopleBase(BaseModel):
     id_group: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PeopleCreate(BaseModel):
     firstname: str
@@ -28,4 +28,4 @@ class PeopleUpdate(BaseModel):
     id_group: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
