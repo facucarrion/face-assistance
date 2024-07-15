@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from config.database import get_db
-from lib.groups.crud import get_group, create_group, update_group, delete_group
+from lib.groups.crud import get_group, create_group, update_group, delete_group, get_people_in_group
 
 groups_router = APIRouter(
     prefix="/groups",
@@ -31,3 +31,6 @@ async def delete_existing_group(id_group: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     return db_group
 
+@groups_router.get("/{id_group}/people", response_model=list[PeopleBase])
+async def get_people_in_group(id_group: int, db: Session = Depends(get_db)):
+    return get_people_in_group(db, id_group)
