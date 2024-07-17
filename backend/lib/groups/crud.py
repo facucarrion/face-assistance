@@ -6,6 +6,9 @@ from schemas.GroupsSchemas import GroupCreate, GroupUpdate
 def get_group(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Groups).offset(skip).limit(limit).all()
 
+def get_group_by_id(db: Session, id_group: int = 0):
+    return db.query(Groups).filter(Groups.id_group == id_group).first()
+
 def create_group(db: Session, group: GroupCreate):
     db_group = Groups(name=group.name)
     db.add(db_group)

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
+from schemas.PeopleSchema import PeopleBase
 from config.database import get_db
-from lib.groups.crud import get_group, create_group, update_group, delete_group, get_people_in_group
+from lib.groups.crud import get_group, get_group_by_id as crud_get_group_by_id, create_group, update_group, delete_group, get_people_in_group
 
 groups_router = APIRouter(
     prefix="/groups",
@@ -12,6 +13,11 @@ groups_router = APIRouter(
 async def read_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     groups = get_group(db, skip=skip, limit=limit)
     return groups
+
+@groups_router.get("/{id_group}", response_model=GroupsBase)
+async def get_group_by_id(id_group: int, db: Session = Depends(get_db)):
+    group = crud_get_group_by_id(db, id_group)
+    return group
 
 @groups_router.post("/", response_model=GroupsBase)
 async def create_new_group(group: GroupCreate, db: Session = Depends(get_db)):
