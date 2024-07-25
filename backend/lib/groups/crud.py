@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
 from models.Groups import Groups
+from models.People import People
 from schemas.GroupsSchemas import GroupCreate, GroupUpdate
 
 def get_group(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Groups).offset(skip).limit(limit).all()
+
+def get_group_by_id(db: Session, id_group: int = 0):
+    return db.query(Groups).filter(Groups.id_group == id_group).first()
 
 def create_group(db: Session, group: GroupCreate):
     db_group = Groups(name=group.name)
@@ -28,3 +32,6 @@ def delete_group(db: Session, id_group: int):
     db.delete(db_group)
     db.commit()
     return db_group
+
+def get_people_in_group(db: Session, id_group: int):
+    return db.query(People).filter(People.id_group == id_group).all()

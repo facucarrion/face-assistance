@@ -1,0 +1,20 @@
+---
+import { getGroups } from "../../lib/groups/getGroups"
+import { getGroup } from "../../lib/groups/getGroup"
+
+export async function getStaticPaths() {
+    const groups = await getGroups()
+
+    return groups.map(group => {
+        return { params: { id: group.id_group.toString() }}
+    })
+}
+
+const { id } = Astro.params
+
+const group = await getGroup(id)
+
+console.log(group)
+---
+
+<h1>{group.name}</h1>

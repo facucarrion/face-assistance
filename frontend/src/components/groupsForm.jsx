@@ -81,11 +81,11 @@ const GroupsForm = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10">
-            <h2 className="text-2xl font-bold mb-4">{editGroupId ? 'Editar Curso' : 'Crear Curso'}</h2>
-            <form onSubmit={handleCreateOrUpdateGroup} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="container mx-auto mt-10 flex">
+            <div className="w-1/2 pr-4">
+                <h2 className="text-2xl font-bold mb-4">{editGroupId ? 'Editar Curso' : 'Crear Curso'}</h2>
+                <form onSubmit={handleCreateOrUpdateGroup} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
 
-                <div className="mb-4">
                     <label htmlFor="name" 
                     className="block text-gray-700 text-sm font-bold mb-2">
                     Nombre del Curso:
@@ -98,16 +98,18 @@ const GroupsForm = () => {
                     placeholder="Ingrese el nombre del curso" required
                     value={formData.name} onChange={handleChange} 
                     />
-                </div>
 
-                <button type="submit"
+                    <button type="submit"
                     className="bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
-                </button>
-            </form>
+                    </button>
+                </form>
+            </div>
 
+        <div className="w-1/2 pl-4">
             <h2 className="text-2xl font-bold mb-4">Lista de Cursos</h2>
-            <table className="min-w-full bg-white shadow-md rounded mb-4">
+            <div className="max-h-96 overflow-y-auto">
+                <table className="min-w-full bg-white shadow-md rounded mb-4">
                 <thead>
                     <tr>
                         <th className="py-2 px-4 bg-gray-200 text-left">Nombre</th>
@@ -130,11 +132,13 @@ const GroupsForm = () => {
                                     className="bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Editar
                                 </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };
