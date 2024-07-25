@@ -1,6 +1,6 @@
 import { jwtVerify } from 'jose'
 
-const token_secret = import.meta.env.TOKEN_SECRET ?? ''
+const token_secret = import.meta.env.PUBLIC_TOKEN_SECRET
 
 export async function verifyJwt() {
   const token = localStorage.getItem('user')

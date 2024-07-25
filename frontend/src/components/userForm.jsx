@@ -5,16 +5,19 @@ const UserForm = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+    repeat_password: '',
     id_rol: 0
   })
+  const [userToEdit, setUserToEdit] = useState(null)
 
   const fetchUsers = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/users/')
       const usersData = await response.json()
       setUsers(usersData)
+      console.log(usersData)
     } catch (error) {
-      console.error('Error fetching users:', error)
+      console.error('Error al recuperar usuarios:', error)
     }
   }
 
@@ -23,8 +26,14 @@ const UserForm = () => {
   }, [])
 
   useEffect(() => {
-    console.log(users)
-  }, [users])
+    setFormData({
+      username: userToEdit?.username || '',
+      password: '',
+      repeat_password: '',
+      id_rol: userToEdit?.id_rol || 0
+    })
+    console.log(userToEdit)
+  }, [userToEdit])
 
   const handleCreateUser = async event => {
     event.preventDefault()
@@ -39,13 +48,13 @@ const UserForm = () => {
       })
 
       if (response.ok) {
-        alert('User created successfully!')
+        alert('¡Usuario creado exitosamente!')
         fetchUsers()
       } else {
-        alert('Failed to create user')
+        alert('No se pudo crear el usuario')
       }
     } catch (error) {
-      console.error('Error creating user:', error)
+      console.error('Error al crear usuario:', error)
     }
   }
 
@@ -56,13 +65,40 @@ const UserForm = () => {
       })
 
       if (response.ok) {
-        alert('User deleted successfully!')
+        alert('¡Usuario eliminado exitosamente!')
         fetchUsers()
       } else {
-        alert('Failed to delete user')
+        alert('No se pudo eliminar el usuario')
       }
     } catch (error) {
-      console.error('Error deleting user:', error)
+      console.error('Error al eliminar usuario:', error)
+    }
+  }
+
+  const handleUpdateUser = async event => {
+    event.preventDefault()
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/users/${userToEdit.id_user}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        }
+      )
+
+      if (response.ok) {
+        alert('¡Usuario actualizado exitosamente!')
+        fetchUsers()
+        setUserToEdit(null)
+      } else {
+        alert('No se pudo actualizar el usuario')
+      }
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error)
     }
   }
 
@@ -112,6 +148,7 @@ const UserForm = () => {
             name='password'
             id='password'
             placeholder='Ingrese la contraseña'
+            required
             value={formData.password}
             onChange={handleChange}
           />
@@ -130,6 +167,7 @@ const UserForm = () => {
             name='repeat_password'
             id='repeat_ password'
             placeholder='Confirmar contraseña'
+            required
             value={formData.repeat_password}
             onChange={handleChange}
           />
@@ -179,31 +217,33 @@ const UserForm = () => {
         )}
       </form>
 
-      <h2 className='text-xl mb-2'>Lista de Usuarios</h2>
-      <table className='min-w-full bg-white shadow-md rounded'>
+      <h2 className='text-2xl font-bold mb-4'>Lista de Usuarios</h2>
+      <table className='min-w-full bg-white shadow-md rounded mb-4'>
         <thead>
           <tr>
-            <th className='py-2'>ID</th>
-            <th className='py-2'>Username</th>
-            <th className='py-2'>Rol</th>
-            <th className='py-2'>Acciones</th>
+            <th className='py-2 px-4 bg-gray-200 text-left'>Username</th>
+            <th className='py-2 px-4 bg-gray-200 text-left'>Rol</th>
+            <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
           </tr>
         </thead>
+
         <tbody>
           {users.map(user => (
             <tr key={user.id_user}>
-              <td className='py-2'>{user.id_user}</td>
-              <td className='py-2'>{user.username}</td>
-              <td className='py-2'>{user.rol}</td>
-              <td className='py-2'>
+              <td className='py-2 px-4 border-b'>{user.username}</td>
+              <td className='py-2 px-4 border-b'>{user.rol}</td>
+              <td className='py-2 px-4 border-b flex space-x-2'>
                 <button
                   onClick={() => handleDeleteUser(user.id_user)}
                   className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                 >
                   Eliminar
                 </button>
+
                 <button
-                  onClick={() => handleUpdateUser(user.id_user)}
+                  onClick={() => {
+                    setUserToEdit(user)
+                  }}
                   className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                 >
                   Editar

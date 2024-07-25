@@ -11,7 +11,7 @@ auth_router = APIRouter(
     prefix="/auth",
 )
 
-@auth_router.post("/homepage", response_model=ApiMessageSchema)
+@auth_router.post("/login", response_model=ApiMessageSchema)
 async def login(user: LoginSchema, db: Session = Depends(get_db)):
     userInDatabase = get_user_by_username(db, user.username)
 

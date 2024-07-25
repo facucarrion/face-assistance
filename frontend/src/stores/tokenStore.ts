@@ -1,3 +1,3 @@
 import { atom } from 'nanostores'
 
-export const userToken = atom<string | null>('')
+export const userToken = atom<string | null>(localStorage.getItem('user'))

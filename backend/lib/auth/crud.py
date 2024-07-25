@@ -9,6 +9,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     .query(
       User.id_user,
       User.username,
+      User.id_rol,
       Roles.rol
     )
     .join(Roles, User.id_rol == Roles.id_rol)
@@ -44,6 +45,9 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password) 
 
 def create_user(db: Session, user: UserCreate):
+    if user.password != user.repeat_password:
+        return None
+    
     hashed_password = hash_password(user.password)
     db_user = User(username=user.username, password=hashed_password, id_rol=user.id_rol)
     db.add(db_user)

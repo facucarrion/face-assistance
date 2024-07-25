@@ -18,9 +18,11 @@ form.addEventListener('submit', async e => {
 
   const responseData = await response.json()
 
+  console.log(responseData)
+
   if (responseData.success) {
     userToken.set(responseData.data.token)
-    location.href = '/'
+    location.href = '/homepage'
   } else {
     alert('Error al iniciar sesión')
   }
