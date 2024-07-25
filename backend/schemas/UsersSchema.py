@@ -28,7 +28,7 @@ class RolBase(BaseModel):
     rol: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RolCreate(RolBase):
     pass

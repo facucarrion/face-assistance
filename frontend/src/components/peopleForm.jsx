@@ -5,26 +5,45 @@ const PeopleForm = () => {
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
-    nickname: '',
     document: '',
     image: '',
-    id_group: 0
+    id_group: null
   })
   const [editPeopleId, setEditPeopleId] = useState(null)
-
-  const fetchPeople = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/people?limit=150')
-      const peopleData = await response.json()
-      setPeople(peopleData)
-    } catch (error) {
-      console.error('Error al recuperar alumno:', error)
-    }
-  }
+  const [groups, setGroups] = useState([])
 
   useEffect(() => {
     fetchPeople()
+    fetchGroups()
   }, [])
+
+  const fetchPeople = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/people/')
+      const peopleData = await response.json()
+      setPeople(peopleData)
+    } catch (error) {
+      console.error('Error al recuperar alumnos:', error)
+    }
+  }
+
+  const fetchGroups = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/groups/')
+      const groupsData = await response.json()
+      console.log('Grupos:', groupsData)
+      setGroups(groupsData)
+
+      if (groupsData.length > 0) {
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          id_group: groupsData[0].id_group
+        }))
+      }
+    } catch (error) {
+      console.error('Error al recuperar grupos:', error)
+    }
+  }
 
   const handleCreateOrUpdatePeople = async event => {
     event.preventDefault()
@@ -53,10 +72,9 @@ const PeopleForm = () => {
         setFormData({
           firstname: '',
           lastname: '',
-          nickname: '',
           document: '',
           image: '',
-          id_group: 0
+          id_group: groups.length > 0 ? groups[0].id_group : ''
         })
         setEditPeopleId(null)
       } else {

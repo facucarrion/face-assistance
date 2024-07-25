@@ -78,3 +78,7 @@ async def update_people(id_person: int, people_update: PeopleUpdate, db: Session
 @app.delete("/people/{id_person}", response_model=PeopleBase)
 async def delete_people(id_person: int, db: Session = Depends(get_db)):
     return PeopleCrud.delete_people(db=db, id_person=id_person)
+
+@app.get("/groups/{id_group}/people", response_model=list[PeopleBase])
+async def get_people_in_group(id_group: int, db: Session = Depends(get_db)):
+    return GroupCrud.get_people_in_group(db=db, id_group=id_group)

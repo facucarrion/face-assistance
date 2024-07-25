@@ -37,18 +37,18 @@ import Layout from '../layout/Layout.astro'
 </Layout>
 
 <script>
-  const greeting = document.getElementById('greeting') as HTMLHeadingElement
+  const greeting = document.getElementById('greeting')
 
   async function fetchGroups() {
     try {
       const response = await fetch('http://localhost:8000/groups')
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error('La respuesta de la red no fue correcta')
       }
       const groups = await response.json()
       renderGroups(groups)
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error)
+      console.error('Hubo un problema con la operación de recuperación:', error)
     }
   }
 
@@ -71,7 +71,7 @@ import Layout from '../layout/Layout.astro'
         'text-center'
       )
       listItem.onclick = () => {
-        window.location.href = `/groups?id_group=${group.id_group}`
+        window.location.href = `/groups/${group.id_group}`
       }
       groupsList.appendChild(listItem)
     })
