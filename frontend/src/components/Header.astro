@@ -1,0 +1,24 @@
+<header class='flex justify-between items-center p-4 bg-gray-200'>
+  <button id='home-button' class='flex items-center text-white'>
+    <img src='/logo.svg' alt='Logo' class='h-20 mr-4' />
+  </button>
+
+  <div class='flex space-x-2'>
+    <button
+      id='button'
+      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400'
+      >Gestionar</button
+    >
+    <div class='relative'>
+      <input
+        id='search-input'
+        type='text'
+        placeholder='Buscar alumnos'
+        class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500'
+      />
+      <button id='search-button' class='absolute right-0 top-0 mt-2 mr-2'>
+        <img src='/search.svg' alt='Buscar' class='h-6 w-6' />
+      </button>
+    </div>
+  </div>
+</header>

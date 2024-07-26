@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from schemas.PeopleSchema import PeopleBase
 
 from pydantic import BaseModel
 
@@ -9,6 +10,9 @@ class GroupsBase(BaseModel):
 
     class Config:
         from_attributes = True
+
+class GroupsWithPeople(GroupsBase):
+    people: list[PeopleBase]
 
 class GroupCreate(BaseModel):
     name: str
