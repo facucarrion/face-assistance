@@ -7,7 +7,6 @@ class PeopleBase(BaseModel):
     firstname: str
     lastname: str
     document: str
-    image: str
     id_group: int
 
     class Config:
@@ -17,14 +16,12 @@ class PeopleCreate(BaseModel):
     firstname: str
     lastname: str
     document: str
-    image: str
     id_group: int
 
 class PeopleUpdate(BaseModel):
     firstname: str
     lastname: str
     document: str
-    image: str
     id_group: int
 
     class Config:
