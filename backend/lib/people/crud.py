@@ -10,7 +10,6 @@ def create_people(db: Session, people: PeopleCreate):
         firstname=people.firstname,
         lastname=people.lastname,
         document=people.document,
-        image=people.image,
         id_group=people.id_group
     )
     db.add(db_people)
@@ -33,5 +32,12 @@ def delete_people(db: Session, id_person: int):
     if not db_people:
         return None
     db.delete(db_people)
+    db.commit()
+    return db_people
+
+def delete_people_by_group(db: Session, id_group: int):
+    db_people = db.query(People).filter(People.id_group == id_group).all()
+    for person in db_people:
+        db.delete(person)
     db.commit()
     return db_people
