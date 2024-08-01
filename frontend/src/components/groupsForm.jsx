@@ -119,6 +119,20 @@ const GroupsForm = () => {
           >
             {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
           </button>
+          {editGroupId && (
+            <button
+              type='button'
+              className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              onClick={() => {
+                setEditGroupId(null)
+                setFormData({
+                  name: ''
+                })
+              }}
+            >
+              Limpiar
+            </button>
+          )}
         </form>
       </div>
 

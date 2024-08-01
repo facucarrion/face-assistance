@@ -221,12 +221,12 @@ const PeopleForm = () => {
               type='button'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
               onClick={() => {
-                setUserToEdit(null)
+                setEditPeopleId(null)
                 setFormData({
                   firstname: '',
                   lastname: '',
                   document: '',
-                  id_group: 0
+                  id_group: groups.length > 0 ? groups[0].id_group : ''
                 })
               }}
             >

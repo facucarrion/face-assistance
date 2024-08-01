@@ -6,11 +6,10 @@ const UserForm = () => {
     username: '',
     password: '',
     repeat_password: '',
-    id_rol: 0
+    id_rol: 1
   })
   const [userToEdit, setUserToEdit] = useState(null)
   const [roles, setRoles] = useState([])
-  const [selectedRole, setSelectedRole] = useState(null)
 
   const fetchUsers = async () => {
     try {
@@ -67,7 +66,7 @@ const UserForm = () => {
           username: '',
           password: '',
           repeat_password: '',
-          id_rol: 0
+          id_rol: 1
         })
       } else {
         alert('No se pudo crear el usuario')
@@ -117,7 +116,7 @@ const UserForm = () => {
           username: '',
           password: '',
           repeat_password: '',
-          id_rol: 0
+          id_rol: 1
         })
       } else {
         alert('No se pudo actualizar el usuario')
