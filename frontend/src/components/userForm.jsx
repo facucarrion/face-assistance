@@ -134,14 +134,14 @@ const UserForm = () => {
   }
 
   return (
-    <div className='container mx-auto mt-10 flex'>
-      <div className='w-1/2 pr-4'>
+    <>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>
           {userToEdit ? 'Editar Usuario' : 'Crear Usuario'}
         </h2>
         <form
           onSubmit={userToEdit ? handleUpdateUser : handleCreateUser}
-          className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+          className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 h-[450px] flex flex-col justify-between'
         >
           <div className='mb-4'>
             <label
@@ -223,37 +223,43 @@ const UserForm = () => {
             </select>
           </div>
 
-          <button
-            type='submit'
-            className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-          >
-            {userToEdit ? 'Actualizar Usuario' : 'Crear Usuario'}
-          </button>
-          {userToEdit && (
+          <div className='grid grid-cols-2 gap-4'>
             <button
-              type='button'
+              type='submit'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-              onClick={() => {
-                setUserToEdit(null)
-                setFormData({
-                  username: '',
-                  password: '',
-                  repeat_password: '',
-                  id_rol: 0
-                })
-              }}
             >
-              Limpiar
+              {userToEdit ? 'Actualizar Usuario' : 'Crear Usuario'}
             </button>
-          )}
+
+            {userToEdit && (
+              <button
+                type='button'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                onClick={() => {
+                  setUserToEdit(null)
+                  setFormData({
+                    username: '',
+                    password: '',
+                    repeat_password: '',
+                    id_rol: 0
+                  })
+                }}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
-      <div className='w-1/2 pl-4'>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Lista de Usuarios</h2>
-        <div className='max-h-96 overflow-y-auto'>
+        <div
+          className='max-h-[450px] overflow-y-scroll relative'
+          style={{ scrollbarGutter: 'stable' }}
+        >
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
-            <thead>
+            <thead className='sticky top-0'>
               <tr>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Username</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Rol</th>
@@ -263,13 +269,13 @@ const UserForm = () => {
 
             <tbody>
               {users.map(user => (
-                <tr key={user.id_user}>
-                  <td className='py-2 px-4 border-b'>{user.username}</td>
-                  <td className='py-2 px-4 border-b'>{user.rol}</td>
-                  <td className='py-2 px-4 border-b flex space-x-2'>
+                <tr key={user.id_user} className='border-b'>
+                  <td className='py-2 px-4'>{user.username}</td>
+                  <td className='py-2 px-4'>{user.rol}</td>
+                  <td className='py-2 px-4 flex space-x-2'>
                     <button
                       onClick={() => handleDeleteUser(user.id_user)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Eliminar
                     </button>
@@ -278,7 +284,7 @@ const UserForm = () => {
                       onClick={() => {
                         setUserToEdit(user)
                       }}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
                     </button>
@@ -289,7 +295,8 @@ const UserForm = () => {
           </table>
         </div>
       </div>
-    </div>
+    </>
   )
 }
+
 export default UserForm

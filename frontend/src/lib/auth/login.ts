@@ -22,7 +22,7 @@ form.addEventListener('submit', async e => {
 
   if (responseData.success) {
     userToken.set(responseData.data.token)
-    location.href = '/homepage'
+    location.href = '/'
   } else {
     alert('Error al iniciar sesión')
   }

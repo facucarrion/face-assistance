@@ -85,14 +85,14 @@ const GroupsForm = () => {
   }
 
   return (
-    <div className='container mx-auto mt-10 flex'>
-      <div className='w-1/2 pr-4'>
+    <>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>
           {editGroupId ? 'Editar Curso' : 'Crear Curso'}
         </h2>
         <form
           onSubmit={handleCreateOrUpdateGroup}
-          className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+          className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'
         >
           <div className='mb-4'>
             <label
@@ -113,30 +113,32 @@ const GroupsForm = () => {
             />
           </div>
 
-          <button
-            type='submit'
-            className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-          >
-            {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
-          </button>
-          {editGroupId && (
+          <div className='w-full grid grid-cols-2'>
             <button
-              type='button'
+              type='submit'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-              onClick={() => {
-                setEditGroupId(null)
-                setFormData({
-                  name: ''
-                })
-              }}
             >
-              Limpiar
+              {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
             </button>
-          )}
+            {editGroupId && (
+              <button
+                type='button'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                onClick={() => {
+                  setEditGroupId(null)
+                  setFormData({
+                    name: ''
+                  })
+                }}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
-      <div className='w-1/2 pl-4'>
+      <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Lista de Cursos</h2>
         <div className='max-h-96 overflow-y-auto'>
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
@@ -172,7 +174,7 @@ const GroupsForm = () => {
           </table>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

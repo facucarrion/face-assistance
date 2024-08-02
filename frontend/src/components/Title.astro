@@ -1,0 +1,22 @@
+---
+import BackArrow from '../icons/BackArrow.astro'
+
+interface Props {
+  backbutton?: boolean
+  backhref?: string
+}
+
+const { backbutton = false, backhref = '/' } = Astro.props
+---
+
+<h2 class='text-3xl font-semibold flex items-center gap-4 mb-4'>
+  {
+    backbutton && (
+      <a href={backhref}>
+        <BackArrow />
+      </a>
+    )
+  }
+
+  <slot />
+</h2>

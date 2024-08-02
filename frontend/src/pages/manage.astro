@@ -1,7 +1,15 @@
 ---
-import Layout from '../layout/Layout.astro';
-import ManageComponent from '../components/ManageComponent.jsx';
+import Layout from '../layout/Layout.astro'
+import Title from '../components/Title.astro'
+import BackArrow from '../icons/BackArrow.astro'
+
+import ManageComponent from '../components/ManageComponent.jsx'
 ---
+
 <Layout>
-  <ManageComponent client:load />
+  <main class='p-4'>
+    <Title backbutton={true}>Panel de Gestión</Title>
+
+    <ManageComponent client:load />
+  </main>
 </Layout>
