@@ -1,6 +1,9 @@
 ---
 import Header from '../components/Header.astro'
 import Layout from '../layout/Layout.astro'
+
+const response = await fetch('http://localhost:8000/groups')
+const groups = await response.json()
 ---
 
 <Layout>
@@ -8,61 +11,18 @@ import Layout from '../layout/Layout.astro'
 
   <main class='p-4'>
     <h2 class='text-2xl font-semibold mb-4'>Cursos</h2>
-    <ul id='groups-list' class='grid grid-cols-3 gap-4'></ul>
+
+    <ul id='groups-list' class='grid grid-cols-3 gap-4'>
+      {groups.map(group => {
+        return ( 
+          <a href={`/groups/${group.id_group}`}>
+            <li class='bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition transform hover:scale-105 text-center'>
+              {group.name}
+            </li>
+          </a>
+        )
+      })}
+    </ul>
   </main>
 </Layout>
 
-<script>
-  async function fetchGroups() {
-    try {
-      const response = await fetch('http://localhost:8000/groups')
-      if (!response.ok) {
-        throw new Error('La respuesta de la red no fue correcta')
-      }
-      const groups = await response.json()
-      renderGroups(groups)
-    } catch (error) {
-      console.error('Hubo un problema con la operación de recuperación:', error)
-    }
-  }
-
-  function renderGroups(groups) {
-    const groupsList = document.getElementById('groups-list')
-    groupsList.innerHTML = ''
-    groups.forEach(group => {
-      const listItem = document.createElement('li')
-      listItem.textContent = group.name
-      listItem.classList.add(
-        'bg-white',
-        'p-4',
-        'rounded-lg',
-        'shadow-md',
-        'cursor-pointer',
-        'hover:bg-gray-200',
-        'transition',
-        'transform',
-        'hover:scale-105',
-        'text-center'
-      )
-      listItem.onclick = () => {
-        window.location.href = `/groups/${group.id_group}`
-      }
-      groupsList.appendChild(listItem)
-    })
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    fetchGroups()
-
-    const button = document.getElementById('button')
-    const homeButton = document.getElementById('home-button')
-
-    button.addEventListener('click', () => {
-      window.location.href = '/manage'
-    })
-
-    homeButton.addEventListener('click', () => {
-      window.location.href = '/'
-    })
-  })
-</script>
