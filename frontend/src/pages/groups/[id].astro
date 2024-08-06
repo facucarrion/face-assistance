@@ -2,6 +2,7 @@
 import { getGroups } from '../../lib/groups/getGroups'
 import { getGroup } from '../../lib/groups/getGroup'
 import Layout from '../../layout/Layout.astro'
+import Title from '../../components/Title.astro'
 
 export async function getStaticPaths() {
   const groups = await getGroups()
@@ -20,29 +21,13 @@ console.log(group)
 
 <Layout>
   <main class='p-4'>
-    <div class='flex items-center mb-4'>
-      <a href='/' class='flex items-center'>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          class='h-6 w-6 mr-2'
-          viewBox='0 0 20 20'
-          fill='currentColor'
-        >
-          <path
-            fill-rule='evenodd'
-            d='M12.707 5.293a1 1 0 010 1.414L9.414 10H17a1 1 0 110 2h-7.586l3.293 3.293a1 1 0 01-1.414 1.414l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 0z'
-            clip-rule='evenodd'></path>
-        </svg>
-      </a>
-      <div class='flex gap-4'>
-        <h1 class='text-2xl ml-4'>
-          Curso "{group.name}"
-        </h1>
-        <p class='text-lg font-semibold self-end'>
-          {group.people.length} Alumnos
-        </p>
-      </div>
-    </div>
+    <Title backbutton={true}>
+      Curso "{group.name}"
+
+      <p class='text-lg font-medium self-end'>
+        {group.people.length} Alumnos
+      </p>
+    </Title>
 
     <div class='w-full h-[75vh] gap-4' id='grid'>
       <section>

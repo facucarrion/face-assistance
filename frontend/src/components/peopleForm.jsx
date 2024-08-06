@@ -20,6 +20,7 @@ const PeopleForm = () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/people?limit=500')
       const peopleData = await response.json()
+
       setPeople(peopleData)
     } catch (error) {
       console.error('Error al recuperar alumnos:', error)
@@ -30,7 +31,7 @@ const PeopleForm = () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/groups/')
       const groupsData = await response.json()
-      console.log('Grupos:', groupsData)
+
       setGroups(groupsData)
 
       if (groupsData.length > 0) {
@@ -112,10 +113,10 @@ const PeopleForm = () => {
 
   const handleEditPeople = people => {
     setFormData({
+      id_group: people.id_group,
       firstname: people.firstname,
       lastname: people.lastname,
-      document: people.document,
-      id_group: people.id_group
+      document: people.document
     })
     setEditPeopleId(people.id_person)
   }
@@ -217,6 +218,7 @@ const PeopleForm = () => {
             >
               {editPeopleId ? 'Actualizar Alumno' : 'Crear Alumno'}
             </button>
+
             {editPeopleId && (
               <button
                 type='button'
@@ -240,9 +242,9 @@ const PeopleForm = () => {
 
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Lista de Alumnos</h2>
-        <div className='max-h-96 overflow-y-auto'>
+        <div className='max-h-96 overflow-y-auto relative'>
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
-            <thead>
+            <thead className='sticky top-0'>
               <tr>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Apellido</th>

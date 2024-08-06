@@ -140,9 +140,9 @@ const GroupsForm = () => {
 
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Lista de Cursos</h2>
-        <div className='max-h-96 overflow-y-auto'>
+        <div className='max-h-96 overflow-y-auto relative'>
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
-            <thead>
+            <thead className='sticky top-0'>
               <tr>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
