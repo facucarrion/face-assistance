@@ -1,0 +1,35 @@
+---
+import Layout from '../layout/Layout.astro'
+import Title from '../components/Title.astro'
+
+import { getSearchedPeople } from "../lib/people/getSearchedPeople"
+
+export const prerender = false
+
+const url = Astro.url
+const search = url.searchParams.get("q") || ""
+
+const searchedPeople = await getSearchedPeople(search)
+---
+
+<Layout>
+  <main class='p-4'>
+    <Title backbutton={true}>Búsqueda</Title>
+    
+    <ul id='groups-list' class='grid grid-cols-4 gap-4'>
+        {
+          searchedPeople.map(person => {
+            return (
+              <a href={`/people/${person.id_person}`}>
+                <li class='bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition transform hover:scale-105 text-center'>
+                  <p>{person.firstname} {person.lastname}</p>
+                  <p>{person.document}</p>
+                </li>
+              </a>
+            )
+          })
+        }
+      </ul>
+</main>
+</Layout>
+
