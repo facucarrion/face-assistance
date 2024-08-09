@@ -13,6 +13,15 @@ people_router = APIRouter(
 async def read_people(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_people(db, skip=skip, limit=limit)
 
+@people_router.get("/search", response_model=list[PeopleBase])
+async def people_filter(q: str, db: Session = Depends(get_db)):
+    print(f"Query: {q}")
+    db_people = filter_people(db, q)
+    if not db_people:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    return db_people
+
+
 @people_router.get("/{id_person}", response_model=PeopleBase)
 async def get_people_by_id(id_person: int, db: Session = Depends(get_db)):
     return get_person_by_id(db, id_person)
@@ -34,9 +43,4 @@ async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
     db_people = delete_people(db, id_person)
     if not db_people:
         raise HTTPException(status_code=404, detail="Alumno no encontrado")
-    return db_people
-
-@people_router.get("/search", response_model=PeopleBase)
-async def people_filter(q: str, db: Session = Depends(get_db)):
-    db_people = filter_people(db, q)
     return db_people

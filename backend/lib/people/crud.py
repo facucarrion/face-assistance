@@ -46,12 +46,12 @@ def delete_people_by_group(db: Session, id_group: int):
     db.commit()
     return db_people
 
-def filter_people(db: Session, query: str):
+def filter_people(db: Session, q: str):
     db_people = db.query(People).filter(
         or_(
-            People.firstname.like(f"%{query}%"),
-            People.lastname.like(f"%{query}%"),
-            People.document.like(f"%{query}%")
+            People.firstname.like(f"%{q}%"),
+            People.lastname.like(f"%{q}%"),
+            People.document.like(f"%{q}%")
         )
     ).all()
     return db_people

@@ -6,7 +6,7 @@ import { getSearchedPeople } from '../../lib/people/getSearchedPeople'
 import { getPerson } from '../../lib/people/getPerson'
 
 export async function getStaticPaths() {
-  const people = await getSearchedPeople("")
+  const people = await getSearchedPeople('')
 
   return people.map(person => {
     return { params: { id: person.id_person.toString() } }
@@ -19,5 +19,10 @@ const person = await getPerson(id)
 ---
 
 <Layout>
-  <Title>{person.firstname} {person.lastname}</Title>
+  <main class='p-4'>
+    <Title backbutton={true} backhref='/search'>
+      {`${person.firstname} ${person.lastname}`}
+    </Title>
+    <p>{person.document}</p>
+  </main>
 </Layout>
