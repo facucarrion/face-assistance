@@ -1,22 +1,13 @@
 ---
-import { getGroups } from '../../lib/groups/getGroups'
 import { getGroup } from '../../lib/groups/getGroup'
 import Layout from '../../layout/Layout.astro'
 import Title from '../../components/Title.astro'
 
-export async function getStaticPaths() {
-  const groups = await getGroups()
-
-  return groups.map(group => {
-    return { params: { id: group.id_group.toString() } }
-  })
-}
+export const prerender = false
 
 const { id } = Astro.params
 
 const group = await getGroup(id)
-
-console.log(group)
 ---
 
 <Layout>

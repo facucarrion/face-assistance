@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from models.People import People
 from schemas.PeopleSchema import PeopleCreate, PeopleUpdate
 
 def get_people(db: Session, skip: int = 0, limit: int = 100):
     return db.query(People).offset(skip).limit(limit).all()
+
+def get_person_by_id(db: Session, id_person: int):
+    return db.query(People).filter(People.id_person == id_person).first()
 
 def create_people(db: Session, people: PeopleCreate):
     db_people = People(
@@ -40,4 +44,14 @@ def delete_people_by_group(db: Session, id_group: int):
     for person in db_people:
         db.delete(person)
     db.commit()
+    return db_people
+
+def filter_people(db: Session, q: str):
+    db_people = db.query(People).filter(
+        or_(
+            People.firstname.like(f"%{q}%"),
+            People.lastname.like(f"%{q}%"),
+            People.document.like(f"%{q}%")
+        )
+    ).all()
     return db_people
