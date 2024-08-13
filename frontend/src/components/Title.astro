@@ -9,7 +9,7 @@ interface Props {
 const { backbutton = false, backhref = '/' } = Astro.props
 ---
 
-<h2 class='text-3xl font-semibold flex items-center gap-4 mb-4'>
+<h2 class='text-3xl font-semibold flex w-full items-center gap-4 mb-4'>
   {
     backbutton && (
       <a href={backhref}>

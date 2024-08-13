@@ -1,5 +1,11 @@
 ---
 import SearchBar from '../components/SearchBar.jsx'
+
+interface Props {
+  searchbar?: boolean
+}
+
+const { searchbar } = Astro.props
 ---
 
 <header class='flex justify-between items-center p-4 bg-gray-200'>
@@ -11,19 +17,19 @@ import SearchBar from '../components/SearchBar.jsx'
   <div class='flex space-x-2'>
     <a
       id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400'
+      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
       href='/manage'>Gestionar</a
     >
     <a
       id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400'
+      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
       href='/images'>Imágenes</a
     >
     <a
       id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-400'
+      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
       href='/devices'>Dispositivos</a
     >
-    <SearchBar client:load />
+    {searchbar && <SearchBar client:load />}
   </div>
 </header>
