@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate, GroupsWithPeople
 from schemas.PeopleSchema import PeopleBase
 from config.database import get_db
-from lib.groups.crud import get_group, get_group_by_id as crud_get_group_by_id, create_group, update_group, delete_group, get_people_in_group
+from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group
 from lib.people.crud import delete_people_by_group
 
 groups_router = APIRouter(
@@ -12,12 +12,12 @@ groups_router = APIRouter(
 
 @groups_router.get("/", response_model=list[GroupsBase])
 async def read_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    groups = get_group(db, skip=skip, limit=limit)
+    groups = get_groups(db, skip=skip, limit=limit)
     return groups
 
 @groups_router.get("/{id_group}", response_model=GroupsWithPeople)
 async def get_group_by_id(id_group: int, db: Session = Depends(get_db)):
-    group = crud_get_group_by_id(db, id_group)
+    group = get_group_with_people_by_id(db, id_group)
     return group
 
 @groups_router.post("/", response_model=GroupsBase)

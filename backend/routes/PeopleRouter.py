@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
 from config.database import get_db
@@ -11,7 +11,8 @@ people_router = APIRouter(
 
 @people_router.get("/", response_model=list[PeopleBase])
 async def read_people(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return get_people(db, skip=skip, limit=limit)
+    people = get_people(db, skip = skip, limit = limit)
+    
 
 @people_router.get("/search", response_model=list[PeopleBase])
 async def people_filter(q: str, db: Session = Depends(get_db)):
