@@ -1,8 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
-from schemas.PeopleSchema import PeopleBase
-
-from pydantic import BaseModel
+from schemas.PeopleSchema import PeopleWithAssistance
 
 class GroupsBase(BaseModel):
     id_group: int
@@ -12,7 +9,7 @@ class GroupsBase(BaseModel):
         from_attributes = True
 
 class GroupsWithPeople(GroupsBase):
-    people: list[PeopleBase]
+    people: list[PeopleWithAssistance]
 
 class GroupCreate(BaseModel):
     name: str

@@ -2,13 +2,33 @@ from sqlalchemy.orm import Session
 from models.Groups import Groups
 from models.People import People
 from schemas.GroupsSchemas import GroupCreate, GroupUpdate
+from lib.assistance.crud import get_today_assistance
 
-def get_group(db: Session, skip: int = 0, limit: int = 100):
+def get_groups(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Groups).offset(skip).limit(limit).all()
 
 def get_group_by_id(db: Session, id_group: int = 0):
+    return db.query(Groups).filter(Groups.id_group == id_group).first()
+    
+
+def get_group_with_people_by_id(db: Session, id_group: int = 0):
     groups = db.query(Groups).filter(Groups.id_group == id_group).first()
     people = db.query(People).filter(People.id_group == id_group).all()
+
+    people = [
+        {
+            "id_person": person.id_person,
+            "firstname": person.firstname,
+            "lastname": person.lastname,
+            "document": person.document,
+            "image": person.image,
+            "id_group": person.id_group,
+            "assistance": get_today_assistance(db, person.id_person)
+
+        }
+        for person in people
+    ]
+
     return {
         "id_group": groups.id_group,
         "name": groups.name,

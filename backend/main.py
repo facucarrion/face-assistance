@@ -49,7 +49,7 @@ async def delete_user(id_user: int, db: Session = Depends(get_db)):
 
 @app.get("/groups", response_model=list[GroupsBase])
 async def get_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-     return GroupCrud.get_group(db, skip, limit)
+     return GroupCrud.get_groups(db, skip, limit)
 
 @app.post("/groups", response_model=GroupsBase)
 async def create_group(group: GroupCreate, db: Session = Depends(get_db)):

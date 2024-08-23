@@ -2,12 +2,42 @@
 import { getGroup } from '../../lib/groups/getGroup'
 import Layout from '../../layout/Layout.astro'
 import Title from '../../components/Title.astro'
+import { DoughnutChart } from '../../components/DoughnutChart.jsx'
 
 export const prerender = false
 
 const { id } = Astro.params
 
 const group = await getGroup(id)
+
+console.log(group)
+const people = group.people
+
+const isClass = people.some(person => person.assistance == 'no-schedule')
+
+const assistance = {
+  assisted: people.filter(person => person.assistance.status == 'assisted')
+    .length,
+  'not-assisted': people.filter(
+    person => person.assistance.status == 'no-assisted'
+  ).length,
+  late: people.filter(person => person.assistance.status == 'late').length
+}
+
+const COLOR_CODE = {
+  assisted: {
+    letter: 'P',
+    color: 'text-green-500'
+  },
+  'no-assisted': {
+    letter: 'A',
+    color: 'text-red-500'
+  },
+  late: {
+    letter: 'T',
+    color: 'text-yellow-500'
+  }
+}
 ---
 
 <Layout>
@@ -26,13 +56,32 @@ const group = await getGroup(id)
 
         <ul class='w-full flex flex-col gap-2'>
           {
-            group.people.map(person => (
-              <li class='p-2 border-2 text-xl font-medium rounded-md'>{`${person.firstname} ${person.lastname}`}</li>
-            ))
+            group.people.map(person => {
+              const color = COLOR_CODE[person.assistance.status]
+
+              console.log(person.assistance)
+
+              return (
+                <li class='p-2 border-2 text-xl font-medium rounded-md flex items-center justify-between'>
+                  <p>{`${person.lastname} ${person.firstname}`}</p>
+
+                  <div class='flex items-center gap-2 text-black/70'>
+                    <p class={`text-xl font-medium`}>
+                      {person.assistance.time}
+                    </p>
+                    <span class={`text-2xl font-bold ${color?.color}`}>
+                      {color?.letter}
+                    </span>
+                  </div>
+                </li>
+              )
+            })
           }
         </ul>
       </section>
-      <section class='border-2'></section>
+      <section class='flex justify-center'>
+        <DoughnutChart assistance={assistance} client:load />
+      </section>
     </div>
   </main>
 </Layout>
@@ -40,6 +89,6 @@ const group = await getGroup(id)
 <style>
   #grid {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: 1fr 2fr;
   }
 </style>
