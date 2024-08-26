@@ -9,9 +9,10 @@ from routes.PeopleRouter import people_router
 import lib.auth.crud as AuthCrud
 import lib.groups.crud as GroupCrud
 import lib.people.crud as PeopleCrud
+import lib.assistance.crud as AssistanceCrud
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
-from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
+from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate, PeopleWithAnnualAssistance
 
 app = FastAPI()
 
@@ -82,3 +83,21 @@ async def delete_people(id_person: int, db: Session = Depends(get_db)):
 @app.get("/groups/{id_group}/people", response_model=list[PeopleBase])
 async def get_people_in_group(id_group: int, db: Session = Depends(get_db)):
     return GroupCrud.get_people_in_group(db=db, id_group=id_group)
+
+@app.get("/api/people/{id_person}/annual-assistance", response_model=PeopleWithAnnualAssistance)
+async def get_person_with_annual_assistance(id_person: int, year: int, db: Session = Depends(get_db)):
+    person = get_person_by_id(db, id_person)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person not found")
+    
+    assistance_history = get_annual_assistance(db, id_person, year)
+    
+    return {
+        "id_person": person.id_person,
+        "firstname": person.firstname,
+        "lastname": person.lastname,
+        "document": person.document,
+        "image": person.image,
+        "id_group": person.id_group,
+        "assistance_history": assistance_history
+    }

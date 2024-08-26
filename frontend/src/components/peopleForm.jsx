@@ -6,6 +6,8 @@ const PeopleForm = () => {
     firstname: '',
     lastname: '',
     document: '',
+    email: '',
+    phone_number: '',
     id_group: null
   })
   const [editPeopleId, setEditPeopleId] = useState(null)
@@ -73,6 +75,8 @@ const PeopleForm = () => {
           firstname: '',
           lastname: '',
           document: '',
+          email: '',
+          phone_number: '',
           id_group: groups.length > 0 ? groups[0].id_group : ''
         })
         setEditPeopleId(null)
@@ -116,7 +120,9 @@ const PeopleForm = () => {
       id_group: people.id_group,
       firstname: people.firstname,
       lastname: people.lastname,
-      document: people.document
+      document: people.document,
+      email: people.email,
+      phone_number: people.phone_number,
     })
     setEditPeopleId(people.id_person)
   }
@@ -190,6 +196,44 @@ const PeopleForm = () => {
 
           <div className='mb-4'>
             <label
+              htmlFor='document'
+              className='block text-gray-700 text-sm font-bold mb-2'
+            >
+              Correo Electrónico:
+            </label>
+            <input
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              type='text'
+              name='email'
+              id='email'
+              placeholder='Ingrese el correo electrónico del padre'
+              required
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='mb-4'>
+            <label
+              htmlFor='document'
+              className='block text-gray-700 text-sm font-bold mb-2'
+            >
+              Número Telefónico:
+            </label>
+            <input
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              type='text'
+              name='phone_number'
+              id='phone_number'
+              placeholder='Ingrese el número de teléfono del padre'
+              required
+              value={formData.phone_number}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='mb-4'>
+            <label
               htmlFor='id_group'
               className='block text-gray-700 text-sm font-bold mb-2'
             >
@@ -229,6 +273,8 @@ const PeopleForm = () => {
                     firstname: '',
                     lastname: '',
                     document: '',
+                    email: '',
+                    phone_number: '',
                     id_group: groups.length > 0 ? groups[0].id_group : ''
                   })
                 }}
@@ -242,7 +288,7 @@ const PeopleForm = () => {
 
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Lista de Alumnos</h2>
-        <div className='max-h-96 overflow-y-auto relative'>
+        <div className='max-h-96 overflow-y-auto'>
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
             <thead className='sticky top-0'>
               <tr>

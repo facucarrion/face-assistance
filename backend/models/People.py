@@ -9,4 +9,6 @@ class People(Base):
   lastname = Column(String(50))
   document = Column(String(8))
   image = Column(String(255))
+  email = Column(String(50))
+  phone_number = Column(String(15))
   id_group = Column(Integer, ForeignKey("groups.id_group"))
