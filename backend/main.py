@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
+import base64
+from datetime import datetime
 from config.database import get_db
 from sqlalchemy.orm import Session
 from routes.AuthRouter import auth_router
@@ -13,6 +17,9 @@ import lib.assistance.crud as AssistanceCrud
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate, PeopleWithAnnualAssistance
+from schemas.ImageSchema import ImageBase
+
+os.makedirs("public/uploads", exist_ok=True)
 
 app = FastAPI()
 
@@ -27,6 +34,19 @@ app.include_router(auth_router)
 app.include_router(groups_router)
 app.include_router(users_router)
 app.include_router(people_router)
+
+@app.post("/image/upload", response_model=dict)
+async def upload_image(request: ImageBase):
+    imgdata = base64.b64decode(request.image)
+    filename = f"public/uploads/{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+
+    with open(filename, 'wb') as f:
+        f.write(imgdata)
+
+    return {
+        "filename": filename
+    }
+    
 
 @app.get("/users", response_model=list[UserWithRole])
 async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -83,21 +103,3 @@ async def delete_people(id_person: int, db: Session = Depends(get_db)):
 @app.get("/groups/{id_group}/people", response_model=list[PeopleBase])
 async def get_people_in_group(id_group: int, db: Session = Depends(get_db)):
     return GroupCrud.get_people_in_group(db=db, id_group=id_group)
-
-@app.get("/api/people/{id_person}/annual-assistance", response_model=PeopleWithAnnualAssistance)
-async def get_person_with_annual_assistance(id_person: int, year: int, db: Session = Depends(get_db)):
-    person = get_person_by_id(db, id_person)
-    if not person:
-        raise HTTPException(status_code=404, detail="Person not found")
-    
-    assistance_history = get_annual_assistance(db, id_person, year)
-    
-    return {
-        "id_person": person.id_person,
-        "firstname": person.firstname,
-        "lastname": person.lastname,
-        "document": person.document,
-        "image": person.image,
-        "id_group": person.id_group,
-        "assistance_history": assistance_history
-    }

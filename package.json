@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev:frontend": "cd ./frontend && pnpm dev",
-    "dev:backend": "cd ./backend && uvicorn main:app"
+    "dev:backend": "cd ./backend && uvicorn main:app --host 0.0.0.0"
   },
   "keywords": [],
   "author": "",
