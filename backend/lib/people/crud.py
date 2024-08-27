@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from models.People import People
+from models.Assistance import Assistance
 from schemas.PeopleSchema import PeopleCreate, PeopleUpdate
+
 
 def get_people(db: Session, skip: int = 0, limit: int = 100):
     return db.query(People).offset(skip).limit(limit).all()
@@ -9,11 +11,20 @@ def get_people(db: Session, skip: int = 0, limit: int = 100):
 def get_person_by_id(db: Session, id_person: int):
     return db.query(People).filter(People.id_person == id_person).first()
 
+def get_annual_assistance(db: Session, id_person: int, year: int):
+    return db.query(Assistance).filter(
+        Assistance.id_person == id_person,
+        Assistance.date >= f"{year}-01-01",
+        Assistance.date <= f"{year}-12-31"
+    ).all()
+
 def create_people(db: Session, people: PeopleCreate):
     db_people = People(
         firstname=people.firstname,
         lastname=people.lastname,
         document=people.document,
+        email=people.email,
+        phone_number=people.phone_number,
         id_group=people.id_group
     )
     db.add(db_people)

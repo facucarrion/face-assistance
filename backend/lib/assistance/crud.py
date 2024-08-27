@@ -48,3 +48,13 @@ def delete_assistance_by_person(db: Session, id_person: int):
         db.commit()
         
     return db_assistance
+
+def get_annual_assistance(db:Session, id_person: int, year: int):
+    start_date = f"{year}-01-01"
+    end_date = f"{year}-12-31"
+
+    assistance_records = db.query(Assistance).filter(
+        Assistance.id_person == id_person
+    ).all()
+
+    return assistance_records

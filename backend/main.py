@@ -13,9 +13,10 @@ from routes.PeopleRouter import people_router
 import lib.auth.crud as AuthCrud
 import lib.groups.crud as GroupCrud
 import lib.people.crud as PeopleCrud
+import lib.assistance.crud as AssistanceCrud
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
-from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
+from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate, PeopleWithAnnualAssistance
 from schemas.ImageSchema import ImageBase
 
 os.makedirs("public/uploads", exist_ok=True)
