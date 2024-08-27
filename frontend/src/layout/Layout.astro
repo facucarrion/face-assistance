@@ -19,6 +19,9 @@ const { header = true, searchbar = true } = Astro.props
     <title>Face Assistance</title>
 
     <style>
+      * {
+        user-select: none;
+      }
       body {
         font-family:
           'Montserrat Variable',
@@ -51,7 +54,7 @@ const { header = true, searchbar = true } = Astro.props
   </head>
 
   <body class='min-h-screen'>
-    {header && <Header searchbar={searchbar}/>}
+    {header && <Header searchbar={searchbar} />}
 
     <slot />
 
