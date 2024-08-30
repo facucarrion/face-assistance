@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
 from config.database import get_db
 from lib.people.crud import get_people, create_people, update_people, delete_people, filter_people, get_person_by_id
-from lib.assistance.crud import delete_assistance_by_person, get_annual_assistance
+from lib.assistance.crud import delete_assistance_by_person, get_yearly_assistance_summary
 
 people_router = APIRouter(
     prefix="/people",
@@ -47,5 +47,5 @@ async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
 
 @people_router.get("/{id_person}/assistance")
 async def annual_assistance(id_person: int, db: Session = Depends(get_db)):
-    db_assistance = get_annual_assistance(db, id_person, year=2024)
+    db_assistance = get_yearly_assistance_summary(db, id_person, year=2024)
     return db_assistance

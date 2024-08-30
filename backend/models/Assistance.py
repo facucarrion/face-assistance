@@ -7,4 +7,4 @@ class Assistance(Base):
   id_assistance = Column(Integer, primary_key=True)
   id_person = Column(Integer, ForeignKey("people.id_person"))
   date = Column(String(50))
-  time = Column(Time)
+  time = Column(String(8))
