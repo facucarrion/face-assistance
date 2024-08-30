@@ -11,11 +11,11 @@
 #include "camera_pins.h"
 
 // Configuración de la red WiFi
-const char* ssid = "RioTel_MIGNANI";
-const char* password = "1475369514";
+const char* ssid = "Fibertel WiFi867 2.4GHz";
+const char* password = "0142681436";
 
 // Dirección del servidor y endpoint
-const char* serverName = "http://192.168.1.148:8000/image/upload";
+const char* serverName = "http://192.168.0.221:8000/image/upload";
 
 void setup() {
   Serial.begin(115200);
@@ -85,6 +85,7 @@ void loop() {
     String base64img = base64::encode(fb->buf, fb->len);
     Serial.println(base64img);
     json["image"] = base64img;
+    json["id_person"] = 148;
 
     String jsonString;
     serializeJson(json, jsonString);
@@ -105,5 +106,5 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
 
-  delay(5000); // Espera antes de tomar otra foto
+  delay(10000); // Espera antes de tomar otra foto
 }

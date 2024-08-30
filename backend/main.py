@@ -18,6 +18,7 @@ from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate, PeopleWithAnnualAssistance
 from schemas.ImageSchema import ImageBase
+from models.People import People
 
 os.makedirs("public/uploads", exist_ok=True)
 
@@ -36,12 +37,20 @@ app.include_router(users_router)
 app.include_router(people_router)
 
 @app.post("/image/upload", response_model=dict)
-async def upload_image(request: ImageBase):
+async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
     imgdata = base64.b64decode(request.image)
-    filename = f"public/uploads/{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    filename = f"/uploads/{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
 
-    with open(filename, 'wb') as f:
+    with open(f"public/{filename}", 'wb') as f:
         f.write(imgdata)
+
+    # update image field of request.id_person
+    db_person = db.query(People).filter(People.id_person == request.id_person).first()
+    old_image = db_person.image
+    db_person.image = filename
+    db.commit()
+
+    os.remove(f"public/{old_image}")
 
     return {
         "filename": filename
