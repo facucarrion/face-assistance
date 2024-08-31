@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layout/Layout.astro'
 import Title from '../../components/Title.astro'
-// import Calendar from '../../components/AnnualCalendar.jsx'
+import AnnualCalendar from '../../components/AnnualCalendar.jsx'
 import { getSearchedPeople } from '../../lib/people/getSearchedPeople'
 import { getPerson } from '../../lib/people/getPerson'
 import { DoughnutChart } from '../../components/DoughnutChart'
@@ -28,9 +28,8 @@ console.log(assistance)
 
 <Layout>
   <main class='p-4 flex'>
-    <div class='w-full h-[75vh] gap-4' id='grid'>
-      <div class='flex'>
-        <div class='flex-1'>
+    <div class='w-full h-[75vh] gap-4 grid grid-cols-2 grid-rows-2'>
+      <div class='flex flex-col'>
           <Title backbutton={true} backhref='/search'>
             {`${person.firstname} ${person.lastname}`}
           </Title>
@@ -39,6 +38,13 @@ console.log(assistance)
             <p class='text-gray-800'>{person.document}</p>
           </div>
         </div>
+
+        <div class='flex-none w-100 mt-4'>
+          <div>
+            <AnnualCalendar />
+          </div>
+        </div>
+        
         <div class='flex-none w-80'>
           <div class='bg-white shadow-lg rounded-lg p-4'>
             <h2 class='text-lg font-semibold mb-2'>Contacto</h2>
@@ -47,23 +53,20 @@ console.log(assistance)
             <p class='font-semibold mr-2'>Número Telefónico:</p>
             <p class='text-gray-800'>{person.phone_number}</p>
           </div>
-          <div class='flex-none w-80 mt-4'>
-            <div class='bg-white shadow-lg rounded-lg p-4'>
-              <h2 class='text-lg font-semibold mb-2'>Calendario</h2>
-            </div>
+
+          <div class='bg-white shadow-lg rounded-lg p-4 mt-4'>
+            <DoughnutChart assistance={assistance} client:load />
           </div>
         </div>
       </div>
-      <section class='flex justify-center'>
-        <DoughnutChart assistance={assistance} client:load />
-      </section>
-    </div>
-  </main>
-</Layout>
+    </main>
+  </Layout>
+  
 
 <style>
   #grid {
     display: grid;
     grid-template-columns: 1fr 2fr;
   }
+
 </style>
