@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate
 from config.database import get_db
 from lib.people.crud import get_people, create_people, update_people, delete_people, filter_people, get_person_by_id
-from lib.assistance.crud import delete_assistance_by_person, get_yearly_assistance_summary
+from lib.assistance.crud import delete_assistance_by_person, get_yearly_assistance_summary, get_monthly_assistance_summary
 
 people_router = APIRouter(
     prefix="/people",
@@ -45,7 +45,12 @@ async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Alumno no encontrado")
     return db_people
 
-@people_router.get("/{id_person}/assistance")
-async def annual_assistance(id_person: int, db: Session = Depends(get_db)):
-    db_assistance = get_yearly_assistance_summary(db, id_person, year=2024)
+@people_router.get("/{id_person}/assistance/{year}")
+async def annual_assistance(id_person: int, year: int, db: Session = Depends(get_db)):
+    db_assistance = get_yearly_assistance_summary(db, id_person, year)
     return db_assistance
+
+@people_router.get("/{id_person}/assistance/{year}/{month}")
+async def mensual_assistance(id_person: int, year: int, month: str, db: Session = Depends(get_db)):
+    db_assistance = get_monthly_assistance_summary(db, id_person, year, month)
+    return db_assistance 

@@ -113,3 +113,67 @@ def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
         'late': late_count,
         'not-assisted': absent_count
     }
+
+def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month: int):
+    # Parsear el mes recibido en formato YYYY-MM
+    start_of_month = datetime.strptime(f"{year}-{month}", "%Y-%m").date()
+    end_of_month = (start_of_month.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+    
+    # Obtener a la persona y su grupo
+    person = get_person_by_id(db, id_person)
+    
+    # Lista para almacenar los resultados
+    assistance_summary = []
+
+    # Recorrer todos los días del mes
+    current_date = start_of_month
+
+    while current_date <= end_of_month:
+        weekday = current_date.weekday() + 1
+        date_str = current_date.strftime("%Y-%m-%d")
+
+        # Obtener el horario y las excepciones para el día actual
+        schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
+        schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
+
+        if not schedule or (schedule_exception and not schedule_exception.is_class):
+            # Si no hay clase programada este día
+            assistance_summary.append({
+                'date': date_str,
+                'assistance': 'no_class'
+            })
+            current_date += timedelta(days=1)
+            continue
+
+        # Determinar la hora de inicio de la clase
+        start_time = schedule.start_time
+        if schedule_exception:
+            start_time = schedule_exception.start_time
+
+        # Obtener la asistencia del día actual
+        assistance = db.query(Assistance).filter(Assistance.id_person == id_person, Assistance.date == date_str).first()
+
+        if not assistance:
+            # Si no hay registro de asistencia, se cuenta como ausente
+            assistance_summary.append({
+                'date': date_str,
+                'assistance': 'not-assisted'
+            })
+        else:
+            difference = assistance.time - start_time
+
+            if difference > timedelta(minutes=10):
+                assistance_summary.append({
+                    'date': date_str,
+                    'assistance': 'late'
+                })
+            else:
+                assistance_summary.append({
+                    'date': date_str,
+                    'assistance': 'not-assisted'
+                })
+
+        # Avanzar al siguiente día
+        current_date += timedelta(days = 1)
+    
+    return assistance_summary
