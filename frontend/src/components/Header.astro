@@ -1,5 +1,7 @@
 ---
 import SearchBar from '../components/SearchBar.jsx'
+import LogOut from '../icons/LogOut.astro'
+import HiddenByRole from './HiddenByRole.astro'
 
 interface Props {
   searchbar?: boolean
@@ -15,21 +17,32 @@ const { searchbar } = Astro.props
   </a>
 
   <div class='flex space-x-2'>
-    <a
-      id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
-      href='/manage'>Gestionar</a
-    >
-    <a
-      id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
-      href='/images'>Imágenes</a
-    >
-    <a
-      id='button'
-      class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
-      href='/devices'>Dispositivos</a
-    >
+    <HiddenByRole class='flex gap-2 items-center'>
+      <a
+        id='manage'
+        class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
+        href='/manage'>Gestionar</a
+      >
+      <a
+        id='images'
+        class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
+        href='/images'>Imágenes</a
+      >
+      <a
+        id='devices'
+        class='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300'
+        href='/devices'>Dispositivos</a
+      >
+    </HiddenByRole>
     {searchbar && <SearchBar client:load />}
+    <button id='logout' class='p-2 rounded-md bg-red-500'>
+      <LogOut class='text-white' />
+    </button>
   </div>
 </header>
+
+<script>
+  import { logOut } from '../lib/auth/logout'
+
+  document.getElementById('logout')?.addEventListener('click', logOut)
+</script>
