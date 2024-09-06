@@ -10,13 +10,16 @@ from routes.AuthRouter import auth_router
 from routes.GroupsRouter import groups_router
 from routes.UsersRouter import users_router
 from routes.PeopleRouter import people_router
+from routes.SchedulesRouter import schedules_router
 import lib.auth.crud as AuthCrud
 import lib.groups.crud as GroupCrud
 import lib.people.crud as PeopleCrud
 import lib.assistance.crud as AssistanceCrud
+import lib.schedules.crud as SchedulesCrud
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate
 from schemas.UsersSchema import UserWithRole, UserCreate, UserUpdate
 from schemas.PeopleSchema import PeopleBase, PeopleCreate, PeopleUpdate, PeopleWithAnnualAssistance
+from schemas.SchedulesSchema import SchedulesBase, SchedulesCreate
 from schemas.ImageSchema import ImageBase
 from models.People import People
 
@@ -35,6 +38,7 @@ app.include_router(auth_router)
 app.include_router(groups_router)
 app.include_router(users_router)
 app.include_router(people_router)
+app.include_router(schedules_router)
 
 @app.post("/image/upload", response_model=dict)
 async def upload_image(request: ImageBase, db: Session = Depends(get_db)):

@@ -41,6 +41,7 @@ const ManageComponent = () => {
         {view === 'users' && <UserForm />}
         {view === 'groups' && <GroupsForm />}
         {view === 'people' && <PeopleForm />}
+        {view === 'schedules' && <ScheduleForm />}
       </div>
     </div>
   )
