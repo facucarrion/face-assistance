@@ -14,7 +14,7 @@ async def read_people(skip: int = 0, limit: int = 100, db: Session = Depends(get
     people = get_people(db, skip = skip, limit = limit)
     return people 
 
-@people_router.get("/search", response_model=list[PeopleBase])
+@people_router.get("/search")
 async def people_filter(q: str, db: Session = Depends(get_db)):
     print(f"Query: {q}")
     db_people = filter_people(db, q)

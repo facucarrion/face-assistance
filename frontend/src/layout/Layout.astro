@@ -44,7 +44,7 @@ const { header = true, searchbar = true } = Astro.props
       import { userToken } from '../stores/tokenStore'
 
       if (!location.href.includes('login')) {
-        if (await verifyJwt()) {
+        if ((await verifyJwt()).status) {
           userToken.set(localStorage.getItem('user'))
         } else {
           location.href = '/login'
