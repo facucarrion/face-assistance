@@ -5,6 +5,8 @@ from schemas.PeopleSchema import PeopleBase
 from config.database import get_db
 from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group
 from lib.people.crud import delete_people_by_group
+from lib.schedule_exceptions.crud import delete_schedule_exception_by_group
+from lib.schedules.crud import delete_schedule_by_group
 
 groups_router = APIRouter(
     prefix="/groups",
@@ -34,6 +36,8 @@ async def update_existing_group(id_group: int, group_update: GroupUpdate, db: Se
 @groups_router.delete("/{id_group}", response_model=GroupsBase)
 async def delete_existing_group(id_group: int, db: Session = Depends(get_db)):
     db_people = delete_people_by_group(db, id_group)
+    db_schedules = delete_schedule_by_group(db, id_group)
+    db_schedules_exceptions = delete_schedule_exception_by_group(db, id_group)
     db_group = delete_group(db, id_group)
     if db_group is None:
         raise HTTPException(status_code=404, detail="Curso no encontrado")

@@ -51,9 +51,7 @@ def delete_people(db: Session, id_person: int):
     return db_people
 
 def delete_people_by_group(db: Session, id_group: int):
-    db_people = db.query(People).filter(People.id_group == id_group).all()
-    for person in db_people:
-        db.delete(person)
+    db_people = db.query(People).filter(People.id_group == id_group).delete()
     db.commit()
     return db_people
 
