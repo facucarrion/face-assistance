@@ -5,4 +5,4 @@ class Days(Base):
   __tablename__ = "days"
 
   id_day = Column(Integer, primary_key=True)
-  day = Column(String(9))
+  day = Column(String, index=True)

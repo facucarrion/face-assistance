@@ -4,6 +4,7 @@ const SchedulesForm = () => {
   const [groups, setGroups] = useState([])
   const [schedules, setSchedules] = useState([])
   const [selectedGroup, setSelectedGroup] = useState('')
+  const [days, setDays] = useState([])
   const [newSchedule, setNewSchedule] = useState({
     id_day: '',
     start_time: '',
@@ -12,6 +13,7 @@ const SchedulesForm = () => {
 
   useEffect(() => {
     fetchGroups()
+    fetchDays() 
   }, [])
 
   useEffect(() => {
@@ -34,6 +36,20 @@ const SchedulesForm = () => {
       }
     } catch (error) {
       console.error('Error al recuperar grupos:', error)
+    }
+  }
+
+  const fetchDays = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/days/')
+      if (response.ok) {
+        const daysData = await response.json()
+        setDays(daysData)
+      } else {
+        console.error('Error al recuperar días:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al recuperar días:', error)
     }
   }
 
@@ -138,25 +154,24 @@ const SchedulesForm = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className='mt-6'>
+        <form onSubmit={handleSubmit} className='mt-6'>
         <h3 className='text-lg font-bold mb-2'>Agregar Nuevo Horario</h3>
-        <div className='mb-4'>
-          <label
-            htmlFor='id_day'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Día:
-          </label>
-          <input
-            type='number'
-            id='id_day'
-            name='id_day'
-            value={newSchedule.id_day}
-            onChange={handleInputChange}
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-            required
-          />
-        </div>
+
+        <label htmlFor="day">Día de la semana:</label>
+<select
+  id="day"
+  name="id_day"
+  value={newSchedule.id_day}
+  onChange={handleInputChange}
+>
+  <option value="">Selecciona un día</option>
+  {days.map((day) => (
+    <option key={day.id_day} value={day.id_day}>
+      {day.day}
+    </option>
+  ))}
+</select>
+
         <div className='mb-4'>
           <label
             htmlFor='start_time'
