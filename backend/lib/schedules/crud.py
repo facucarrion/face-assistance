@@ -1,10 +1,13 @@
 from sqlalchemy.orm import Session
 from models.Schedules import Schedules
-from schemas.SchedulesSchema import SchedulesCreate
 from models.Days import Days
+from schemas.SchedulesSchema import SchedulesCreate
 
 def get_schedule_by_group_and_day(db: Session, id_group: int, day: int):
     return db.query(Schedules).filter(Schedules.id_group == id_group, Schedules.id_day == day).first()
+
+def get_schedules_by_group(db: Session, id_group: int):
+    return db.query(Schedules).filter(Schedules.id_group == id_group).all()
 
 def get_all_days(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Days).offset(skip).limit(limit).all()

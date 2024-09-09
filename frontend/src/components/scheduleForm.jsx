@@ -56,7 +56,7 @@ const SchedulesForm = () => {
   const fetchSchedules = async id_group => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/schedules?id_group=${id_group}`
+        `http://127.0.0.1:8000/schedules/${id_group}`
       )
       if (response.ok) {
         const schedulesData = await response.json()
@@ -110,6 +110,22 @@ const SchedulesForm = () => {
     }
   }
 
+  const handleDelete = async id_schedule => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/schedules/${id_schedule}`, {
+        method: 'DELETE'
+      })
+      if (response.ok) {
+        fetchSchedules(selectedGroup)
+        console.log('Horario eliminado')
+      } else {
+        console.error('Error al eliminar horario:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al eliminar horario:', error)
+    }
+  }
+
   return (
     <div className='w-full'>
       <h2 className='text-2xl font-bold mb-4'>Horarios de Cursos</h2>
@@ -138,21 +154,22 @@ const SchedulesForm = () => {
       </div>
 
       {selectedGroup && (
-        <div className='mb-4'>
-          <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
-          {schedules.length > 0 ? (
-            <ul className='list-disc pl-5'>
-              {schedules.map(schedule => (
-                <li key={schedule.id_schedule}>
-                  {`Día ${schedule.id_day}: ${schedule.start_time} - ${schedule.end_time}`}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No hay horarios disponibles para este curso.</p>
-          )}
-        </div>
-      )}
+  <div className='mb-4'>
+    <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
+    {schedules.length > 0 ? (
+      <ul className='list-disc pl-5'>
+        {schedules.map(schedule => (
+          <li key={schedule.id_schedule}>
+            {`Día ${schedule.id_day}: ${schedule.start_time} - ${schedule.end_time}`}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No hay horarios disponibles para este curso.</p>
+    )}
+  </div>
+)}
+      
 
         <form onSubmit={handleSubmit} className='mt-6'>
         <h3 className='text-lg font-bold mb-2'>Agregar Nuevo Horario</h3>
