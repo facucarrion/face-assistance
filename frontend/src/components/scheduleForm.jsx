@@ -263,21 +263,23 @@ const SchedulesForm = () => {
             <div className='grid grid-cols-1 gap-4'>
               {schedules.length > 0 ? (
                 schedules.map(schedule => (
-                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md'>
+                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md flex justify-between items-center'> 
                     <p><strong>Día:</strong> {schedule.day}</p>
                     <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
+                    <div className='flex space-x-2'>
                     <button
                       onClick={() => handleDeleteSchedules(schedule.id_schedule)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                     >
                       Eliminar
                     </button>
                     <button
                       onClick={() => handleEditSchedules(schedule)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm' 
                     >
                       Editar
                     </button>
+                    </div>
                   </div>
                 ))
               ) : (
