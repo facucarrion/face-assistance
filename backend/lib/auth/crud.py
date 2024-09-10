@@ -21,7 +21,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def get_user_by_id(db: Session, id_user: int):
   user = (db
-    .query(User.id_user, User.username, Roles.rol)
+    .query(User.id_user, User.username, User.id_rol, Roles.rol)
     .join(Roles, User.id_rol == Roles.id_rol)
     .filter(User.id_user == id_user)
     .first()
