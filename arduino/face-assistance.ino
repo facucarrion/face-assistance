@@ -11,8 +11,8 @@
 #include "camera_pins.h"
 
 // Configuración de la red WiFi
-const char* ssid = "Fibertel WiFi867 2.4GHz";
-const char* password = "0142681436";
+const char* ssid = "placa";
+const char* password = "12345678";
 
 // Dirección del servidor y endpoint
 const char* serverName = "http://192.168.0.221:8000/image/upload";

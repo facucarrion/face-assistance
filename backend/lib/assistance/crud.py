@@ -136,11 +136,11 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
         schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
         schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
 
-        if not schedule or (schedule_exception and not schedule_exception.is_class):
+        if not schedule or (schedule_exception and not schedule_exception.is_class) or current_date > datetime.today().date():
             # Si no hay clase programada este día
             assistance_summary.append({
                 'date': date_str,
-                'assistance': 'no_class'
+                'assistance': 'no-class'
             })
             current_date += timedelta(days=1)
             continue
@@ -170,7 +170,7 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
             else:
                 assistance_summary.append({
                     'date': date_str,
-                    'assistance': 'not-assisted'
+                    'assistance': 'assisted'
                 })
 
         # Avanzar al siguiente día

@@ -8,6 +8,11 @@ class UserBase(BaseModel):
   class Config:
     from_attributes = True
 
+
+class UserWithRole(UserBase):
+    id_rol: int
+    rol: str
+    
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -19,9 +24,7 @@ class UserUpdate(BaseModel):
     password: Optional[str]
     id_rol: Optional[int]
 
-class UserWithRole(UserBase):
-    id_rol: int
-    rol: str
+
 
 class RolBase(BaseModel):
     id_rol: int
