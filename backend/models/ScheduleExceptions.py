@@ -10,4 +10,3 @@ class ScheduleExceptions(Base):
   is_class = Column(Boolean)
   start_time = Column(String)
   end_time = Column(String)
-  

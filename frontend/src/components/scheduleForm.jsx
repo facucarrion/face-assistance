@@ -11,6 +11,14 @@ const SchedulesForm = () => {
     end_time: ''
   })
   const [scheduleToEdit, setScheduleToEdit] = useState(null)
+  const [isExceptionMode, setIsExceptionMode] = useState(false)
+  const [exception, setException] = useState({
+    id_group: '',
+    date: '',
+    is_class: false,
+    start_time: '',
+    end_time: ''
+  })
 
   useEffect(() => {
     fetchGroups()
@@ -143,11 +151,47 @@ const SchedulesForm = () => {
     }
   }
 
+  const handleExceptionSubmit = async event => {
+    event.preventDefault()
+    try {
+      const response = await fetch('http://127.0.0.1:8000/exceptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(exception)
+      })
+      if (response.ok) {
+        setException({
+          id_group: '',
+          date: '',
+          is_class: false,
+          start_time: '',
+          end_time: ''
+        })
+        fetchSchedules(selectedGroup)
+        console.log(await response.json())
+      } else {
+        console.error('Error al crear excepción:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al crear excepción:', error)
+    }
+  }
+
   const handleInputChange = event => {
     const { name, value } = event.target
     setNewSchedule({
       ...newSchedule,
       [name]: value
+    })
+  }
+
+  const handleExceptionChange = event => {
+    const { name, value, type, checked } = event.target
+    setException({
+      ...exception,
+      [name]: type === 'checkbox' ? checked : value
     })
   }
 
@@ -256,6 +300,8 @@ const SchedulesForm = () => {
           </form>
         </div>
       </div>
+
+      
       <div className=''>
         {selectedGroup && (
           <div>
@@ -289,6 +335,85 @@ const SchedulesForm = () => {
           </div>
         )}
       </div>
+
+      <h3 className='text-lg font-bold mb-2'>Agregar Excepción</h3>
+          <button
+            onClick={() => setIsExceptionMode(!isExceptionMode)}
+            className='bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4'
+          >
+            {isExceptionMode ? 'Cancelar' : 'Agregar Excepción'}
+          </button>
+          {isExceptionMode && (
+            <form
+              onSubmit={handleExceptionSubmit}
+              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+            >
+              <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
+                Fecha de excepción:
+              </label>
+              <input
+                type='date'
+                id='date'
+                name='date'
+                value={exception.date}
+                onChange={handleExceptionChange}
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                required
+              />
+
+              <div className='mb-4'>
+                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de inicio:
+                </label>
+                <input
+                  type='time'
+                  id='start_time'
+                  name='start_time'
+                  value={exception.start_time}
+                  onChange={handleExceptionChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+
+              <div className='mb-4'>
+                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de fin:
+                </label>
+                <input
+                  type='time'
+                  id='end_time'
+                  name='end_time'
+                  value={exception.end_time}
+                  onChange={handleExceptionChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+
+              <div className='mb-4'>
+                <label htmlFor='is_class' className='block text-gray-700 text-sm font-bold mb-2'>
+                  ¿No hay clase?
+                </label>
+                <input
+                  type='checkbox'
+                  id='is_class'
+                  name='is_class'
+                  checked={exception.is_class}
+                  onChange={handleExceptionChange}
+                  className='mr-2 leading-tight'
+                />
+              </div>
+
+              <button
+                type='submit'
+                className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
+              >
+                Agregar Excepción
+              </button>
+            </form>
+          )}
+        
     </>
   )
 }
