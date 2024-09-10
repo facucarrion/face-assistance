@@ -1,0 +1,13 @@
+<span id='hidden' {...Astro.props}>
+  <slot />
+</span>
+
+<script>
+  import { verifyJwt } from '../lib/auth/jwt/verify'
+  const rol = (await verifyJwt()).payload?.rol
+
+  if (rol != 'admin') {
+    const hidden = document.getElementById('hidden') as HTMLElement
+    hidden.style.display = 'none'
+  }
+</script>
