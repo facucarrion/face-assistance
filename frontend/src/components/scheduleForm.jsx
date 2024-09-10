@@ -10,6 +10,7 @@ const SchedulesForm = () => {
     start_time: '',
     end_time: ''
   })
+  const [scheduleToEdit, setScheduleToEdit] = useState(null)
 
   useEffect(() => {
     fetchGroups()
@@ -60,6 +61,7 @@ const SchedulesForm = () => {
       )
       if (response.ok) {
         const schedulesData = await response.json()
+        console.log(schedulesData)
         setSchedules(schedulesData)
       } else {
         console.error('Error al recuperar horarios:', response.statusText)
@@ -73,12 +75,43 @@ const SchedulesForm = () => {
     setSelectedGroup(event.target.value)
   }
 
-  const handleInputChange = event => {
-    const { name, value } = event.target
+  const handleEditSchedules = schedule => {
+    setScheduleToEdit(schedule)
     setNewSchedule({
-      ...newSchedule,
-      [name]: value
+      id_day: schedule.id_day,
+      start_time: schedule.start_time,
+      end_time: schedule.end_time
     })
+  }
+
+  const handleUpdateSchedules = async event => {
+    event.preventDefault()
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/schedules/${scheduleToEdit.id_schedule}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id_group: selectedGroup,
+          ...newSchedule
+        })
+      })
+      if (response.ok) {
+        alert('¡Horario actualizado exitosamente!')
+        setScheduleToEdit(null)
+        setNewSchedule({
+          id_day: '',
+          start_time: '',
+          end_time: ''
+        })
+        fetchSchedules(selectedGroup)
+      } else {
+        console.error('Error al actualizar horario:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al actualizar horario:', error)
+    }
   }
 
   const handleSubmit = async event => {
@@ -110,7 +143,15 @@ const SchedulesForm = () => {
     }
   }
 
-  const handleDelete = async id_schedule => {
+  const handleInputChange = event => {
+    const { name, value } = event.target
+    setNewSchedule({
+      ...newSchedule,
+      [name]: value
+    })
+  }
+
+  const handleDeleteSchedules = async id_schedule => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/schedules/${id_schedule}`, {
         method: 'DELETE'
@@ -127,10 +168,10 @@ const SchedulesForm = () => {
   }
 
   return (
-    <div className='w-full'>
-      <h2 className='text-2xl font-bold mb-4'>Gestionar Horarios</h2>
-      <div className="flex space-x-8"> 
-        <div className='w-1/2'> 
+    <>
+      <div className='w-full'>
+        <h2 className='text-2xl font-bold mb-4'>Gestionar Horarios</h2>
+        <div className="flex flex-col">
           <div className='mb-4'>
             <label
               htmlFor='id_group'
@@ -154,8 +195,11 @@ const SchedulesForm = () => {
             </select>
           </div>
 
-          <form onSubmit={handleSubmit} className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
-            <h3 className='text-lg font-bold mb-2'>Agregar Nuevo Horario</h3>
+          <h3 className='text-lg font-bold mb-2'>
+            {scheduleToEdit ? 'Editar Horario' : 'Crear Horario'}</h3>
+          <form
+            onSubmit={scheduleToEdit ? handleUpdateSchedules : handleSubmit}
+            className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
             <label htmlFor="day" className='block text-gray-700 text-sm font-bold mb-2'>
               Día de la semana:
             </label>
@@ -207,31 +251,43 @@ const SchedulesForm = () => {
               type='submit'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             >
-              Agregar Horario
+              {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
             </button>
           </form>
         </div>
-        <div className='w-1/2'> 
-          {selectedGroup && (
-            <div>
-              <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
-              <div className='grid grid-cols-1 gap-4'>
-                {schedules.length > 0 ? (
-                  schedules.map(schedule => (
-                    <div key={schedule.id_schedule} className='border p-4 rounded shadow-md'>
-                      <p><strong>Día:</strong> {schedule.id_day}</p>
-                      <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p>No hay horarios disponibles para este curso.</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
-    </div>
+      <div className=''>
+        {selectedGroup && (
+          <div>
+            <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
+            <div className='grid grid-cols-1 gap-4'>
+              {schedules.length > 0 ? (
+                schedules.map(schedule => (
+                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md'>
+                    <p><strong>Día:</strong> {schedule.day}</p>
+                    <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
+                    <button
+                      onClick={() => handleDeleteSchedules(schedule.id_schedule)}
+                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      onClick={() => handleEditSchedules(schedule)}
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    >
+                      Editar
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No hay horarios disponibles para este curso.</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
