@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Time, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from config.database import Base
 
 class Schedules(Base):
@@ -9,4 +9,3 @@ class Schedules(Base):
   id_day = Column(Integer, ForeignKey("days.id_day"))
   start_time = Column(String(8))
   end_time = Column(String(8))
-  

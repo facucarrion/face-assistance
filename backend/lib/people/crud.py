@@ -1,8 +1,11 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from models.People import People
+from models.Groups import Groups
 from models.Assistance import Assistance
+from models.UsersGroup import UsersGroup
 from schemas.PeopleSchema import PeopleCreate, PeopleUpdate
+from lib.auth.crud import get_user_by_id
 
 
 def get_people(db: Session, skip: int = 0, limit: int = 100):
@@ -57,12 +60,34 @@ def delete_people_by_group(db: Session, id_group: int):
     db.commit()
     return db_people
 
-def filter_people(db: Session, q: str):
-    db_people = db.query(People).filter(
-        or_(
-            People.firstname.like(f"%{q}%"),
-            People.lastname.like(f"%{q}%"),
-            People.document.like(f"%{q}%")
-        )
+def filter_people(db: Session, q: str, id_user: int):
+    user = get_user_by_id(db, id_user)
+    filtered_people = []
+
+    if id_user == 0 or user is None or (user is not None and user.rol == "admin"):
+        filtered_people = db.query(People, Groups.name).join(Groups, People.id_group == Groups.id_group).filter(
+        (People.firstname.like(f"%{q}%")) |
+        (People.lastname.like(f"%{q}%")) |
+        (People.document.like(f"%{q}%"))
     ).all()
-    return db_people
+
+    else:
+        filtered_people = db.query(People, Groups.name).join(Groups, People.id_group == Groups.id_group).join(UsersGroup, UsersGroup.id_group == Groups.id_group).filter(
+        ((People.firstname.like(f"%{q}%")) |
+        (People.lastname.like(f"%{q}%")) |
+        (People.document.like(f"%{q}%")))).filter(UsersGroup.id_user == user.id_user).all()
+
+    # Convertir los resultados en una lista de diccionarios
+    result = [
+        {
+            'id_person': person.id_person,
+            'firstname': person.firstname,
+            'lastname': person.lastname,
+            'document': person.document,
+            'id_group': person.id_group,
+            'group_name': group_name
+        }
+        for person, group_name in filtered_people
+    ]
+
+    return result

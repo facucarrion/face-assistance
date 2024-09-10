@@ -5,7 +5,10 @@ const token_secret = import.meta.env.PUBLIC_TOKEN_SECRET
 export async function verifyJwt() {
   const token = localStorage.getItem('user')
 
-  if (!token) return false
+  let status = false
+  let payload = null
+
+  if (!token) return { status, payload }
 
   try {
     const { payload } = await jwtVerify(
@@ -14,12 +17,12 @@ export async function verifyJwt() {
     )
 
     if (payload) {
-      return true
+      status = true
     }
 
-    return false
+    return { status, payload }
   } catch (error) {
     console.error(error)
-    return false
+    return { status, payload: null }
   }
 }

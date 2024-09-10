@@ -50,6 +50,16 @@ const UserForm = () => {
   const handleCreateUser = async event => {
     event.preventDefault()
 
+    if (!formData.password) {
+      alert('La contraseña es obligatoria al crear un usuario')
+      return
+    }
+
+    if (formData.password !== formData.repeat_password) {
+      alert('Las contraseñas no coinciden')
+      return
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:8000/users/', {
         method: 'POST',
@@ -95,6 +105,11 @@ const UserForm = () => {
 
   const handleUpdateUser = async event => {
     event.preventDefault()
+
+    if (formData.password && formData.password !== formData.repeat_password) {
+      alert('Las contraseñas no coinciden')
+      return
+    }
 
     try {
       const response = await fetch(
@@ -175,7 +190,6 @@ const UserForm = () => {
               name='password'
               id='password'
               placeholder='Ingrese la contraseña'
-              required
               value={formData.password}
               onChange={handleChange}
             />
@@ -194,9 +208,9 @@ const UserForm = () => {
               name='repeat_password'
               id='repeat_ password'
               placeholder='Confirmar contraseña'
-              required
               value={formData.repeat_password}
               onChange={handleChange}
+              required={!!formData.password}
             />
           </div>
 
