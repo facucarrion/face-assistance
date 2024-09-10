@@ -34,6 +34,7 @@ class PeopleWithAnnualAssistance(PeopleBase):
     class Config:
         from_attributes = True
 
+
 class PeopleCreate(BaseModel):
     firstname: str
     lastname: str

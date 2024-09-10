@@ -1,27 +1,13 @@
 ---
+import { GroupList } from '../components/GroupList'
 import Title from '../components/Title.astro'
 import Layout from '../layout/Layout.astro'
-import { getGroups } from '../lib/groups/getGroups'
-
-const groups = await getGroups()
 ---
 
 <Layout>
   <main class='p-4'>
     <Title>Cursos</Title>
 
-    <ul id='groups-list' class='grid grid-cols-3 gap-4'>
-      {
-        groups.map(group => {
-          return (
-            <a href={`/groups/${group.id_group}`}>
-              <li class='bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition transform hover:scale-105 text-center'>
-                {group.name}
-              </li>
-            </a>
-          )
-        })
-      }
-    </ul>
+    <GroupList client:load />
   </main>
 </Layout>
