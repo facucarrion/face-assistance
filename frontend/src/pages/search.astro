@@ -2,16 +2,12 @@
 import Layout from '../layout/Layout.astro'
 import Title from '../components/Title.astro'
 
-import { getSearchedPeople } from '../lib/people/getSearchedPeople'
+import { SearchedPeopleList } from '../components/SearchedPeopleList'
 
 export const prerender = false
 
 const url = Astro.url
 const search = url.searchParams.get('q') || ''
-
-const searchedPeople = await getSearchedPeople(search)
-
-console.log(searchedPeople)
 ---
 
 <Layout searchbar={false}>
@@ -35,24 +31,7 @@ console.log(searchedPeople)
       </button>
     </form>
 
-    <ul id='groups-list' class='grid grid-cols-4 w-full gap-4'>
-      {
-        searchedPeople.length &&
-          searchedPeople.map(person => {
-            return (
-              <a href={`/people/${person.id_person}`}>
-                <li class='bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 transition transform hover:scale-105'>
-                  <p class='text-center text-black font-semibold text-lg'>
-                    {person.firstname} {person.lastname}
-                  </p>
-                  <p class='text-center'>{person.document}</p>
-                  <p class='text-center'>{person.group_name}</p>
-                </li>
-              </a>
-            )
-          })
-      }
-    </ul>
+    <SearchedPeopleList query={search} client:load />
   </main>
 </Layout>
 
