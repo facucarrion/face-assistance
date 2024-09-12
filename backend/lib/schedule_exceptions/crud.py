@@ -1,6 +1,35 @@
 from sqlalchemy.orm import Session
 from models.ScheduleExceptions import ScheduleExceptions
 from schemas.SchedulesExceptionsSchema import SchedulesExceptionsBase, ExceptionsCreate
+from datetime import datetime, timedelta
+
+def get_schedule_exceptions_by_group(db: Session, id_group: int):
+    # Obtener la fecha actual
+    today = datetime.today()
+
+    # Calcular la fecha límite de los próximos 30 días
+    thirty_days_from_now = today + timedelta(days=30)
+
+    # Filtrar por grupo y excepciones dentro de los próximos 30 días
+    exceptions = db.query(ScheduleExceptions).filter(
+        ScheduleExceptions.id_group == id_group,
+        ScheduleExceptions.date >= today,
+        ScheduleExceptions.date <= thirty_days_from_now
+    ).all()
+
+    exceptions = [
+        {
+            "id_schedule_exception": exception.id_schedule_exception,
+            "id_group": exception.id_group,
+            "start_time": str(exception.start_time),
+            "end_time": str(exception.end_time),
+            "is_class": exception.is_class,
+            "date": exception.date
+        }
+        for exception in exceptions
+    ]
+
+    return exceptions
 
 def create_exceptions(db: Session, schedules_exceptions: ExceptionsCreate):
     db_schedules_exceptions = ScheduleExceptions(
