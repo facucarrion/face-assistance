@@ -39,6 +39,10 @@ const SchedulesForm = () => {
         setGroups(groupsData)
         if (groupsData.length > 0) {
           setSelectedGroup(groupsData[0].id_group)
+          setException(prevState => ({
+            ...prevState,
+            id_group: groupsData[0].id_group
+          }))
         }
       } else {
         console.error('Error al recuperar grupos:', response.statusText)
@@ -81,6 +85,10 @@ const SchedulesForm = () => {
 
   const handleGroupChange = event => {
     setSelectedGroup(event.target.value)
+    setException(prevState => ({
+      ...prevState,
+      id_group: event.target.value
+    }))
   }
 
   const handleEditSchedules = schedule => {
@@ -154,13 +162,14 @@ const SchedulesForm = () => {
   const handleExceptionSubmit = async event => {
     event.preventDefault()
     try {
-      const response = await fetch('http://127.0.0.1:8000/exceptions', {
+      const response = await fetch('http://127.0.0.1:8000/schedule_exceptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(exception)
       })
+      console.log(exception)
       if (response.ok) {
         setException({
           id_group: '',
@@ -170,7 +179,8 @@ const SchedulesForm = () => {
           end_time: ''
         })
         fetchSchedules(selectedGroup)
-        console.log(await response.json())
+        const data = await response.json()
+        console.log(data)
       } else {
         console.error('Error al crear excepción:', response.statusText)
       }
@@ -240,8 +250,78 @@ const SchedulesForm = () => {
           </div>
 
           <h3 className='text-lg font-bold mb-2'>
-            {scheduleToEdit ? 'Editar Horario' : 'Crear Horario'}</h3>
-          <form
+            {isExceptionMode ? 'Agregar Excepciones' : (
+              scheduleToEdit ? 'Editar Horario' : 'Crear Horario'
+            )}
+          </h3>
+          {isExceptionMode ? (<form
+            onSubmit={handleExceptionSubmit}
+            className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+          >
+            <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
+              Fecha de excepción:
+            </label>
+            <input
+              type='date'
+              id='date'
+              name='date'
+              value={exception.date}
+              onChange={handleExceptionChange}
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              required
+            />
+
+            <div className='mb-4'>
+              <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                Hora de inicio:
+              </label>
+              <input
+                type='time'
+                id='start_time'
+                name='start_time'
+                value={exception.start_time}
+                onChange={handleExceptionChange}
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                required
+              />
+            </div>
+
+            <div className='mb-4'>
+              <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                Hora de fin:
+              </label>
+              <input
+                type='time'
+                id='end_time'
+                name='end_time'
+                value={exception.end_time}
+                onChange={handleExceptionChange}
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                required
+              />
+            </div>
+
+            <div className='mb-4 flex items-center gap-1'>
+              <input
+                type='checkbox'
+                id='is_class'
+                name='is_class'
+                checked={exception.is_class}
+                onChange={handleExceptionChange}
+                className='mr-2 leading-tight'
+              />
+              <label htmlFor='is_class' className='block text-gray-700 text-sm font-bold'>
+                ¿Hay clase?
+              </label>
+            </div>
+
+            <button
+              type='submit'
+              className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            >
+              Agregar Excepción
+            </button>
+          </form>) : (<form
             onSubmit={scheduleToEdit ? handleUpdateSchedules : handleSubmit}
             className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
             <label htmlFor="day" className='block text-gray-700 text-sm font-bold mb-2'>
@@ -297,11 +377,11 @@ const SchedulesForm = () => {
             >
               {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
             </button>
-          </form>
+          </form>)}
         </div>
       </div>
 
-      
+
       <div className=''>
         {selectedGroup && (
           <div>
@@ -309,111 +389,39 @@ const SchedulesForm = () => {
             <div className='grid grid-cols-1 gap-4'>
               {schedules.length > 0 ? (
                 schedules.map(schedule => (
-                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md flex justify-between items-center'> 
+                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md flex justify-between items-center'>
                     <p><strong>Día:</strong> {schedule.day}</p>
                     <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
                     <div className='flex space-x-2'>
-                    <button
-                      onClick={() => handleDeleteSchedules(schedule.id_schedule)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
-                    >
-                      Eliminar
-                    </button>
-                    <button
-                      onClick={() => handleEditSchedules(schedule)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm' 
-                    >
-                      Editar
-                    </button>
+                      <button
+                        onClick={() => handleDeleteSchedules(schedule.id_schedule)}
+                        className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                      >
+                        Eliminar
+                      </button>
+                      <button
+                        onClick={() => handleEditSchedules(schedule)}
+                        className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                      >
+                        Editar
+                      </button>
                     </div>
                   </div>
                 ))
               ) : (
                 <p>No hay horarios disponibles para este curso.</p>
               )}
+              <button
+                onClick={() => setIsExceptionMode(!isExceptionMode)}
+                className='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 w-full'
+              >
+                {isExceptionMode ? 'Cancelar' : 'Agregar Excepción'}
+              </button>
             </div>
           </div>
         )}
       </div>
 
-      <h3 className='text-lg font-bold mb-2'>Agregar Excepción</h3>
-          <button
-            onClick={() => setIsExceptionMode(!isExceptionMode)}
-            className='bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mb-4'
-          >
-            {isExceptionMode ? 'Cancelar' : 'Agregar Excepción'}
-          </button>
-          {isExceptionMode && (
-            <form
-              onSubmit={handleExceptionSubmit}
-              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
-            >
-              <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
-                Fecha de excepción:
-              </label>
-              <input
-                type='date'
-                id='date'
-                name='date'
-                value={exception.date}
-                onChange={handleExceptionChange}
-                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                required
-              />
-
-              <div className='mb-4'>
-                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
-                  Hora de inicio:
-                </label>
-                <input
-                  type='time'
-                  id='start_time'
-                  name='start_time'
-                  value={exception.start_time}
-                  onChange={handleExceptionChange}
-                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                  required
-                />
-              </div>
-
-              <div className='mb-4'>
-                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
-                  Hora de fin:
-                </label>
-                <input
-                  type='time'
-                  id='end_time'
-                  name='end_time'
-                  value={exception.end_time}
-                  onChange={handleExceptionChange}
-                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                  required
-                />
-              </div>
-
-              <div className='mb-4'>
-                <label htmlFor='is_class' className='block text-gray-700 text-sm font-bold mb-2'>
-                  ¿No hay clase?
-                </label>
-                <input
-                  type='checkbox'
-                  id='is_class'
-                  name='is_class'
-                  checked={exception.is_class}
-                  onChange={handleExceptionChange}
-                  className='mr-2 leading-tight'
-                />
-              </div>
-
-              <button
-                type='submit'
-                className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
-              >
-                Agregar Excepción
-              </button>
-            </form>
-          )}
-        
     </>
   )
 }
