@@ -13,6 +13,7 @@ from routes.UsersRouter import users_router
 from routes.PeopleRouter import people_router
 from routes.SchedulesRouter import schedules_router
 from routes.DaysRouter import days_router
+from routes.ExceptionsRouter import schedule_exceptions_router
 from schemas.ImageSchema import ImageBase
 from models.People import People
 
@@ -38,6 +39,7 @@ app.include_router(users_router)
 app.include_router(people_router)
 app.include_router(schedules_router)
 app.include_router(days_router)
+app.include_router(schedule_exceptions_router)
 
 
 @app.post("/image/upload", response_model=dict)
