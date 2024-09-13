@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 const SchedulesForm = () => {
   const [groups, setGroups] = useState([])
   const [schedules, setSchedules] = useState([])
+  const [scheduleExceptions, setScheduleExceptions] = useState([])
+
   const [selectedGroup, setSelectedGroup] = useState('')
   const [days, setDays] = useState([])
   const [newSchedule, setNewSchedule] = useState({
@@ -11,6 +13,14 @@ const SchedulesForm = () => {
     end_time: ''
   })
   const [scheduleToEdit, setScheduleToEdit] = useState(null)
+  const [isExceptionMode, setIsExceptionMode] = useState(false)
+  const [newException, setNewException] = useState({
+    id_group: '',
+    date: '',
+    is_class: false,
+    start_time: '',
+    end_time: ''
+  })
 
   useEffect(() => {
     fetchGroups()
@@ -23,6 +33,12 @@ const SchedulesForm = () => {
     }
   }, [selectedGroup])
 
+  useEffect(() => {
+    if (isExceptionMode) {
+      fetchScheduleExceptions(selectedGroup)
+    }
+  }, [isExceptionMode])
+
   const fetchGroups = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/groups/')
@@ -31,6 +47,10 @@ const SchedulesForm = () => {
         setGroups(groupsData)
         if (groupsData.length > 0) {
           setSelectedGroup(groupsData[0].id_group)
+          setNewException(prevState => ({
+            ...prevState,
+            id_group: groupsData[0].id_group
+          }))
         }
       } else {
         console.error('Error al recuperar grupos:', response.statusText)
@@ -61,8 +81,22 @@ const SchedulesForm = () => {
       )
       if (response.ok) {
         const schedulesData = await response.json()
-        console.log(schedulesData)
         setSchedules(schedulesData)
+      } else {
+        console.error('Error al recuperar horarios:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al recuperar horarios:', error)
+    }
+  }
+
+  const fetchScheduleExceptions = async id_group => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/schedule_exceptions/${id_group}`)
+      if (response.ok) {
+        const scheduleExceptionsData = await response.json()
+        console.log(scheduleExceptionsData)
+        setScheduleExceptions(scheduleExceptionsData)
       } else {
         console.error('Error al recuperar horarios:', response.statusText)
       }
@@ -73,6 +107,10 @@ const SchedulesForm = () => {
 
   const handleGroupChange = event => {
     setSelectedGroup(event.target.value)
+    setNewException(prevState => ({
+      ...prevState,
+      id_group: event.target.value
+    }))
   }
 
   const handleEditSchedules = schedule => {
@@ -143,11 +181,49 @@ const SchedulesForm = () => {
     }
   }
 
+  const handleExceptionSubmit = async event => {
+    event.preventDefault()
+    try {
+      const response = await fetch('http://127.0.0.1:8000/schedule_exceptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newException)
+      })
+      console.log(newException)
+      if (response.ok) {
+        setNewException({
+          id_group: '',
+          date: '',
+          is_class: false,
+          start_time: '',
+          end_time: ''
+        })
+        fetchSchedules(selectedGroup)
+        const data = await response.json()
+        console.log(data)
+      } else {
+        console.error('Error al crear excepción:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al crear excepción:', error)
+    }
+  }
+
   const handleInputChange = event => {
     const { name, value } = event.target
     setNewSchedule({
       ...newSchedule,
       [name]: value
+    })
+  }
+
+  const handleExceptionChange = event => {
+    const { name, value, type, checked } = event.target
+    setNewException({
+      ...newException,
+      [name]: type === 'checkbox' ? checked : value
     })
   }
 
@@ -196,97 +272,209 @@ const SchedulesForm = () => {
           </div>
 
           <h3 className='text-lg font-bold mb-2'>
-            {scheduleToEdit ? 'Editar Horario' : 'Crear Horario'}</h3>
-          <form
-            onSubmit={scheduleToEdit ? handleUpdateSchedules : handleSubmit}
-            className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
-            <label htmlFor="day" className='block text-gray-700 text-sm font-bold mb-2'>
-              Día de la semana:
-            </label>
-            <select
-              id="day"
-              name="id_day"
-              value={newSchedule.id_day}
-              onChange={handleInputChange}
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            {isExceptionMode ? 'Agregar Excepciones' : (
+              scheduleToEdit ? 'Editar Horario' : 'Crear Horario'
+            )}
+          </h3>
+          {isExceptionMode ? (
+            <form
+              onSubmit={handleExceptionSubmit}
+              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
             >
-              <option value="">Selecciona un día</option>
-              {days.map((day) => (
-                <option key={day.id_day} value={day.id_day}>
-                  {day.day}
-                </option>
-              ))}
-            </select>
-
-            <div className='mb-4'>
-              <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
-                Hora de inicio:
+              <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
+                Fecha de excepción:
               </label>
               <input
-                type='time'
-                id='start_time'
-                name='start_time'
-                value={newSchedule.start_time}
-                onChange={handleInputChange}
+                type='date'
+                id='date'
+                name='date'
+                value={newException.date}
+                onChange={handleExceptionChange}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                 required
               />
-            </div>
 
-            <div className='mb-4'>
-              <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
-                Hora de fin:
+              <div className='mb-4'>
+                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de inicio:
+                </label>
+                <input
+                  type='time'
+                  id='start_time'
+                  name='start_time'
+                  value={newException.start_time}
+                  onChange={handleExceptionChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+
+              <div className='mb-4'>
+                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de fin:
+                </label>
+                <input
+                  type='time'
+                  id='end_time'
+                  name='end_time'
+                  value={newException.end_time}
+                  onChange={handleExceptionChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+
+              <div className='mb-4 flex items-center gap-1'>
+                <input
+                  type='checkbox'
+                  id='is_class'
+                  name='is_class'
+                  checked={newException.is_class}
+                  onChange={handleExceptionChange}
+                  className='mr-2 leading-tight'
+                />
+                <label htmlFor='is_class' className='block text-gray-700 text-sm font-bold'>
+                  ¿Hay clase?
+                </label>
+              </div>
+
+              <button
+                type='submit'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              >
+                Agregar Excepción
+              </button>
+
+            </form>
+          ) : (
+            <form
+              onSubmit={scheduleToEdit ? handleUpdateSchedules : handleSubmit}
+              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
+              <label htmlFor="day" className='block text-gray-700 text-sm font-bold mb-2'>
+                Día de la semana:
               </label>
-              <input
-                type='time'
-                id='end_time'
-                name='end_time'
-                value={newSchedule.end_time}
+              <select
+                id="day"
+                name="id_day"
+                value={newSchedule.id_day}
                 onChange={handleInputChange}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                required
-              />
-            </div>
-            <button
-              type='submit'
-              className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-            >
-              {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
-            </button>
-          </form>
+              >
+                <option value="">Selecciona un día</option>
+                {days.map((day) => (
+                  <option key={day.id_day} value={day.id_day}>
+                    {day.day}
+                  </option>
+                ))}
+              </select>
+
+              <div className='mb-4'>
+                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de inicio:
+                </label>
+                <input
+                  type='time'
+                  id='start_time'
+                  name='start_time'
+                  value={newSchedule.start_time}
+                  onChange={handleInputChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+
+              <div className='mb-4'>
+                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                  Hora de fin:
+                </label>
+                <input
+                  type='time'
+                  id='end_time'
+                  name='end_time'
+                  value={newSchedule.end_time}
+                  onChange={handleInputChange}
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                  required
+                />
+              </div>
+              <button
+                type='submit'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              >
+                {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
+              </button>
+            </form>
+          )}
         </div>
       </div>
+
+
       <div className=''>
-        {selectedGroup && (
-          <div>
-            <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
-            <div className='grid grid-cols-1 gap-4'>
-              {schedules.length > 0 ? (
-                schedules.map(schedule => (
-                  <div key={schedule.id_schedule} className='border p-4 rounded shadow-md'>
-                    <p><strong>Día:</strong> {schedule.day}</p>
-                    <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
+        <div>
+          <h3 className='text-lg font-bold mb-2'>Horarios del Curso</h3>
+          <div className='grid grid-cols-1 gap-4'>
+            {isExceptionMode ? (
+              scheduleExceptions.length > 0 ? (
+                scheduleExceptions.map(exception => (
+                  <div key={exception.id_schedule_exception} className='border p-4 rounded shadow-md flex justify-between items-center'>
+                    <div className='flex flex-col gap-1'>
+                      <p><strong>Fecha:</strong> {exception.date}</p>
+                      <p><strong>Horario:</strong> {exception.start_time} - {exception.end_time}</p>
+                      <p><strong>¿Hay Clase?:</strong> {exception.is_class ? "Sí" : "No"} </p>
+                    </div>
+                    <div className='flex space-x-2'>
+                      <button
+                        onClick={() => handleDeleteSchedules(exception.id_schedule_exception)}
+                        className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                      >
+                        Eliminar
+                      </button>
+                      <button
+                        onClick={() => handleEditSchedules(exception)}
+                        className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                      >
+                        Editar
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No hay excepciones disponibles para este curso.</p>
+              )
+            ) : (schedules.length > 0 ? (
+              schedules.map(schedule => (
+                <div key={schedule.id_schedule} className='border p-4 rounded shadow-md flex justify-between items-center'>
+                  <p><strong>Día:</strong> {schedule.day}</p>
+                  <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
+                  <div className='flex space-x-2'>
                     <button
                       onClick={() => handleDeleteSchedules(schedule.id_schedule)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                     >
                       Eliminar
                     </button>
                     <button
                       onClick={() => handleEditSchedules(schedule)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                     >
                       Editar
                     </button>
                   </div>
-                ))
-              ) : (
-                <p>No hay horarios disponibles para este curso.</p>
-              )}
-            </div>
+                </div>
+              ))
+            ) : (
+              <p>No hay horarios disponibles para este curso.</p>
+            ))}
+            <button
+              onClick={() => setIsExceptionMode(!isExceptionMode)}
+              className='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 w-full'
+            >
+              {isExceptionMode ? 'Cancelar' : 'Agregar Excepción'}
+            </button>
           </div>
-        )}
+        </div>
       </div>
+
     </>
   )
 }
