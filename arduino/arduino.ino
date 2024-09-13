@@ -15,7 +15,7 @@ const char* ssid = "placa";
 const char* password = "12345678";
 
 // Dirección del servidor y endpoint
-const char* serverName = "http://192.168.0.221:8000/image/upload";
+const char* serverName = "http://192.168.2.141:8000/image/upload";
 
 void setup() {
   Serial.begin(115200);

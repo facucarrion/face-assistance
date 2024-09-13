@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
+import cv2
 import base64
 from datetime import datetime
 from config.database import get_db
@@ -16,9 +17,14 @@ from routes.ExceptionsRouter import schedule_exceptions_router
 from schemas.ImageSchema import ImageBase
 from models.People import People
 
+from lib.images.recognition import recognize_and_crop_image
+
 os.makedirs("public/uploads", exist_ok=True)
+os.makedirs("temp/uploads", exist_ok=True)
 
 app = FastAPI()
+
+app.mount("/public", StaticFiles(directory="/"), name="public")
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,23 +44,33 @@ app.include_router(schedule_exceptions_router)
 
 @app.post("/image/upload", response_model=dict)
 async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
-  imgdata = base64.b64decode(request.image)
-  filename = f"/uploads/{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    imgdata = base64.b64decode(request.image)
+    filename = f"{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    temp_file = f"temp/uploads/{filename}"
 
-  with open(f"public/{filename}", 'wb') as f:
-    f.write(imgdata)
+    print(filename)
+    print(temp_file)
 
-  # update image field of request.id_person
-  db_person = db.query(People).filter(
-    People.id_person == request.id_person
-  ).first()
+    with open(temp_file, "wb") as file:
+        file.write(imgdata)
 
-  old_image = db_person.image
-  db_person.image = filename
-  db.commit()
+    new_image = recognize_and_crop_image(f"temp/uploads/{filename}", f"public/uploads/{filename}")
 
-  os.remove(f"public/{old_image}")
+    print(new_image["destine_path"])
 
-  return {
-    "filename": filename
-  }
+    cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
+
+    person = db.query(People).filter(People.id_person == request.id_person).first()
+    old_image = person.image
+    person.image = f"uploads/{filename}"
+    db.commit()
+
+    if old_image:
+        os.remove(f"public/{old_image}")
+
+    os.remove(temp_file)
+
+    return {
+        "filename": filename,
+        "temp_file": temp_file
+    }
