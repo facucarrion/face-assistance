@@ -74,3 +74,12 @@ def delete_group(db: Session, id_group: int):
 
 def get_people_in_group(db: Session, id_group: int):
   return db.query(People).filter(People.id_group == id_group).all()
+
+def update_people_group(db: Session, from_group_id: int, to_group_id: int):
+    people_in_group = db.query(People).filter(People.id_group == from_group_id).all()
+
+    for person in people_in_group:
+        person.id_group = to_group_id
+        db.add(person)
+    db.commit()
+    return people_in_group

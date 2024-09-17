@@ -21,6 +21,7 @@ const SchedulesForm = () => {
     start_time: '',
     end_time: ''
   })
+  const [scheduleExceptionsEdit, setScheduleExceptionsEdit] = useState(null)
 
   useEffect(() => {
     fetchGroups()
@@ -200,7 +201,7 @@ const SchedulesForm = () => {
           start_time: '',
           end_time: ''
         })
-        fetchSchedules(selectedGroup)
+        fetchScheduleExceptions(selectedGroup)
         const data = await response.json()
         console.log(data)
       } else {
@@ -225,6 +226,48 @@ const SchedulesForm = () => {
       ...newException,
       [name]: type === 'checkbox' ? checked : value
     })
+  }
+
+  const handleEditScheduleExceptions = scheduleException => {
+    scheduleExceptionsEdit(scheduleException)
+    setScheduleExceptionsEdit({
+      id_group: scheduleException.id_group,
+      date: scheduleException.date,
+      is_class: scheduleException.is_class,
+      start_time: scheduleException.start_time,
+      end_time: scheduleException.end_time
+    })
+  }
+
+  const handleUpdateSchedulesExceptions = async event => {
+    event.preventDefault()
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/schedulesException/${scheduleExceptionsEdit.id_schedule_exception}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id_group: selectedGroup,
+          ...newSchedule
+        })
+      })
+      if (response.ok) {
+        alert('¡Excepción actualizado exitosamente!')
+        setScheduleExceptionsEdit(null)
+        setNewException({
+      date: '',
+      is_class: '',
+      start_time: '',
+      end_time: ''
+        })
+        fetchSchedules(selectedGroup)
+      } else {
+        console.error('Error al actualizar la excepción:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al actualizar la excepción:', error)
+    }
   }
 
   const handleDeleteSchedules = async id_schedule => {
@@ -272,7 +315,7 @@ const SchedulesForm = () => {
           </div>
 
           <h3 className='text-lg font-bold mb-2'>
-            {isExceptionMode ? 'Agregar Excepciones' : (
+            {isExceptionMode ? scheduleExceptionsEdit ? 'Editar Excepciones' : 'Agregar Excepciones' : (
               scheduleToEdit ? 'Editar Horario' : 'Crear Horario'
             )}
           </h3>
@@ -288,7 +331,7 @@ const SchedulesForm = () => {
                 type='date'
                 id='date'
                 name='date'
-                value={newException.date}
+                value={scheduleExceptionsEdit?.date ?? newException.date}
                 onChange={handleExceptionChange}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                 required
@@ -302,7 +345,7 @@ const SchedulesForm = () => {
                   type='time'
                   id='start_time'
                   name='start_time'
-                  value={newException.start_time}
+                  value={scheduleExceptionsEdit?.start_time ?? newException.start_time}
                   onChange={handleExceptionChange}
                   className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                   required
@@ -340,7 +383,7 @@ const SchedulesForm = () => {
 
               <button
                 type='submit'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-1/2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'
               >
                 Agregar Excepción
               </button>
@@ -399,10 +442,26 @@ const SchedulesForm = () => {
               </div>
               <button
                 type='submit'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-1/2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'
               >
                 {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
               </button>
+              {scheduleToEdit && (
+                <button
+                  type='button'
+                  className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                  onClick={() => {
+                    setScheduleToEdit(null)
+                    setNewSchedule({
+                      id_day: '',
+                      start_time: '',
+                      end_time: ''
+                    })
+                  }}
+                >
+                  Limpiar
+                </button>
+              )}
             </form>
           )}
         </div>

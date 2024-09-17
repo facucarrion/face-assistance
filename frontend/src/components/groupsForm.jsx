@@ -5,6 +5,10 @@ const GroupsForm = () => {
   const [formData, setFormData] = useState({
     name: ''
   })
+  const [groupsData, setGroupsData] = useState({
+    currentGroupId: '',
+    newGroupId: ''
+  })
   const [editGroupId, setEditGroupId] = useState(null)
 
   const fetchGroups = async () => {
@@ -84,6 +88,47 @@ const GroupsForm = () => {
     setEditGroupId(group.id_group)
   }
 
+  const handleTransferStudents = async () => {
+    if (!groupsData.currentGroupId || !groupsData.newGroupId) {
+      alert('Seleccione ambos cursos para realizar el traslado.')
+      return
+    }
+
+    if (!confirm(`¿Está seguro de mover los alumnos del curso ${groupsData.currentGroupId} a ${groupsData.newGroupId}?`)) return
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/groups/transfer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from_group_id: groupsData.currentGroupId,
+          to_group_id: groupsData.newGroupId
+        })
+      })
+
+      if (response.ok) {
+        alert('¡Alumnos trasladados exitosamente!')
+        setGroupsData({
+          currentGroupId: '',
+          newGroupId: ''
+        })
+      } else {
+        alert('No se pudo trasladar los alumnos')
+      }
+    } catch (error) {
+      console.error('Error al trasladar alumnos:', error)
+    }
+  }
+
+  const handleChangeSelect = event => {
+    setGroupsData({
+      ...groupsData,
+      [event.target.name]: event.target.value
+    })
+  }
+
   return (
     <>
       <div className='w-full'>
@@ -136,6 +181,65 @@ const GroupsForm = () => {
             )}
           </div>
         </form>
+        <h2 className='text-2xl font-bold mb-4'>
+          Desplazar Alumnos a otro Curso
+        </h2>
+<div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'>
+        <div className='mb-4'>
+          <label
+            htmlFor='currentGroupId'
+            className='block text-gray-700 text-sm font-bold mb-2'
+          >
+            Curso Actual:
+          </label>
+          <select
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            name='currentGroupId'
+            id='currentGroupId'
+            value={groupsData.currentGroupId}
+            onChange={handleChangeSelect}
+            required
+          >
+            <option value=''>Seleccione un curso</option>
+            {groups.map(group => (
+              <option key={group.id_group} value={group.id_group}>
+                {group.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className='mb-4'>
+          <label
+            htmlFor='newGroupId'
+            className='block text-gray-700 text-sm font-bold mb-2'
+          >
+            Nuevo Curso:
+          </label>
+          <select
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            name='newGroupId'
+            id='newGroupId'
+            value={groupsData.newGroupId}
+            onChange={handleChangeSelect}
+            required
+          >
+            <option value=''>Seleccione un curso</option>
+            {groups.map(group => (
+              <option key={group.id_group} value={group.id_group}>
+                {group.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          className='bg-blue-300 hover:bg-blue-500 text-white w-1/2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+          onClick={handleTransferStudents}
+        >
+          Trasladar Alumnos
+        </button>
+      </div>
       </div>
 
       <div className='w-full'>
