@@ -229,7 +229,7 @@ const SchedulesForm = () => {
   }
 
   const handleEditScheduleExceptions = scheduleException => {
-    scheduleExceptionsEdit(scheduleException)
+    setScheduleExceptionsEdit(scheduleException)
     setScheduleExceptionsEdit({
       id_group: scheduleException.id_group,
       date: scheduleException.date,
@@ -242,7 +242,7 @@ const SchedulesForm = () => {
   const handleUpdateSchedulesExceptions = async event => {
     event.preventDefault()
     try {
-      const response = await fetch(`http://127.0.0.1:8000/schedulesException/${scheduleExceptionsEdit.id_schedule_exception}`, {
+      const response = await fetch(`http://127.0.0.1:8000/schedule_exceptions/${scheduleExceptionsEdit.id_schedule_exception}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -256,10 +256,10 @@ const SchedulesForm = () => {
         alert('¡Excepción actualizado exitosamente!')
         setScheduleExceptionsEdit(null)
         setNewException({
-      date: '',
-      is_class: '',
-      start_time: '',
-      end_time: ''
+          date: '',
+          is_class: '',
+          start_time: '',
+          end_time: ''
         })
         fetchSchedules(selectedGroup)
       } else {
@@ -269,6 +269,8 @@ const SchedulesForm = () => {
       console.error('Error al actualizar la excepción:', error)
     }
   }
+
+
 
   const handleDeleteSchedules = async id_schedule => {
     try {
@@ -283,6 +285,22 @@ const SchedulesForm = () => {
       }
     } catch (error) {
       console.error('Error al eliminar horario:', error)
+    }
+  }
+
+  const handleDeleteSchedulesExceptions = async id_schedule_exception => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/schedule_exceptions/${id_schedule_exception}`, {
+        method: 'DELETE'
+      })
+      if (response.ok) {
+        fetchSchedules(selectedGroup)
+        console.log('Excepcion eliminado')
+      } else {
+        console.error('Error al eliminar Excepcion:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al eliminar Excepcion:', error)
     }
   }
 
@@ -321,7 +339,7 @@ const SchedulesForm = () => {
           </h3>
           {isExceptionMode ? (
             <form
-              onSubmit={handleExceptionSubmit}
+              onSubmit={scheduleExceptionsEdit ? handleUpdateSchedulesExceptions : handleExceptionSubmit}
               className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
             >
               <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
@@ -360,7 +378,7 @@ const SchedulesForm = () => {
                   type='time'
                   id='end_time'
                   name='end_time'
-                  value={newException.end_time}
+                  value={scheduleExceptionsEdit?.end_time ?? newException.end_time}
                   onChange={handleExceptionChange}
                   className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                   required
@@ -372,7 +390,7 @@ const SchedulesForm = () => {
                   type='checkbox'
                   id='is_class'
                   name='is_class'
-                  checked={newException.is_class}
+                  checked={scheduleExceptionsEdit?.is_class ?? newException.is_class}
                   onChange={handleExceptionChange}
                   className='mr-2 leading-tight'
                 />
@@ -385,7 +403,7 @@ const SchedulesForm = () => {
                 type='submit'
                 className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-1/2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'
               >
-                Agregar Excepción
+                {scheduleExceptionsEdit ? 'Actualizar Excepción' : 'Agregar Excepción'}
               </button>
 
             </form>
@@ -483,13 +501,13 @@ const SchedulesForm = () => {
                     </div>
                     <div className='flex space-x-2'>
                       <button
-                        onClick={() => handleDeleteSchedules(exception.id_schedule_exception)}
+                        onClick={() => handleDeleteSchedulesExceptions(exception.id_schedule_exception)}
                         className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                       >
                         Eliminar
                       </button>
                       <button
-                        onClick={() => handleEditSchedules(exception)}
+                        onClick={() => handleEditScheduleExceptions(exception.id_schedule_exception)}
                         className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                       >
                         Editar

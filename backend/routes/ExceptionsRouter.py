@@ -22,3 +22,8 @@ async def get_schedule_exceptions_by_group(id_group: int, db: Session = Depends(
 async def update_existing_schedules_exception(id_schedule_exception: int, schedules_exception_update: ExceptionsUpdate, db: Session = Depends(get_db)):
     schedules_exception = ExceptionsCrud.update_schedules_exceptions(db, id_schedule_exception, schedules_exception_update)
     return schedules_exception
+
+@schedule_exceptions_router.delete("/{id_schedule_exception}")
+async def delete_existing_schedule_exception(id_schedule_exception: int, db: Session = Depends(get_db)):
+    schedules_exception = ExceptionsCrud.delete_schedules_exception(db, id_schedule_exception)
+    return schedules_exception

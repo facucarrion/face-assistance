@@ -65,3 +65,11 @@ def update_schedules_exceptions(db: Session, id_schedule_exception: int, schedul
     db_schedules_exception.end_time = str(db_schedules_exception.end_time)
 
     return db_schedules_exception
+
+def delete_schedules_exception(db: Session, id_schedule_exception: int):
+    db_schedules_exception = db.query(ScheduleExceptions).filter(ScheduleExceptions.id_schedule_exception == id_schedule_exception).first()
+    if not db_schedules_exception:
+        return None
+    db.delete(db_schedules_exception)
+    db.commit()
+    return db_schedules_exception
