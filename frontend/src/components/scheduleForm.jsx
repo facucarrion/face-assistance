@@ -35,6 +35,10 @@ const SchedulesForm = () => {
   }, [selectedGroup])
 
   useEffect(() => {
+    console.log(scheduleExceptionsEdit)
+  }, [scheduleExceptionsEdit])
+
+  useEffect(() => {
     if (isExceptionMode) {
       fetchScheduleExceptions(selectedGroup)
     }
@@ -230,13 +234,6 @@ const SchedulesForm = () => {
 
   const handleEditScheduleExceptions = scheduleException => {
     setScheduleExceptionsEdit(scheduleException)
-    setScheduleExceptionsEdit({
-      id_group: scheduleException.id_group,
-      date: scheduleException.date,
-      is_class: scheduleException.is_class,
-      start_time: scheduleException.start_time,
-      end_time: scheduleException.end_time
-    })
   }
 
   const handleUpdateSchedulesExceptions = async event => {
@@ -507,7 +504,7 @@ const SchedulesForm = () => {
                         Eliminar
                       </button>
                       <button
-                        onClick={() => handleEditScheduleExceptions(exception.id_schedule_exception)}
+                        onClick={() => handleEditScheduleExceptions(exception)}
                         className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                       >
                         Editar
