@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate, GroupsWithPeople
+from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate, GroupsWithPeople, GroupTransfer
 from schemas.PeopleSchema import PeopleBase
 from config.database import get_db
-from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group
+from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group, update_people_group
 from lib.people.crud import delete_people_by_group
 from lib.schedule_exceptions.crud import delete_schedule_exception_by_group
 from lib.schedules.crud import delete_schedule_by_group
@@ -51,3 +51,9 @@ async def delete_existing_group(id_group: int, db: Session = Depends(get_db)):
 @groups_router.get("/{id_group}/people", response_model=list[PeopleBase])
 async def get_people_in_group(id_group: int, db: Session = Depends(get_db)):
   return get_people_in_group(db, id_group)
+
+@groups_router.post("/transfer")
+async def transfer_people_to_new_group(groups: GroupTransfer, db: Session = Depends(get_db)):
+    people_in_group = get_people_in_group(db, groups.from_group_id)
+    updated_people = update_people_group(db, groups.from_group_id, groups.to_group_id)
+    return {"message": f"{len(updated_people)} personas trasladadas al nuevo curso."}

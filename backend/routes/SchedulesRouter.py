@@ -21,13 +21,9 @@ async def get_schedules_by_group(id_group: int, db: Session = Depends(get_db)):
 @schedules_router.delete("/{id_schedule}")
 async def delete_existing_schedule(id_schedule: int, db: Session = Depends(get_db)):
     db_schedules = delete_schedules(db, id_schedule)
-    if not db_schedules:
-        raise HTTPException(status_code=404, detail="Horario no encontrado")
     return db_schedules
 
 @schedules_router.put("/{id_schedule}", response_model=SchedulesBase)
 async def update_existing_schedules(id_schedule: int, schedules_update: SchedulesUpdate, db: Session = Depends(get_db)):
     db_schedules = update_schedules(db, id_schedule, schedules_update)
-    if not db_schedules:
-        raise HTTPException(status_code=404, detail="Horario no encontrado")
     return db_schedules

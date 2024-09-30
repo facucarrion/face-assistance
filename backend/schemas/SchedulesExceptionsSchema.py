@@ -18,3 +18,12 @@ class ExceptionsCreate(BaseModel):
     is_class: bool
     start_time: str
     end_time: str
+
+class ExceptionsUpdate(BaseModel):
+    date: str
+    is_class: bool
+    start_time: str
+    end_time: str
+
+    class Config:
+        from_attributes = True

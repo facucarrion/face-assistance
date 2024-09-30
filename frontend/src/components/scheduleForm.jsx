@@ -21,6 +21,7 @@ const SchedulesForm = () => {
     start_time: '',
     end_time: ''
   })
+  const [scheduleExceptionsEdit, setScheduleExceptionsEdit] = useState(null)
 
   useEffect(() => {
     fetchGroups()
@@ -28,8 +29,13 @@ const SchedulesForm = () => {
   }, [])
 
   useEffect(() => {
+    console.log(newException)
+  }, [newException])
+
+  useEffect(() => {
     if (selectedGroup) {
       fetchSchedules(selectedGroup)
+      fetchScheduleExceptions(selectedGroup)
     }
   }, [selectedGroup])
 
@@ -92,7 +98,9 @@ const SchedulesForm = () => {
 
   const fetchScheduleExceptions = async id_group => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/schedule_exceptions/${id_group}`)
+      const response = await fetch(
+        `http://127.0.0.1:8000/schedule_exceptions/${id_group}`
+      )
       if (response.ok) {
         const scheduleExceptionsData = await response.json()
         console.log(scheduleExceptionsData)
@@ -125,16 +133,19 @@ const SchedulesForm = () => {
   const handleUpdateSchedules = async event => {
     event.preventDefault()
     try {
-      const response = await fetch(`http://127.0.0.1:8000/schedules/${scheduleToEdit.id_schedule}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id_group: selectedGroup,
-          ...newSchedule
-        })
-      })
+      const response = await fetch(
+        `http://127.0.0.1:8000/schedules/${scheduleToEdit.id_schedule}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id_group: selectedGroup,
+            ...newSchedule
+          })
+        }
+      )
       if (response.ok) {
         alert('¡Horario actualizado exitosamente!')
         setScheduleToEdit(null)
@@ -184,13 +195,16 @@ const SchedulesForm = () => {
   const handleExceptionSubmit = async event => {
     event.preventDefault()
     try {
-      const response = await fetch('http://127.0.0.1:8000/schedule_exceptions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newException)
-      })
+      const response = await fetch(
+        'http://127.0.0.1:8000/schedule_exceptions',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newException)
+        }
+      )
       console.log(newException)
       if (response.ok) {
         setNewException({
@@ -200,7 +214,7 @@ const SchedulesForm = () => {
           start_time: '',
           end_time: ''
         })
-        fetchSchedules(selectedGroup)
+        fetchScheduleExceptions(selectedGroup)
         const data = await response.json()
         console.log(data)
       } else {
@@ -227,11 +241,60 @@ const SchedulesForm = () => {
     })
   }
 
+  const handleEditScheduleExceptions = scheduleException => {
+    setScheduleExceptionsEdit(scheduleException)
+    setNewException({
+      id_group: scheduleException.id_group,
+      id_schedule_exception: scheduleException.id_schedule_exception,
+      date: scheduleException.date,
+      is_class: scheduleException.is_class,
+      start_time: scheduleException.start_time,
+      end_time: scheduleException.end_time
+    })
+  }
+
+  const handleUpdateSchedulesExceptions = async event => {
+    event.preventDefault()
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/schedule_exceptions/${scheduleExceptionsEdit.id_schedule_exception}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id_group: selectedGroup,
+            ...newException
+          })
+        }
+      )
+      if (response.ok) {
+        alert('¡Excepción actualizado exitosamente!')
+        setScheduleExceptionsEdit(null)
+        setNewException({
+          date: '',
+          is_class: '',
+          start_time: '',
+          end_time: ''
+        })
+        fetchScheduleExceptions(selectedGroup)
+      } else {
+        console.error('Error al actualizar la excepción:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al actualizar la excepción:', error)
+    }
+  }
+
   const handleDeleteSchedules = async id_schedule => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/schedules/${id_schedule}`, {
-        method: 'DELETE'
-      })
+      const response = await fetch(
+        `http://127.0.0.1:8000/schedules/${id_schedule}`,
+        {
+          method: 'DELETE'
+        }
+      )
       if (response.ok) {
         fetchSchedules(selectedGroup)
         console.log('Horario eliminado')
@@ -243,20 +306,39 @@ const SchedulesForm = () => {
     }
   }
 
+  const handleDeleteSchedulesExceptions = async id_schedule_exception => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/schedule_exceptions/${id_schedule_exception}`,
+        {
+          method: 'DELETE'
+        }
+      )
+      if (response.ok) {
+        fetchSchedules(selectedGroup)
+        console.log('Excepcion eliminado')
+      } else {
+        console.error('Error al eliminar Excepcion:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error al eliminar Excepcion:', error)
+    }
+  }
+
   return (
     <>
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Gestionar Horarios</h2>
-        <div className="flex flex-col">
+        <div className='flex flex-col'>
           <div className='mb-4'>
             <label
               htmlFor='id_group'
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className='block text-gray-700 text-sm font-bold mb-2'
             >
               Seleccionar Curso:
             </label>
             <select
-              className="block w-full bg-gray-100 border border-gray-300 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+              className='block w-full bg-gray-100 border border-gray-300 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-500'
               name='id_group'
               id='id_group'
               value={selectedGroup}
@@ -272,16 +354,27 @@ const SchedulesForm = () => {
           </div>
 
           <h3 className='text-lg font-bold mb-2'>
-            {isExceptionMode ? 'Agregar Excepciones' : (
-              scheduleToEdit ? 'Editar Horario' : 'Crear Horario'
-            )}
+            {isExceptionMode
+              ? scheduleExceptionsEdit
+                ? 'Editar Excepciones'
+                : 'Agregar Excepciones'
+              : scheduleToEdit
+              ? 'Editar Horario'
+              : 'Crear Horario'}
           </h3>
           {isExceptionMode ? (
             <form
-              onSubmit={handleExceptionSubmit}
+              onSubmit={
+                scheduleExceptionsEdit
+                  ? handleUpdateSchedulesExceptions
+                  : handleExceptionSubmit
+              }
               className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
             >
-              <label htmlFor="date" className='block text-gray-700 text-sm font-bold mb-2'>
+              <label
+                htmlFor='date'
+                className='block text-gray-700 text-sm font-bold mb-2'
+              >
                 Fecha de excepción:
               </label>
               <input
@@ -295,7 +388,10 @@ const SchedulesForm = () => {
               />
 
               <div className='mb-4'>
-                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                <label
+                  htmlFor='start_time'
+                  className='block text-gray-700 text-sm font-bold mb-2'
+                >
                   Hora de inicio:
                 </label>
                 <input
@@ -310,7 +406,10 @@ const SchedulesForm = () => {
               </div>
 
               <div className='mb-4'>
-                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                <label
+                  htmlFor='end_time'
+                  className='block text-gray-700 text-sm font-bold mb-2'
+                >
                   Hora de fin:
                 </label>
                 <input
@@ -333,35 +432,63 @@ const SchedulesForm = () => {
                   onChange={handleExceptionChange}
                   className='mr-2 leading-tight'
                 />
-                <label htmlFor='is_class' className='block text-gray-700 text-sm font-bold'>
+                <label
+                  htmlFor='is_class'
+                  className='block text-gray-700 text-sm font-bold'
+                >
                   ¿Hay clase?
                 </label>
               </div>
 
-              <button
-                type='submit'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-              >
-                Agregar Excepción
-              </button>
-
+              <div className='grid w-full grid-cols-2 gap-2'>
+                <button
+                  type='submit'
+                  className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-full py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                >
+                  {scheduleExceptionsEdit
+                    ? 'Actualizar Excepción'
+                    : 'Agregar Excepción'}
+                </button>
+                {scheduleExceptionsEdit && (
+                  <button
+                    type='button'
+                    className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    onClick={() => {
+                      setScheduleExceptionsEdit(null)
+                      setNewException({
+                        id_group: '',
+                        date: '',
+                        is_class: false,
+                        start_time: '',
+                        end_time: ''
+                      })
+                    }}
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
             </form>
           ) : (
             <form
               onSubmit={scheduleToEdit ? handleUpdateSchedules : handleSubmit}
-              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
-              <label htmlFor="day" className='block text-gray-700 text-sm font-bold mb-2'>
+              className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+            >
+              <label
+                htmlFor='day'
+                className='block text-gray-700 text-sm font-bold mb-2'
+              >
                 Día de la semana:
               </label>
               <select
-                id="day"
-                name="id_day"
+                id='day'
+                name='id_day'
                 value={newSchedule.id_day}
                 onChange={handleInputChange}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
               >
-                <option value="">Selecciona un día</option>
-                {days.map((day) => (
+                <option value=''>Selecciona un día</option>
+                {days.map(day => (
                   <option key={day.id_day} value={day.id_day}>
                     {day.day}
                   </option>
@@ -369,7 +496,10 @@ const SchedulesForm = () => {
               </select>
 
               <div className='mb-4'>
-                <label htmlFor='start_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                <label
+                  htmlFor='start_time'
+                  className='block text-gray-700 text-sm font-bold mb-2'
+                >
                   Hora de inicio:
                 </label>
                 <input
@@ -384,7 +514,10 @@ const SchedulesForm = () => {
               </div>
 
               <div className='mb-4'>
-                <label htmlFor='end_time' className='block text-gray-700 text-sm font-bold mb-2'>
+                <label
+                  htmlFor='end_time'
+                  className='block text-gray-700 text-sm font-bold mb-2'
+                >
                   Hora de fin:
                 </label>
                 <input
@@ -399,15 +532,30 @@ const SchedulesForm = () => {
               </div>
               <button
                 type='submit'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-1/2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'
               >
                 {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
               </button>
+              {scheduleToEdit && (
+                <button
+                  type='button'
+                  className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                  onClick={() => {
+                    setScheduleToEdit(null)
+                    setNewSchedule({
+                      id_day: '',
+                      start_time: '',
+                      end_time: ''
+                    })
+                  }}
+                >
+                  Limpiar
+                </button>
+              )}
             </form>
           )}
         </div>
       </div>
-
 
       <div className=''>
         <div>
@@ -416,21 +564,36 @@ const SchedulesForm = () => {
             {isExceptionMode ? (
               scheduleExceptions.length > 0 ? (
                 scheduleExceptions.map(exception => (
-                  <div key={exception.id_schedule_exception} className='border p-4 rounded shadow-md flex justify-between items-center'>
+                  <div
+                    key={exception.id_schedule_exception}
+                    className='border p-4 rounded shadow-md flex justify-between items-center'
+                  >
                     <div className='flex flex-col gap-1'>
-                      <p><strong>Fecha:</strong> {exception.date}</p>
-                      <p><strong>Horario:</strong> {exception.start_time} - {exception.end_time}</p>
-                      <p><strong>¿Hay Clase?:</strong> {exception.is_class ? "Sí" : "No"} </p>
+                      <p>
+                        <strong>Fecha:</strong> {exception.date}
+                      </p>
+                      <p>
+                        <strong>Horario:</strong> {exception.start_time} -{' '}
+                        {exception.end_time}
+                      </p>
+                      <p>
+                        <strong>¿Hay Clase?:</strong>{' '}
+                        {exception.is_class ? 'Sí' : 'No'}{' '}
+                      </p>
                     </div>
                     <div className='flex space-x-2'>
                       <button
-                        onClick={() => handleDeleteSchedules(exception.id_schedule_exception)}
+                        onClick={() =>
+                          handleDeleteSchedulesExceptions(
+                            exception.id_schedule_exception
+                          )
+                        }
                         className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                       >
                         Eliminar
                       </button>
                       <button
-                        onClick={() => handleEditSchedules(exception)}
+                        onClick={() => handleEditScheduleExceptions(exception)}
                         className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                       >
                         Editar
@@ -441,14 +604,24 @@ const SchedulesForm = () => {
               ) : (
                 <p>No hay excepciones disponibles para este curso.</p>
               )
-            ) : (schedules.length > 0 ? (
+            ) : schedules.length > 0 ? (
               schedules.map(schedule => (
-                <div key={schedule.id_schedule} className='border p-4 rounded shadow-md flex justify-between items-center'>
-                  <p><strong>Día:</strong> {schedule.day}</p>
-                  <p><strong>Horario:</strong> {schedule.start_time} - {schedule.end_time}</p>
+                <div
+                  key={schedule.id_schedule}
+                  className='border p-4 rounded shadow-md flex justify-between items-center'
+                >
+                  <p>
+                    <strong>Día:</strong> {schedule.day}
+                  </p>
+                  <p>
+                    <strong>Horario:</strong> {schedule.start_time} -{' '}
+                    {schedule.end_time}
+                  </p>
                   <div className='flex space-x-2'>
                     <button
-                      onClick={() => handleDeleteSchedules(schedule.id_schedule)}
+                      onClick={() =>
+                        handleDeleteSchedules(schedule.id_schedule)
+                      }
                       className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
                     >
                       Eliminar
@@ -464,7 +637,7 @@ const SchedulesForm = () => {
               ))
             ) : (
               <p>No hay horarios disponibles para este curso.</p>
-            ))}
+            )}
             <button
               onClick={() => setIsExceptionMode(!isExceptionMode)}
               className='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 w-full'
@@ -474,7 +647,6 @@ const SchedulesForm = () => {
           </div>
         </div>
       </div>
-
     </>
   )
 }
