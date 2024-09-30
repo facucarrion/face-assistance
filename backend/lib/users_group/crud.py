@@ -8,3 +8,4 @@ def delete_usergroup_by_user(db: Session, id_user: int):
         db.commit()
         
     return db_user_group
+

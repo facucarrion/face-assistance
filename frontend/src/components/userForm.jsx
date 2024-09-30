@@ -9,26 +9,19 @@ const UserForm = () => {
     id_rol: 1
   })
   const [userToEdit, setUserToEdit] = useState(null)
+  const [userPermissions, setUserPermissions] = useState(null)
   const [roles, setRoles] = useState([])
 
   const fetchUsers = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/users/')
-      const usersData = await response.json()
-      setUsers(usersData)
-    } catch (error) {
-      console.error('Error al recuperar usuarios:', error)
-    }
+    const response = await fetch('http://127.0.0.1:8000/users/')
+    const usersData = await response.json()
+    setUsers(usersData)
   }
 
   const fetchRoles = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/users/roles/')
-      const rolesData = await response.json()
-      setRoles(rolesData)
-    } catch (error) {
-      console.error('Error al recuperar roles:', error)
-    }
+    const response = await fetch('http://127.0.0.1:8000/users/roles/')
+    const rolesData = await response.json()
+    setRoles(rolesData)
   }
 
   useEffect(() => {
@@ -60,46 +53,38 @@ const UserForm = () => {
       return
     }
 
-    try {
-      const response = await fetch('http://127.0.0.1:8000/users/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
+    const response = await fetch('http://127.0.0.1:8000/users/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
 
-      if (response.ok) {
-        alert('¡Usuario creado exitosamente!')
-        fetchUsers()
-        setFormData({
-          username: '',
-          password: '',
-          repeat_password: '',
-          id_rol: 1
-        })
-      } else {
-        alert('No se pudo crear el usuario')
-      }
-    } catch (error) {
-      console.error('Error al crear usuario:', error)
+    if (response.ok) {
+      alert('¡Usuario creado exitosamente!')
+      fetchUsers()
+      setFormData({
+        username: '',
+        password: '',
+        repeat_password: '',
+        id_rol: 1
+      })
+    } else {
+      alert('No se pudo crear el usuario')
     }
   }
 
   const handleDeleteUser = async id_user => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/users/${id_user}`, {
-        method: 'DELETE'
-      })
+    const response = await fetch(`http://127.0.0.1:8000/users/${id_user}`, {
+      method: 'DELETE'
+    })
 
-      if (response.ok) {
-        alert('¡Usuario eliminado exitosamente!')
-        fetchUsers()
-      } else {
-        alert('No se pudo eliminar el usuario')
-      }
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error)
+    if (response.ok) {
+      alert('¡Usuario eliminado exitosamente!')
+      fetchUsers()
+    } else {
+      alert('No se pudo eliminar el usuario')
     }
   }
 
@@ -111,33 +96,29 @@ const UserForm = () => {
       return
     }
 
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/users/${userToEdit.id_user}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        }
-      )
-
-      if (response.ok) {
-        alert('¡Usuario actualizado exitosamente!')
-        fetchUsers()
-        setUserToEdit(null)
-        setFormData({
-          username: '',
-          password: '',
-          repeat_password: '',
-          id_rol: 1
-        })
-      } else {
-        alert('No se pudo actualizar el usuario')
+    const response = await fetch(
+      `http://127.0.0.1:8000/users/${userToEdit.id_user}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
       }
-    } catch (error) {
-      console.error('Error al actualizar usuario:', error)
+    )
+
+    if (response.ok) {
+      alert('¡Usuario actualizado exitosamente!')
+      fetchUsers()
+      setUserToEdit(null)
+      setFormData({
+        username: '',
+        password: '',
+        repeat_password: '',
+        id_rol: 1
+      })
+    } else {
+      alert('No se pudo actualizar el usuario')
     }
   }
 
@@ -301,6 +282,15 @@ const UserForm = () => {
                       className='bg-yellow-300 hover:bg-yellow-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setUserPermissions(user)
+                      }}
+                      className='bg-green-300 hover:bg-green-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    >
+                      Permisos 
                     </button>
                   </td>
                 </tr>

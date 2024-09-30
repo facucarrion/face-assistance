@@ -19,92 +19,76 @@ const PeopleForm = () => {
   }, [])
 
   const fetchPeople = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/people?limit=500')
-      const peopleData = await response.json()
+    const response = await fetch('http://127.0.0.1:8000/people?limit=500')
+    const peopleData = await response.json()
 
-      setPeople(peopleData)
-    } catch (error) {
-      console.error('Error al recuperar alumnos:', error)
-    }
+    setPeople(peopleData)
   }
 
   const fetchGroups = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/groups/')
-      const groupsData = await response.json()
+    const response = await fetch('http://127.0.0.1:8000/groups/')
+    const groupsData = await response.json()
 
-      setGroups(groupsData)
+    setGroups(groupsData)
 
-      if (groupsData.length > 0) {
-        setFormData(prevFormData => ({
-          ...prevFormData,
-          id_group: groupsData[0].id_group
-        }))
-      }
-    } catch (error) {
-      console.error('Error al recuperar grupos:', error)
+    if (groupsData.length > 0) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        id_group: groupsData[0].id_group
+      }))
     }
   }
 
   const handleCreateOrUpdatePeople = async event => {
     event.preventDefault()
 
-    try {
-      const url = editPeopleId
-        ? `http://127.0.0.1:8000/people/${editPeopleId}`
-        : 'http://127.0.0.1:8000/people/'
-      const method = editPeopleId ? 'PUT' : 'POST'
+    const url = editPeopleId
+      ? `http://127.0.0.1:8000/people/${editPeopleId}`
+      : 'http://127.0.0.1:8000/people/'
+    const method = editPeopleId ? 'PUT' : 'POST'
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+
+    if (response.ok) {
+      alert(
+        editPeopleId
+          ? 'Alumno actualizado exitosamente!'
+          : 'Alumno creado exitosamente!'
+      )
+      fetchPeople()
+      setFormData({
+        firstname: '',
+        lastname: '',
+        document: '',
+        email: '',
+        phone_number: '',
+        id_group: groups.length > 0 ? groups[0].id_group : ''
       })
-
-      if (response.ok) {
-        alert(
-          editPeopleId
-            ? 'Alumno actualizado exitosamente!'
-            : 'Alumno creado exitosamente!'
-        )
-        fetchPeople()
-        setFormData({
-          firstname: '',
-          lastname: '',
-          document: '',
-          email: '',
-          phone_number: '',
-          id_group: groups.length > 0 ? groups[0].id_group : ''
-        })
-        setEditPeopleId(null)
-      } else {
-        alert('No se pudo crear/actualizar el alumno')
-      }
-    } catch (error) {
-      console.error('Error al crear/actualizar alumno:', error)
+      setEditPeopleId(null)
+    } else {
+      alert('No se pudo crear/actualizar el alumno')
     }
   }
 
   const handleDeletePeople = async id_person => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/people/${id_person}`,
-        {
-          method: 'DELETE'
-        }
-      )
-
-      if (response.ok) {
-        alert('¡Alumno eliminado exitosamente!')
-        fetchPeople()
-      } else {
-        alert('No se pudo eliminar el alumno')
+    const response = await fetch(
+      `http://127.0.0.1:8000/people/${id_person}`,
+      {
+        method: 'DELETE'
       }
-    } catch (error) {
-      console.error('Error al eliminar alumno:', error)
+    )
+
+    if (response.ok) {
+      alert('¡Alumno eliminado exitosamente!')
+      fetchPeople()
+    } else {
+      alert('No se pudo eliminar el alumno')
     }
   }
 
