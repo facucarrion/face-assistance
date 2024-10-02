@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.Assistance import Assistance
+from models.Periods import Periods
 from lib.people.crud import get_person_by_id
 from lib.schedules.crud import get_schedule_by_group_and_day
 from lib.schedule_exceptions.crud import get_schedule_exception_by_group_and_date
@@ -51,9 +52,14 @@ def delete_assistance_by_person(db: Session, id_person: int):
         
     return db_assistance
 
+def get_periods(db: Session, year: int):
+    return db.query(Periods).filter(Periods.year == year).first()
+
 def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
     # Obtener todas las fechas del año específico
-    start_of_year = datetime(year, 1, 1).date()
+    periods = get_periods(db, year)
+    split_period = periods.start_date.split("-")
+    start_of_year = datetime(split_period[0], split_period[1], split_period[2]).date()
     end_of_year = datetime.today().date()
     
     # Obtener a la persona y su grupo
@@ -119,6 +125,8 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
     start_of_month = datetime.strptime(f"{year}-{month}", "%Y-%m").date()
     end_of_month = (start_of_month.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
     
+
+    periods = get_periods(db, year)
     # Obtener a la persona y su grupo
     person = get_person_by_id(db, id_person)
     
@@ -129,6 +137,14 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
     current_date = start_of_month
 
     while current_date <= end_of_month:
+        if any(period.start_date <= current_date <= period.end_date for period in periods): 
+            assistance_summary.append({
+                'date': current_date.strftime("%Y-%m-%d"),
+                'assistance': 'vacation' 
+            })
+            current_date += timedelta(days=1)
+            continue
+
         weekday = current_date.weekday() + 1
         date_str = current_date.strftime("%Y-%m-%d")
 
