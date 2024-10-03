@@ -3,6 +3,7 @@ from pydantic import BaseModel
 class AssistanceBase(BaseModel):
     id_assistance: int
     id_person: int
+    id_period: int
     date: str
     time: str
 

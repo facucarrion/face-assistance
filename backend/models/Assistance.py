@@ -6,5 +6,6 @@ class Assistance(Base):
 
   id_assistance = Column(Integer, primary_key=True)
   id_person = Column(Integer, ForeignKey("people.id_person"))
+  id_period = Column(Integer, ForeignKey("periods.id_period"))
   date = Column(String(50))
   time = Column(String(8))

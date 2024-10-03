@@ -314,10 +314,10 @@ const UserForm = () => {
         ) : (
           // Formulario de Permisos
           <form onSubmit={handleSavePermissions} className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
-            <div className='mb-4'>
+            <div className='mb-6'>
               {groups.length > 0 ? (
                 groups.map(group => (
-                  <div key={group.id_group} className='flex items-center mb-2'>
+                  <div key={group.id_group} className='flex items-center mb-3'>
                     <input
                       type='checkbox'
                       id={`group-${group.id_group}`}
@@ -325,7 +325,7 @@ const UserForm = () => {
                       value={group.id_group}
                       checked={selectedGroups.includes(group.id_group)}
                       onChange={handleGroupsChange}
-                      className='mr-2'
+                      className="mr-3 h-5 w-5 accent-blue-400 border-gray-300 rounded"
                     />
                     <label htmlFor={`group-${group.id_group}`} className='text-gray-700'>
                       {group.name}
@@ -333,7 +333,7 @@ const UserForm = () => {
                   </div>
                 ))
               ) : (
-                <p>No hay cursos disponibles.</p>
+                <p className="text-gray-600">No hay cursos disponibles.</p>
               )}
             </div>
             <div className='grid grid-cols-2 gap-4'>
