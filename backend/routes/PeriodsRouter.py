@@ -13,7 +13,7 @@ periods_router = APIRouter(
 async def create_new_periods(periods: PeriodsCreate, db: Session = Depends(get_db)):
     return PeriodsCrud.create_periods(db, periods)
 
-@periods_router.get("/{id_group}")
-async def get_schedules_by_group(id_group: int, db: Session = Depends(get_db)):
-    schedules = crud_get_schedules_by_group(db=db, id_group=id_group)
-    return schedules
+@periods_router.put("/{id_periods}")
+async def update_periods(id_period: int, periods_update: PeriodsUpdate, db: Session = Depends(get_db)):
+    periods = PeriodsCrud.update_periods(db, id_period, periods_update)
+    return periods
