@@ -2,17 +2,8 @@
 import Layout from '../../layout/Layout.astro'
 import Title from '../../components/Title.astro'
 import AnnualCalendar from '../../components/AnnualCalendar.jsx'
-import { getSearchedPeople } from '../../lib/people/getSearchedPeople'
 import { getPerson } from '../../lib/people/getPerson'
 import { DoughnutChart } from '../../components/DoughnutChart'
-
-export async function getStaticPaths() {
-  const people = await getSearchedPeople('')
-
-  return people.map(person => {
-    return { params: { id: person.id_person.toString() } }
-  })
-}
 
 export const prerender = false
 
@@ -29,24 +20,23 @@ console.log(yearly_assistance)
 ---
 
 <Layout>
-  
   <main class='p-4 flex flex-col items-center'>
-    <div class="w-full mb-4">
-        <Title backbutton={true} backhref='/search'>
-          {`${person.firstname} ${person.lastname}`}
-        </Title>
-        <div class='flex items-center mb-2'>
-          <p class='font-semibold mr-2'>Documento:</p>
-          <p class='text-gray-800'>{person.document}</p>
-        </div>
+    <div class='w-full mb-4'>
+      <Title backbutton={true} backhref='/search'>
+        {`${person.firstname} ${person.lastname}`}
+      </Title>
+      <div class='flex items-center mb-2'>
+        <p class='font-semibold mr-2'>Documento:</p>
+        <p class='text-gray-800'>{person.document}</p>
       </div>
+    </div>
 
     <div class='w-full flex justify-between'>
       <div class='flex-grow'>
         <AnnualCalendar id_person={id} client:load />
       </div>
 
-      <div class='ml-2' style="width: 55%;">
+      <div class='ml-2' style='width: 55%;'>
         <DoughnutChart assistance={yearly_assistance} client:load />
       </div>
     </div>

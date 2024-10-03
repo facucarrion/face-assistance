@@ -38,7 +38,7 @@ async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
   db_people = delete_people(db, id_person)
   return db_people
 
-@people_router.get("/{id_person}/assistance/{year}")
+@people_router.get("/{id_person}/assistance/{year}", response_model=dict)
 async def annual_assistance(id_person: int, year: int, db: Session = Depends(get_db)):
   db_assistance = get_yearly_assistance_summary(db, id_person, year)
   return db_assistance

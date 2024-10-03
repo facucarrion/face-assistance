@@ -58,9 +58,11 @@ def get_periods(db: Session, year: int):
 def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
     # Obtener todas las fechas del año específico
     periods = get_periods(db, year)
-    split_period = periods.start_date.split("-")
-    start_of_year = datetime(split_period[0], split_period[1], split_period[2]).date()
+    start_of_year = periods.start_date
     end_of_year = datetime.today().date()
+
+    if periods.end_date < end_of_year:
+        end_of_year = periods.end_date
     
     # Obtener a la persona y su grupo
     person = get_person_by_id(db, id_person)
@@ -70,6 +72,9 @@ def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
     present_count = 0
     late_count = 0
     absent_count = 0
+
+    dates_excluded = []
+    dates_included = []
 
     # Recorrer todos los días del año
     current_date = start_of_year
@@ -82,13 +87,15 @@ def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
         schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
         schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
 
-        if not schedule or (schedule_exception and not schedule_exception.is_class):
+        if not schedule or (schedule_exception and not schedule_exception.is_class) or (current_date >= periods.vacation_start and current_date <= periods.vacation_end):
             # Si no hay clase programada este día, no se cuenta
             current_date += timedelta(days=1)
+            dates_excluded.append(date_str)
             continue
 
         # Incrementar el contador de días de clase
         total_days += 1
+        dates_included.append(date_str)
 
         # Determinar la hora de inicio de la clase
         start_time = schedule.start_time
@@ -122,11 +129,16 @@ def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
 
 def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month: int):
     # Parsear el mes recibido en formato YYYY-MM
+    periods = get_periods(db, year)
     start_of_month = datetime.strptime(f"{year}-{month}", "%Y-%m").date()
     end_of_month = (start_of_month.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
     
+    if (start_of_month < periods.start_date):
+        start_of_month = periods.start_date
 
-    periods = get_periods(db, year)
+    if (end_of_month > periods.end_date):
+        end_of_month = periods.end_date
+
     # Obtener a la persona y su grupo
     person = get_person_by_id(db, id_person)
     
@@ -137,14 +149,6 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
     current_date = start_of_month
 
     while current_date <= end_of_month:
-        if any(period.start_date <= current_date <= period.end_date for period in periods): 
-            assistance_summary.append({
-                'date': current_date.strftime("%Y-%m-%d"),
-                'assistance': 'vacation' 
-            })
-            current_date += timedelta(days=1)
-            continue
-
         weekday = current_date.weekday() + 1
         date_str = current_date.strftime("%Y-%m-%d")
 
@@ -152,7 +156,7 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
         schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
         schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
 
-        if not schedule or (schedule_exception and not schedule_exception.is_class) or current_date > datetime.today().date():
+        if not schedule or (schedule_exception and not schedule_exception.is_class) or (current_date > datetime.today().date()) or (current_date >= periods.vacation_start and current_date <= periods.vacation_end):
             # Si no hay clase programada este día
             assistance_summary.append({
                 'date': date_str,
