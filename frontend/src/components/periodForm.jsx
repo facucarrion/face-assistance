@@ -11,6 +11,21 @@ const PeriodForm = () => {
   })
   const [editPeriodsId, setEditPeriodsId] = useState(null)
 
+  const fetchPeriods = async () => {
+    const response = await fetch('http://127.0.0.1:8000/periods/')
+    const periodsData = await response.json()
+    setPeriods(periodsData)
+  }
+
+  useEffect(() => {
+    fetchPeriods()
+  }, [])
+
+  useEffect(() => {
+    console.log(newPeriods)
+    console.log(editPeriodsId)
+  }, [editPeriodsId])
+
   const handleCreateOrUpdatePeriods = async event => {
     event.preventDefault()
 
@@ -42,9 +57,21 @@ const PeriodForm = () => {
         year: ''
       })
       setEditPeriodsId(null)
+      fetchPeriods()
     } else {
       alert('No se pudo crear/actualizar el ciclo lectivo')
     }
+  }
+
+  const handleEditPeriods = period => {
+    setNewPeriods({
+      start_date: period.start_date,
+      end_date: period.end_date,
+      vacation_start: period.vacation_start,
+      vacation_end: period.vacation_end,
+      year: period.year
+    })
+    setEditPeriodsId(period.id_period)
   }
 
   const handleDeletePeriods = async id_period => {
@@ -54,6 +81,7 @@ const PeriodForm = () => {
 
     if (response.ok) {
       alert('¡Ciclo lectivo eliminado exitosamente!')
+      fetchPeriods()
     } else {
       alert('No se pudo eliminar el ciclo lectivo')
     }
@@ -207,26 +235,30 @@ const PeriodForm = () => {
             </thead>
 
             <tbody>
-              {/* {groups.map(group => (
-                <tr key={group.id_group}>
-                  {/* <td className='py-2 px-4 border-b'>{group.name}</td> */}
-                  {/* <td className='py-2 px-4 border-b'> */} 
-                    {/* <button
-                      onClick={() => handleDeleteGroup(group.id_group)}
+              {periods.map(period => (
+                <tr key={period.id_period}>
+                  <td className='py-2 px-4 border-b'>{period.start_date}</td>
+                  <td className='py-2 px-4 border-b'>{period.end_date}</td>
+                  <td className='py-2 px-4 border-b'>{period.vacation_start}</td>
+                  <td className='py-2 px-4 border-b'>{period.vacation_end}</td>
+                  <td className='py-2 px-4 border-b'>{period.year}</td>
+                  <td className='py-2 px-4 border-b'>
+                    <button
+                      onClick={() => handleDeletePeriods(period.id_period)}
                       className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Eliminar
                     </button>
 
                     <button
-                      onClick={() => handleEditGroup(group)}
+                      onClick={() => handleEditPeriods(period)}
                       className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
                     </button>
                   </td>
                 </tr>
-              ))} */}
+              ))}
             </tbody>
           </table>
         </div>
