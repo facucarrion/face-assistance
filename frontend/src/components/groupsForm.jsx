@@ -12,13 +12,9 @@ const GroupsForm = () => {
   const [editGroupId, setEditGroupId] = useState(null)
 
   const fetchGroups = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/groups/')
-      const groupsData = await response.json()
-      setGroups(groupsData)
-    } catch (error) {
-      console.error('Error al recuperar curso:', error)
-    }
+    const response = await fetch('http://127.0.0.1:8000/groups/')
+    const groupsData = await response.json()
+    setGroups(groupsData)
   }
 
   useEffect(() => {
@@ -28,51 +24,43 @@ const GroupsForm = () => {
   const handleCreateOrUpdateGroup = async event => {
     event.preventDefault()
 
-    try {
-      const url = editGroupId
-        ? `http://127.0.0.1:8000/groups/${editGroupId}`
-        : 'http://127.0.0.1:8000/groups/'
-      const method = editGroupId ? 'PUT' : 'POST'
+    const url = editGroupId
+      ? `http://127.0.0.1:8000/groups/${editGroupId}`
+      : 'http://127.0.0.1:8000/groups/'
+    const method = editGroupId ? 'PUT' : 'POST'
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
 
-      if (response.ok) {
-        alert(
-          editGroupId
-            ? 'Curso actualizado exitosamente!'
-            : 'Curso creado exitosamente!'
-        )
-        fetchGroups()
-        setFormData({ name: '' })
-        setEditGroupId(null)
-      } else {
-        alert('No se pudo crear/actualizar el curso')
-      }
-    } catch (error) {
-      console.error('Error al crear/actualizar curso:', error)
+    if (response.ok) {
+      alert(
+        editGroupId
+          ? 'Curso actualizado exitosamente!'
+          : 'Curso creado exitosamente!'
+      )
+      fetchGroups()
+      setFormData({ name: '' })
+      setEditGroupId(null)
+    } else {
+      alert('No se pudo crear/actualizar el curso')
     }
   }
 
   const handleDeleteGroup = async id_group => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/groups/${id_group}`, {
-        method: 'DELETE'
-      })
+    const response = await fetch(`http://127.0.0.1:8000/groups/${id_group}`, {
+      method: 'DELETE'
+    })
 
-      if (response.ok) {
-        alert('¡Curso eliminado exitosamente!')
-        fetchGroups()
-      } else {
-        alert('No se pudo eliminar el curso')
-      }
-    } catch (error) {
-      console.error('Error al eliminar curso:', error)
+    if (response.ok) {
+      alert('¡Curso eliminado exitosamente!')
+      fetchGroups()
+    } else {
+      alert('No se pudo eliminar el curso')
     }
   }
 
@@ -96,29 +84,25 @@ const GroupsForm = () => {
 
     if (!confirm(`¿Está seguro de mover los alumnos del curso ${groupsData.currentGroupId} a ${groupsData.newGroupId}?`)) return
 
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/groups/transfer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from_group_id: groupsData.currentGroupId,
-          to_group_id: groupsData.newGroupId
-        })
+    const response = await fetch(`http://127.0.0.1:8000/groups/transfer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from_group_id: groupsData.currentGroupId,
+        to_group_id: groupsData.newGroupId
       })
+    })
 
-      if (response.ok) {
-        alert('¡Alumnos trasladados exitosamente!')
-        setGroupsData({
-          currentGroupId: '',
-          newGroupId: ''
-        })
-      } else {
-        alert('No se pudo trasladar los alumnos')
-      }
-    } catch (error) {
-      console.error('Error al trasladar alumnos:', error)
+    if (response.ok) {
+      alert('¡Alumnos trasladados exitosamente!')
+      setGroupsData({
+        currentGroupId: '',
+        newGroupId: ''
+      })
+    } else {
+      alert('No se pudo trasladar los alumnos')
     }
   }
 
@@ -184,62 +168,62 @@ const GroupsForm = () => {
         <h2 className='text-2xl font-bold mb-4'>
           Desplazar Alumnos a otro Curso
         </h2>
-<div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'>
-        <div className='mb-4'>
-          <label
-            htmlFor='currentGroupId'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Curso Actual:
-          </label>
-          <select
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-            name='currentGroupId'
-            id='currentGroupId'
-            value={groupsData.currentGroupId}
-            onChange={handleChangeSelect}
-            required
-          >
-            <option value=''>Seleccione un curso</option>
-            {groups.map(group => (
-              <option key={group.id_group} value={group.id_group}>
-                {group.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'>
+          <div className='mb-4'>
+            <label
+              htmlFor='currentGroupId'
+              className='block text-gray-700 text-sm font-bold mb-2'
+            >
+              Curso Actual:
+            </label>
+            <select
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              name='currentGroupId'
+              id='currentGroupId'
+              value={groupsData.currentGroupId}
+              onChange={handleChangeSelect}
+              required
+            >
+              <option value=''>Seleccione un curso</option>
+              {groups.map(group => (
+                <option key={group.id_group} value={group.id_group}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className='mb-4'>
-          <label
-            htmlFor='newGroupId'
-            className='block text-gray-700 text-sm font-bold mb-2'
-          >
-            Nuevo Curso:
-          </label>
-          <select
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-            name='newGroupId'
-            id='newGroupId'
-            value={groupsData.newGroupId}
-            onChange={handleChangeSelect}
-            required
-          >
-            <option value=''>Seleccione un curso</option>
-            {groups.map(group => (
-              <option key={group.id_group} value={group.id_group}>
-                {group.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className='mb-4'>
+            <label
+              htmlFor='newGroupId'
+              className='block text-gray-700 text-sm font-bold mb-2'
+            >
+              Nuevo Curso:
+            </label>
+            <select
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              name='newGroupId'
+              id='newGroupId'
+              value={groupsData.newGroupId}
+              onChange={handleChangeSelect}
+              required
+            >
+              <option value=''>Seleccione un curso</option>
+              {groups.map(group => (
+                <option key={group.id_group} value={group.id_group}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <button
-          className='bg-blue-300 hover:bg-blue-500 text-white w-1/2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-          onClick={handleTransferStudents}
-        >
-          Trasladar Alumnos
-        </button>
-      </div>
+          <button
+            className='bg-blue-300 hover:bg-blue-500 text-white w-1/2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            onClick={handleTransferStudents}
+          >
+            Trasladar Alumnos
+          </button>
+        </div>
       </div>
 
       <div className='w-full'>

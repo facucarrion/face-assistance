@@ -46,70 +46,46 @@ const SchedulesForm = () => {
   }, [isExceptionMode])
 
   const fetchGroups = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/groups/')
-      if (response.ok) {
-        const groupsData = await response.json()
-        setGroups(groupsData)
-        if (groupsData.length > 0) {
-          setSelectedGroup(groupsData[0].id_group)
-          setNewException(prevState => ({
-            ...prevState,
-            id_group: groupsData[0].id_group
-          }))
-        }
-      } else {
-        console.error('Error al recuperar grupos:', response.statusText)
+    const response = await fetch('http://127.0.0.1:8000/groups/')
+    if (response.ok) {
+      const groupsData = await response.json()
+      setGroups(groupsData)
+      if (groupsData.length > 0) {
+        setSelectedGroup(groupsData[0].id_group)
+        setNewException(prevState => ({
+          ...prevState,
+          id_group: groupsData[0].id_group
+        }))
       }
-    } catch (error) {
-      console.error('Error al recuperar grupos:', error)
     }
   }
 
   const fetchDays = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/days/')
-      if (response.ok) {
-        const daysData = await response.json()
-        setDays(daysData)
-      } else {
-        console.error('Error al recuperar días:', response.statusText)
-      }
-    } catch (error) {
-      console.error('Error al recuperar días:', error)
+    const response = await fetch('http://127.0.0.1:8000/days/')
+    if (response.ok) {
+      const daysData = await response.json()
+      setDays(daysData)
     }
   }
 
   const fetchSchedules = async id_group => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedules/${id_group}`
-      )
-      if (response.ok) {
-        const schedulesData = await response.json()
-        setSchedules(schedulesData)
-      } else {
-        console.error('Error al recuperar horarios:', response.statusText)
-      }
-    } catch (error) {
-      console.error('Error al recuperar horarios:', error)
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedules/${id_group}`
+    )
+    if (response.ok) {
+      const schedulesData = await response.json()
+      setSchedules(schedulesData)
     }
   }
 
   const fetchScheduleExceptions = async id_group => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedule_exceptions/${id_group}`
-      )
-      if (response.ok) {
-        const scheduleExceptionsData = await response.json()
-        console.log(scheduleExceptionsData)
-        setScheduleExceptions(scheduleExceptionsData)
-      } else {
-        console.error('Error al recuperar horarios:', response.statusText)
-      }
-    } catch (error) {
-      console.error('Error al recuperar horarios:', error)
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedule_exceptions/${id_group}`
+    )
+    if (response.ok) {
+      const scheduleExceptionsData = await response.json()
+      console.log(scheduleExceptionsData)
+      setScheduleExceptions(scheduleExceptionsData)
     }
   }
 
@@ -132,42 +108,10 @@ const SchedulesForm = () => {
 
   const handleUpdateSchedules = async event => {
     event.preventDefault()
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedules/${scheduleToEdit.id_schedule}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id_group: selectedGroup,
-            ...newSchedule
-          })
-        }
-      )
-      if (response.ok) {
-        alert('¡Horario actualizado exitosamente!')
-        setScheduleToEdit(null)
-        setNewSchedule({
-          id_day: '',
-          start_time: '',
-          end_time: ''
-        })
-        fetchSchedules(selectedGroup)
-      } else {
-        console.error('Error al actualizar horario:', response.statusText)
-      }
-    } catch (error) {
-      console.error('Error al actualizar horario:', error)
-    }
-  }
-
-  const handleSubmit = async event => {
-    event.preventDefault()
-    try {
-      const response = await fetch('http://127.0.0.1:8000/schedules', {
-        method: 'POST',
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedules/${scheduleToEdit.id_schedule}`,
+      {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -175,53 +119,67 @@ const SchedulesForm = () => {
           id_group: selectedGroup,
           ...newSchedule
         })
-      })
-      if (response.ok) {
-        setNewSchedule({
-          id_day: '',
-          start_time: '',
-          end_time: ''
-        })
-        fetchSchedules(selectedGroup)
-        console.log(await response.json())
-      } else {
-        console.error('Error al crear horario:', response.statusText)
       }
-    } catch (error) {
-      console.error('Error al crear horario:', error)
+    )
+    if (response.ok) {
+      alert('¡Horario actualizado exitosamente!')
+      setScheduleToEdit(null)
+      setNewSchedule({
+        id_day: '',
+        start_time: '',
+        end_time: ''
+      })
+      fetchSchedules(selectedGroup)
+    }
+  }
+
+  const handleSubmit = async event => {
+    event.preventDefault()
+    const response = await fetch('http://127.0.0.1:8000/schedules', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id_group: selectedGroup,
+        ...newSchedule
+      })
+    })
+    if (response.ok) {
+      setNewSchedule({
+        id_day: '',
+        start_time: '',
+        end_time: ''
+      })
+      fetchSchedules(selectedGroup)
+      console.log(await response.json())
     }
   }
 
   const handleExceptionSubmit = async event => {
     event.preventDefault()
-    try {
-      const response = await fetch(
-        'http://127.0.0.1:8000/schedule_exceptions',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newException)
-        }
-      )
-      console.log(newException)
-      if (response.ok) {
-        setNewException({
-          id_group: '',
-          date: '',
-          is_class: false,
-          start_time: '',
-          end_time: ''
-        })
-        fetchScheduleExceptions(selectedGroup)
-        const data = await response.json()
-        console.log(data)
-      } else {
-        console.error('Error al crear excepción:', response.statusText)
+    const response = await fetch(
+      'http://127.0.0.1:8000/schedule_exceptions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newException)
       }
-    } catch (error) {
-      console.error('Error al crear excepción:', error)
+    )
+    console.log(newException)
+    if (response.ok) {
+      setNewException({
+        id_group: '',
+        date: '',
+        is_class: false,
+        start_time: '',
+        end_time: ''
+      })
+      fetchScheduleExceptions(selectedGroup)
+      const data = await response.json()
+      console.log(data)
     }
   }
 
@@ -255,59 +213,45 @@ const SchedulesForm = () => {
 
   const handleUpdateSchedulesExceptions = async event => {
     event.preventDefault()
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedule_exceptions/${scheduleExceptionsEdit.id_schedule_exception}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id_group: selectedGroup,
-            ...newException
-          })
-        }
-      )
-      if (response.ok) {
-        alert('¡Excepción actualizado exitosamente!')
-        setScheduleExceptionsEdit(null)
-        setNewException({
-          date: '',
-          is_class: '',
-          start_time: '',
-          end_time: ''
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedule_exceptions/${scheduleExceptionsEdit.id_schedule_exception}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id_group: selectedGroup,
+          ...newException
         })
-        fetchScheduleExceptions(selectedGroup)
-      } else {
-        console.error('Error al actualizar la excepción:', response.statusText)
       }
-    } catch (error) {
-      console.error('Error al actualizar la excepción:', error)
+    )
+    if (response.ok) {
+      alert('¡Excepción actualizado exitosamente!')
+      setScheduleExceptionsEdit(null)
+      setNewException({
+        date: '',
+        is_class: '',
+        start_time: '',
+        end_time: ''
+      })
+      fetchScheduleExceptions(selectedGroup)
     }
   }
 
   const handleDeleteSchedules = async id_schedule => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedules/${id_schedule}`,
-        {
-          method: 'DELETE'
-        }
-      )
-      if (response.ok) {
-        fetchSchedules(selectedGroup)
-        console.log('Horario eliminado')
-      } else {
-        console.error('Error al eliminar horario:', response.statusText)
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedules/${id_schedule}`,
+      {
+        method: 'DELETE'
       }
-    } catch (error) {
-      console.error('Error al eliminar horario:', error)
+    )
+    if (response.ok) {
+      fetchSchedules(selectedGroup)
+      console.log('Horario eliminado')
     }
-  }
 
-  const handleDeleteSchedulesExceptions = async id_schedule_exception => {
-    try {
+    const handleDeleteSchedulesExceptions = async id_schedule_exception => {
       const response = await fetch(
         `http://127.0.0.1:8000/schedule_exceptions/${id_schedule_exception}`,
         {
@@ -317,11 +261,7 @@ const SchedulesForm = () => {
       if (response.ok) {
         fetchSchedules(selectedGroup)
         console.log('Excepcion eliminado')
-      } else {
-        console.error('Error al eliminar Excepcion:', response.statusText)
       }
-    } catch (error) {
-      console.error('Error al eliminar Excepcion:', error)
     }
   }
 
@@ -359,8 +299,8 @@ const SchedulesForm = () => {
                 ? 'Editar Excepciones'
                 : 'Agregar Excepciones'
               : scheduleToEdit
-              ? 'Editar Horario'
-              : 'Crear Horario'}
+                ? 'Editar Horario'
+                : 'Crear Horario'}
           </h3>
           {isExceptionMode ? (
             <form

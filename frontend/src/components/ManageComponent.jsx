@@ -4,6 +4,7 @@ import UserForm from './userForm.jsx'
 import GroupsForm from './groupsForm.jsx'
 import PeopleForm from './peopleForm.jsx'
 import ScheduleForm from './scheduleForm.jsx'
+import PeriodForm from './periodForm.jsx'
 
 const ManageComponent = () => {
   const [view, setView] = useState('users')
@@ -35,6 +36,12 @@ const ManageComponent = () => {
         >
           Gestionar Horarios
         </button>
+        <button
+          onClick={() => setView('periods')}
+          className='bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+        >
+          Gestionar Ciclo Lectivo
+        </button>
       </div>
 
       <div className='grid grid-cols-2 gap-8'>
@@ -42,6 +49,7 @@ const ManageComponent = () => {
         {view === 'groups' && <GroupsForm />}
         {view === 'people' && <PeopleForm />}
         {view === 'schedules' && <ScheduleForm />}
+        {view === 'periods' && <PeriodForm />}
       </div>
     </div>
   )

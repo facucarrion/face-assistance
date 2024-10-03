@@ -17,8 +17,6 @@ async def read_people(skip: int = 0, limit: int = 100, db: Session = Depends(get
 @people_router.get("/search")
 async def people_filter(q: str, id_user: int = 0, db: Session = Depends(get_db)):
   db_people = filter_people(db, q, id_user)
-  if not db_people:
-    raise HTTPException(status_code=404, detail="Alumno no encontrado")
   return db_people
 
 @people_router.get("/{id_person}", response_model=PeopleBase)
@@ -32,19 +30,15 @@ async def create_new_people(people: PeopleCreate, db: Session = Depends(get_db))
 @people_router.put("/{id_person}", response_model=PeopleBase)
 async def update_existing_people(id_person: int, people_update: PeopleUpdate, db: Session = Depends(get_db)):
   db_people = update_people(db, id_person, people_update)
-  if not db_people:
-    raise HTTPException(status_code=404, detail="Alumno no encontrado")
   return db_people
 
 @people_router.delete("/{id_person}")
 async def delete_existing_people(id_person: int, db: Session = Depends(get_db)):
   db_assistance = delete_assistance_by_person(db, id_person)
   db_people = delete_people(db, id_person)
-  if not db_people:
-    raise HTTPException(status_code=404, detail="Alumno no encontrado")
   return db_people
 
-@people_router.get("/{id_person}/assistance/{year}")
+@people_router.get("/{id_person}/assistance/{year}", response_model=dict)
 async def annual_assistance(id_person: int, year: int, db: Session = Depends(get_db)):
   db_assistance = get_yearly_assistance_summary(db, id_person, year)
   return db_assistance
