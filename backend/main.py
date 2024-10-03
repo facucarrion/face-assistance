@@ -15,6 +15,8 @@ from routes.SchedulesRouter import schedules_router
 from routes.DaysRouter import days_router
 from routes.ExceptionsRouter import schedule_exceptions_router
 from routes.PeriodsRouter import periods_router
+from routes.DevicesRouter import devices_router
+from routes.StatesRouter import states_router
 from schemas.ImageSchema import ImageBase
 from models.People import People
 
@@ -42,8 +44,8 @@ app.include_router(schedules_router)
 app.include_router(days_router)
 app.include_router(schedule_exceptions_router)
 app.include_router(periods_router)
-
-
+app.include_router(devices_router)
+app.include_router(states_router)
 
 @app.post("/image/upload", response_model=dict)
 async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
