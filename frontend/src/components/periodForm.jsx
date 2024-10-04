@@ -21,11 +21,6 @@ const PeriodForm = () => {
     fetchPeriods()
   }, [])
 
-  useEffect(() => {
-    console.log(newPeriods)
-    console.log(editPeriodsId)
-  }, [editPeriodsId])
-
   const handleCreateOrUpdatePeriods = async event => {
     event.preventDefault()
 
@@ -199,7 +194,9 @@ const PeriodForm = () => {
               type='submit'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             >
-              {editPeriodsId ? 'Actualizar Ciclo Lectivo' : 'Crear Ciclo Lectivo'}
+              {editPeriodsId
+                ? 'Actualizar Ciclo Lectivo'
+                : 'Crear Ciclo Lectivo'}
             </button>
             {editPeriodsId && (
               <button
@@ -233,26 +230,23 @@ const PeriodForm = () => {
                 key={periods.id_period}
                 className='border p-4 rounded shadow-md flex gap-4 justify-between'
               >
-
                 <div>
                   <p>
                     <strong>Clases: </strong>
-                    {period.start_date} -{' '}
-                      {period.end_date} 
+                    {period.start_date} - {period.end_date}
                   </p>
                   <p>
                     <strong>Vacaciones: </strong>
-                    {period.vacation_start} -{' '}
-                      {period.vacation_end} 
+                    {period.vacation_start} - {period.vacation_end}
                   </p>
                   <td>
-                  <p>
-                    <strong>Año Lectivo: </strong> {period.year} 
-                  </p></td>
+                    <p>
+                      <strong>Año Lectivo: </strong> {period.year}
+                    </p>
+                  </td>
                 </div>
 
                 <div className='flex space-x-2 items-center'>
-
                   <button
                     onClick={() => handleDeletePeriods(period.id_period)}
                     className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
@@ -268,12 +262,10 @@ const PeriodForm = () => {
                   </button>
                 </div>
               </div>
-
             ))
           ) : (
             <p>No hay ciclos lectivos disponibles.</p>
           )}
-
         </div>
       </div>
     </>

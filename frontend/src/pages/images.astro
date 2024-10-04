@@ -1,10 +1,13 @@
 ---
 import Layout from '../layout/Layout.astro'
 import Title from '../components/Title.astro'
+import ImageForm from '../components/imageForm.jsx'
 ---
 
 <Layout>
   <main class='p-4'>
     <Title backbutton={true}>Imágenes</Title>
+
+    <ImageForm client:load />
   </main>
 </Layout>

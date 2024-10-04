@@ -27,7 +27,8 @@ os.makedirs("temp/uploads", exist_ok=True)
 
 app = FastAPI()
 
-app.mount("/public", StaticFiles(directory="/"), name="public")
+app.mount("/public", StaticFiles(directory="public"), name="public")
+app.mount("/temp", StaticFiles(directory="temp/uploads"), name="temp_uploads")
 
 app.add_middleware(
     CORSMiddleware,
