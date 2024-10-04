@@ -11,6 +11,7 @@ def get_devices(db: Session, skip: int = 0, limit: int = 100):
       "id_device": device.id_device,
       "name": device.name,
       "id_config": device.id_config,
+      "id_state": device.id_state,
       "state": state
     }
     for [device, state] in devices

@@ -4,6 +4,7 @@ class DevicesBase(BaseModel):
   id_device: int
   name: str
   id_config: int
+  id_state: int
   state: str
 
   class Config:
@@ -15,7 +16,6 @@ class DevicesCreate(BaseModel):
   id_state: int
 
 class DevicesUpdate(BaseModel):
-    id_device: int
     name: str
     id_config: int
     id_state: int

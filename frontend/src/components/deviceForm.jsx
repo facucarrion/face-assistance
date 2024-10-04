@@ -72,6 +72,7 @@ const DeviceForm = () => {
   }
 
   const handleEditDevice = device => {
+    console.log (device)
     setFormData({
       id_config: device.id_config,
       name: device.name,
@@ -87,7 +88,7 @@ const DeviceForm = () => {
 
     if (response.ok) {
       alert('¡Dispositivo eliminado exitosamente!')
-      fetchPeriods()
+      fetchDevices()
     } else {
       alert('No se pudo eliminar el dispositivo')
     }
@@ -192,7 +193,7 @@ const DeviceForm = () => {
       </div>
 
       <div>
-        <h2 className='text-2xl font-bold mb-4'>Lista de Dispositivos</h2>
+        <h2 className='text-lg font-bold mb-2'>Lista de Dispositivos</h2>
         <div className='max-h-96 overflow-y-auto relative'>
           <table className='min-w-full bg-white shadow-md rounded mb-4'>
             <thead className='sticky top-0'>
