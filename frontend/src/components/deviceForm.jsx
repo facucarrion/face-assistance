@@ -17,6 +17,10 @@ const DeviceForm = () => {
   }
 
   useEffect(() => {
+    console.log(formData)
+  }, [formData])
+
+  useEffect(() => {
     const fetchStates = async () => {
       const response = await fetch('http://localhost:8000/states')
       const statesData = await response.json()
@@ -67,21 +71,25 @@ const DeviceForm = () => {
     }
   }
 
-  const handleCreateDevice = async () => {
-    const response = await fetch('http://localhost:8000/devices/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
+  const handleEditDevice = device => {
+    setFormData({
+      id_config: device.id_config,
+      name: device.name,
+      id_state: device.id_state
+    })
+    setEditDeviceId(device.id_device)
+  }
+
+  const handleDeleteDevice = async id_device => {
+    const response = await fetch(`http://127.0.0.1:8000/devices/${id_device}`, {
+      method: 'DELETE'
     })
 
     if (response.ok) {
-      alert('Dispositivo creado exitosamente!')
-      setFormData({ id_config: '', name: '', id_state: 1 })
-      fetchDevices()
+      alert('¡Dispositivo eliminado exitosamente!')
+      fetchPeriods()
     } else {
-      alert('No se pudo crear el dispositivo')
+      alert('No se pudo eliminar el dispositivo')
     }
   }
 
@@ -149,7 +157,7 @@ const DeviceForm = () => {
               required
             >
               {states.map(state => (
-                <option key={state.id_state} value={state.id_state}>
+                <option key={state.id_state} value={state.id_state} checked={formData.id_state == state.id_state}>
                   {state.state}
                 </option>
               ))}
@@ -170,7 +178,9 @@ const DeviceForm = () => {
                 onClick={() => {
                   setEditDeviceId(null)
                   setFormData({
-                    name: ''
+                    id_config: '',
+                    name: '',
+                    id_state: 1
                   })
                 }}
               >
