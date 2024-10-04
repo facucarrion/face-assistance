@@ -13,12 +13,14 @@ class SchedulesExceptionsBase(BaseModel):
         from_attributes = True
 
 class ExceptionsCreate(BaseModel):
+    id_group: int
     date: str
     is_class: bool
     start_time: str
     end_time: str
 
 class ExceptionsUpdate(BaseModel):
+    id_group: int
     date: str
     is_class: bool
     start_time: str

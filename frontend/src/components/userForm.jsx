@@ -358,7 +358,7 @@ const UserForm = () => {
 
 
       <div className='w-full'>
-        <h2 className='text-2xl font-bold mb-4'>Lista de Usuarios</h2>
+        <h2 className='text-lg font-bold mb-2'>Lista de Usuarios</h2>
         <div
           className='max-h-[450px] overflow-y-scroll relative'
           style={{ scrollbarGutter: 'stable' }}

@@ -223,44 +223,57 @@ const PeriodForm = () => {
         </form>
       </div>
 
-      <div className='w-full'>
-        <h2 className='text-2xl font-bold mb-4'>Lista de Cursos</h2>
-        <div className='max-h-96 overflow-y-auto relative'>
-          <table className='min-w-full bg-white shadow-md rounded mb-4'>
-            <thead className='sticky top-0'>
-              <tr>
-                <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
-                <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
-              </tr>
-            </thead>
+      <div className=''>
+        <div>
+          <h2 className='text-lg font-bold mb-2'>Ciclos Lectivos</h2>
+          <div className='grid grid-cols-1 gap-4'></div>
+          {periods.length > 0 ? (
+            periods.map(period => (
+              <div
+                key={periods.id_period}
+                className='border p-4 rounded shadow-md flex gap-4 justify-between'
+              >
 
-            <tbody>
-              {periods.map(period => (
-                <tr key={period.id_period}>
-                  <td className='py-2 px-4 border-b'>{period.start_date}</td>
-                  <td className='py-2 px-4 border-b'>{period.end_date}</td>
-                  <td className='py-2 px-4 border-b'>{period.vacation_start}</td>
-                  <td className='py-2 px-4 border-b'>{period.vacation_end}</td>
-                  <td className='py-2 px-4 border-b'>{period.year}</td>
-                  <td className='py-2 px-4 border-b'>
-                    <button
-                      onClick={() => handleDeletePeriods(period.id_period)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                    >
-                      Eliminar
-                    </button>
+                <div>
+                  <p>
+                    <strong>Clases: </strong>
+                    {period.start_date} -{' '}
+                      {period.end_date} 
+                  </p>
+                  <p>
+                    <strong>Vacaciones: </strong>
+                    {period.vacation_start} -{' '}
+                      {period.vacation_end} 
+                  </p>
+                  <td>
+                  <p>
+                    <strong>Año Lectivo: </strong> {period.year} 
+                  </p></td>
+                </div>
 
-                    <button
-                      onClick={() => handleEditPeriods(period)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                    >
-                      Editar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                <div className='flex space-x-2 items-center'>
+
+                  <button
+                    onClick={() => handleDeletePeriods(period.id_period)}
+                    className='bg-red-300 hover:bg-red-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                  >
+                    Eliminar
+                  </button>
+
+                  <button
+                    onClick={() => handleEditPeriods(period)}
+                    className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm'
+                  >
+                    Editar
+                  </button>
+                </div>
+              </div>
+
+            ))
+          ) : (
+            <p>No hay ciclos lectivos disponibles.</p>
+          )}
+
         </div>
       </div>
     </>
