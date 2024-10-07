@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 
 const GroupsForm = () => {
   const [groups, setGroups] = useState([])
+  const [devices, setDevice] = useState([])
   const [formData, setFormData] = useState({
-    name: ''
+    name: '',
+    id_device: null
   })
   const [groupsData, setGroupsData] = useState({
     currentGroupId: '',
     newGroupId: ''
   })
   const [editGroupId, setEditGroupId] = useState(null)
+  const [showTransferForm, setShowTransferForm] = useState(false)
 
   const fetchGroups = async () => {
     const response = await fetch('http://127.0.0.1:8000/groups/')
@@ -17,8 +20,17 @@ const GroupsForm = () => {
     setGroups(groupsData)
   }
 
+  const fetchDevices = async () => {
+    const response = await fetch('http://127.0.0.1:8000/devices/')
+    if (response.ok) {
+      const devicesData = await response.json()
+      setDevice(devicesData)
+    }
+  }
+
   useEffect(() => {
     fetchGroups()
+    fetchDevices()
   }, [])
 
   const handleCreateOrUpdateGroup = async event => {
@@ -44,7 +56,7 @@ const GroupsForm = () => {
           : 'Curso creado exitosamente!'
       )
       fetchGroups()
-      setFormData({ name: '' })
+      setFormData({ name: '', id_device: '' })
       setEditGroupId(null)
     } else {
       alert('No se pudo crear/actualizar el curso')
@@ -72,7 +84,10 @@ const GroupsForm = () => {
   }
 
   const handleEditGroup = group => {
-    setFormData({ name: group.name })
+    setFormData({
+      name: group.name,
+      id_device: group.id_device
+    })
     setEditGroupId(group.id_group)
   }
 
@@ -101,6 +116,7 @@ const GroupsForm = () => {
         currentGroupId: '',
         newGroupId: ''
       })
+      setShowTransferForm(false)
     } else {
       alert('No se pudo trasladar los alumnos')
     }
@@ -116,114 +132,140 @@ const GroupsForm = () => {
   return (
     <>
       <div className='w-full'>
-        <h2 className='text-2xl font-bold mb-4'>
-          {editGroupId ? 'Editar Curso' : 'Crear Curso'}
-        </h2>
-        <form
-          onSubmit={handleCreateOrUpdateGroup}
-          className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'
-        >
-          <div className='mb-4'>
-            <label
-              htmlFor='name'
-              className='block text-gray-700 text-sm font-bold mb-2'
-            >
-              Nombre del Curso:
-            </label>
-            <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              type='text'
-              name='name'
-              id='name'
-              placeholder='Ingrese el nombre del curso'
-              required
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </div>
 
-          <div className='w-full grid grid-cols-2'>
-            <button
-              type='submit'
-              className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-            >
-              {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
-            </button>
-            {editGroupId && (
-              <button
-                type='button'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                onClick={() => {
-                  setEditGroupId(null)
-                  setFormData({
-                    name: ''
-                  })
-                }}
+        <h2 className='text-2xl font-bold mb-4'>
+          {showTransferForm ? "Desplazar alumnos" : editGroupId ? 'Editar Curso' : 'Crear Curso'}
+        </h2>
+
+        {showTransferForm ? (
+          <div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'>
+            <div className='mb-4'>
+              <label
+                htmlFor='currentGroupId'
+                className='block text-gray-700 text-sm font-bold mb-2'
               >
-                Limpiar
-              </button>
-            )}
-          </div>
-        </form>
-        <h2 className='text-2xl font-bold mb-4'>
-          Desplazar Alumnos a otro Curso
-        </h2>
-        <div className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'>
-          <div className='mb-4'>
-            <label
-              htmlFor='currentGroupId'
-              className='block text-gray-700 text-sm font-bold mb-2'
-            >
-              Curso Actual:
-            </label>
-            <select
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              name='currentGroupId'
-              id='currentGroupId'
-              value={groupsData.currentGroupId}
-              onChange={handleChangeSelect}
-              required
-            >
-              <option value=''>Seleccione un curso</option>
-              {groups.map(group => (
-                <option key={group.id_group} value={group.id_group}>
-                  {group.name}
-                </option>
-              ))}
-            </select>
-          </div>
+                Curso Actual:
+              </label>
+              <select
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                name='currentGroupId'
+                id='currentGroupId'
+                value={groupsData.currentGroupId}
+                onChange={handleChangeSelect}
+                required
+              >
+                <option value=''>Seleccione un curso</option>
+                {groups.map(group => (
+                  <option key={group.id_group} value={group.id_group}>
+                    {group.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className='mb-4'>
-            <label
-              htmlFor='newGroupId'
-              className='block text-gray-700 text-sm font-bold mb-2'
-            >
-              Nuevo Curso:
-            </label>
-            <select
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              name='newGroupId'
-              id='newGroupId'
-              value={groupsData.newGroupId}
-              onChange={handleChangeSelect}
-              required
-            >
-              <option value=''>Seleccione un curso</option>
-              {groups.map(group => (
-                <option key={group.id_group} value={group.id_group}>
-                  {group.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className='mb-4'>
+              <label
+                htmlFor='newGroupId'
+                className='block text-gray-700 text-sm font-bold mb-2'
+              >
+                Nuevo Curso:
+              </label>
+              <select
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                name='newGroupId'
+                id='newGroupId'
+                value={groupsData.newGroupId}
+                onChange={handleChangeSelect}
+                required
+              >
+                <option value=''>Seleccione un curso</option>
+                {groups.map(group => (
+                  <option key={group.id_group} value={group.id_group}>
+                    {group.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <button
-            className='bg-blue-300 hover:bg-blue-500 text-white w-1/2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-            onClick={handleTransferStudents}
+            <button
+              className='bg-blue-300 hover:bg-blue-500 text-white w-1/2 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              onClick={handleTransferStudents}
+            >
+              Trasladar Alumnos
+            </button>
+          </div>
+        ) : (
+          <form
+            onSubmit={handleCreateOrUpdateGroup}
+            className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col justify-between'
           >
-            Trasladar Alumnos
-          </button>
-        </div>
+            <div className='mb-4'>
+              <label
+                htmlFor='name'
+                className='block text-gray-700 text-sm font-bold mb-2'
+              >
+                Nombre del Curso:
+              </label>
+              <input
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                type='text'
+                name='name'
+                id='name'
+                placeholder='Ingrese el nombre del curso'
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div className='mb-4'>
+              <label
+                htmlFor='devices'
+                className='block text-gray-700 text-sm font-bold mb-2'
+              >
+                Dispositivo Asociado:
+              </label>
+              <select
+                id='devices'
+                name='id_device'
+                value={formData.id_device}
+                onChange={handleChange}
+                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+              >
+                <option value=''>Selecciona un Dispositivo</option>
+                {devices.map(device => (
+                  <option key={device.id_device} value={device.id_device}>
+                    {device.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className='w-full grid grid-cols-2 gap-4'>
+              <button
+                type='submit'
+                className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+              >
+                {editGroupId ? 'Actualizar Curso' : 'Crear Curso'}
+              </button>
+              {editGroupId && (
+                <button
+                  type='button'
+                  className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                  onClick={() => {
+                    setEditGroupId(null)
+                    setFormData({
+                      name: '',
+                      id_device: ''
+                    })
+                  }}
+                >
+                  Limpiar
+                </button>
+              )}
+            </div>
+          </form>
+        )}
+
       </div>
 
       <div className='w-full'>
@@ -241,6 +283,8 @@ const GroupsForm = () => {
               {groups.map(group => (
                 <tr key={group.id_group}>
                   <td className='py-2 px-4 border-b'>{group.name}</td>
+
+
                   <td className='py-2 px-4 border-b'>
                     <button
                       onClick={() => handleDeleteGroup(group.id_group)}
@@ -260,8 +304,17 @@ const GroupsForm = () => {
               ))}
             </tbody>
           </table>
+
         </div>
+        <button
+          onClick={() => setShowTransferForm(!showTransferForm)}
+          className='bg-gray-200 text-black font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 w-full'
+        >
+          {showTransferForm ? 'Cancelar' : 'Desplazar Alumnos'}
+        </button>
       </div>
+
+
     </>
   )
 }

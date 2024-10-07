@@ -46,7 +46,8 @@ def get_group_with_people_by_id(db: Session, id_group: int = 0):
 
 
 def create_group(db: Session, group: GroupCreate):
-  db_group = Groups(name=group.name)
+  db_group = Groups(name=group.name,
+                    id_device=group.id_device)
   db.add(db_group)
   db.commit()
   db.refresh(db_group)
@@ -58,6 +59,7 @@ def update_group(db: Session, id_group: int, group_update: GroupUpdate):
   if db_group is None:
     return None
   db_group.name = group_update.name
+  db_group.id_device = group_update.id_device
   db.commit()
   db.refresh(db_group)
   return db_group
