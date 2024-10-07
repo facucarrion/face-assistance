@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from models.Devices import Devices
 from models.States import States
 from schemas.DevicesSchema import DevicesBase, DevicesCreate, DevicesUpdate
+from models.Groups import Groups
+from models.People import People
 
 def get_devices(db: Session, skip: int = 0, limit: int = 100):
   devices = db.query(Devices, States.state).join(States, Devices.id_state == States.id_state).offset(skip).limit(limit).all()
@@ -50,9 +52,19 @@ def update_device(db: Session, id_device: int, device_update: DevicesUpdate):
     return db_device
 
 def delete_devices(db: Session, id_device: int):
-    db_device = db.query(Devices).filter(Devices.id_device == id_device).first()
-    if not db_device:
-        return None
-    db.delete(db_device)
-    db.commit()
-    return db_device
+  db_device = db.query(Devices).filter(Devices.id_device == id_device).first()
+  if not db_device:
+      return None
+  db.delete(db_device)
+  db.commit()
+  return db_device
+
+def get_device_by_person(db: Session, id_person: int):
+  return (
+      db.query(Devices)
+      .join(Groups, Groups.id_device == Devices.id_device)
+      .join(People, People.id_group == Groups.id_group)
+      .filter(People.id_person == id_person)
+      .first()
+    )
+  

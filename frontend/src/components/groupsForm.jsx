@@ -21,6 +21,10 @@ const GroupsForm = () => {
     fetchGroups()
   }, [])
 
+  useEffect(() => {
+    console.log(groups)
+  }, [groups])
+
   const handleCreateOrUpdateGroup = async event => {
     event.preventDefault()
 
@@ -82,7 +86,12 @@ const GroupsForm = () => {
       return
     }
 
-    if (!confirm(`¿Está seguro de mover los alumnos del curso ${groupsData.currentGroupId} a ${groupsData.newGroupId}?`)) return
+    if (
+      !confirm(
+        `¿Está seguro de mover los alumnos del curso ${groupsData.currentGroupId} a ${groupsData.newGroupId}?`
+      )
+    )
+      return
 
     const response = await fetch(`http://127.0.0.1:8000/groups/transfer`, {
       method: 'POST',

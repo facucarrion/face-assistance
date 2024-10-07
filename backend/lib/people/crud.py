@@ -4,12 +4,35 @@ from models.People import People
 from models.Groups import Groups
 from models.Assistance import Assistance
 from models.UsersGroup import UsersGroup
+from models.Devices import Devices
 from schemas.PeopleSchema import PeopleCreate, PeopleUpdate
 from lib.auth.crud import get_user_by_id
 
 
 def get_people(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(People).offset(skip).limit(limit).all()
+    db_people = (
+        db.query(People, Groups, Devices)
+        .join(Groups, Groups.id_group == People.id_group).join(Devices, Groups.id_device == Devices.id_device, isouter=True)
+        .order_by(People.id_group)
+        .offset(skip).limit(limit).all()
+    )
+
+    db_people = [
+        {
+            'id_person': person.id_person,
+            'firstname': person.firstname,
+            'lastname': person.lastname,
+            'document': person.document,
+            'email': person.email,
+            'phone_number': person.phone_number,
+            'id_group': person.id_group,
+            'group_name': group.name,
+            'device_name': device.name if device else None
+        }
+        for person, group, device in db_people
+    ]
+
+    return db_people
 
 def get_person_by_id(db: Session, id_person: int):
     return db.query(People).filter(People.id_person == id_person).first()

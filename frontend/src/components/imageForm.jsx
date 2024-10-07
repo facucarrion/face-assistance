@@ -16,6 +16,10 @@ const ImageForm = () => {
     fetchPeople()
   }, [])
 
+  useEffect(() => {
+    console.log(people)
+  }, [people])
+
   const handleUploadImage = async id_person => {
     const response = await fetch(
       `http://localhost:8000/temp_images/create_empty_temp_image`,
@@ -27,8 +31,11 @@ const ImageForm = () => {
         body: JSON.stringify({ id_person })
       }
     )
+    if (!response.ok) {
+      alert('No se ha podido poner la imagen en cola')
+      return
+    }
     const data = await response.json()
-    console.log(data)
     setIsUploading(true)
     setTempImage(data)
   }
@@ -59,6 +66,8 @@ const ImageForm = () => {
               <tr>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Apellido</th>
+                <th className='py-2 px-4 bg-gray-200 text-left'>Curso</th>
+                <th className='py-2 px-4 bg-gray-200 text-left'>Dispositivo</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
               </tr>
             </thead>
@@ -68,13 +77,19 @@ const ImageForm = () => {
                 <tr key={person.id_person}>
                   <td className='py-2 px-4 border-b'>{person.firstname}</td>
                   <td className='py-2 px-4 border-b'>{person.lastname}</td>
+                  <td className='py-2 px-4 border-b'>{person.group_name}</td>
                   <td className='py-2 px-4 border-b'>
-                    <button
-                      onClick={() => handleUploadImage(person.id_person)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                    >
-                      Subir Imagen
-                    </button>
+                    {person.device_name ?? 'No asignado'}
+                  </td>
+                  <td className='py-2 px-4 border-b'>
+                    {person.device_name && (
+                      <button
+                        onClick={() => handleUploadImage(person.id_person)}
+                        className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      >
+                        Subir Imagen
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

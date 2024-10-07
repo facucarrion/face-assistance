@@ -1,11 +1,43 @@
 from sqlalchemy.orm import Session
 from models.TempImages import TempImages
+from models.Groups import Groups
+from models.People import People
+from models.Devices import Devices
+from lib.people.crud import get_person_by_id
+from lib.devices.crud import get_device_by_person
+
+
+
+def can_upload_temp(db: Session, id_person: int):
+    user_temp_images = db.query(TempImages).filter(TempImages.id_person == id_person).all()
+
+    if len(user_temp_images) > 0:
+        return False
+    
+    device = get_device_by_person(db, id_person)
+
+    temp_images = db.query(TempImages).filter(get_device_by_person(db, id_person=TempImages.id_person).id_device == device.id_device).all()
+
+    if len(temp_images) > 0:
+        return False
+
+    return True
 
 def create_empty_temp_image(db: Session, id_person: int):
+    person = get_person_by_id(db, id_person)
+
+    if can_upload_temp(db, id_person) == False:
+        return None
+    
     db_temp_image = TempImages(id_person=id_person, image="")
     db.add(db_temp_image)
     db.commit()
     db.refresh(db_temp_image)
+
+    db_device = get_device_by_person(db, id_person)
+    db_device.id_state = 2
+    db.commit()
+    db.refresh(db_device)
 
     db_temp_image = db.query(TempImages).filter(TempImages.id_temp_images == db_temp_image.id_temp_images).first()
     

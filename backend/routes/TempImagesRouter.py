@@ -11,7 +11,6 @@ temp_images_router = APIRouter(
 @temp_images_router.post("/create_empty_temp_image", response_model=TempImagesBase)
 async def create_empty_temp_image_route(person: TempImagesCreate, db = Depends(get_db)):
   temp_image = create_empty_temp_image(db, person.id_person)
-  print(temp_image)
   return temp_image
 
 @temp_images_router.delete("/{id_temp_images}", response_model=TempImagesBase)
