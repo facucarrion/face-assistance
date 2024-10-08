@@ -11,7 +11,8 @@ class PeopleBase(BaseModel):
     email: Optional[str] = None
     phone_number: Optional[str] = None
     id_group: int
-    name: Optional[str] = None
+    group_name: Optional[str] = None
+    device_name: Optional[str] = None
 
     class Config:
         from_attributes = True

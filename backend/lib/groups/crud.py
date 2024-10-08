@@ -12,8 +12,9 @@ def get_groups(db: Session, skip: int = 0, limit: int = 100, id_user: int = 0):
 
   if id_user == 0 or user is None or (user is not None and user.rol == "admin"):
     return db.query(Groups).offset(skip).limit(limit).all()
+  else:
+    return db.query(Groups).join(UsersGroup, UsersGroup.id_group == Groups.id_group).filter(UsersGroup.id_user == user.id_user).offset(skip).limit(limit).all()
 
-  return db.query(Groups).join(UsersGroup, UsersGroup.id_group == Groups.id_group).filter(UsersGroup.id_user == user.id_user).offset(skip).limit(limit).all()
 
 
 def get_group_by_id(db: Session, id_group: int = 0):

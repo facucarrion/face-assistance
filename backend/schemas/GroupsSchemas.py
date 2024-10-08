@@ -15,13 +15,12 @@ class GroupsWithPeople(GroupsBase):
 
 class GroupCreate(BaseModel):
     name: str
-    id_device: int
+    id_device: str
 
 class GroupUpdate(BaseModel):
     name: str
-    id_device: int
+    id_device: str
 
 class GroupTransfer(BaseModel):
     from_group_id: int
     to_group_id: int
-
