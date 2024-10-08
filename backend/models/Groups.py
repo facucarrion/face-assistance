@@ -6,3 +6,4 @@ class Groups(Base):
 
   id_group = Column(Integer, primary_key=True)
   name = Column(String(40))
+  id_device = Column(Integer)
