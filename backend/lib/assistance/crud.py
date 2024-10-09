@@ -156,7 +156,12 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
         schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
         schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
 
-        if not schedule or (schedule_exception and not schedule_exception.is_class) or (current_date > datetime.today().date()) or (current_date >= periods.vacation_start and current_date <= periods.vacation_end):
+        if (   
+          not schedule
+          or (schedule_exception and not schedule_exception.is_class)
+          or (current_date > datetime.today().date())
+          or (current_date >= periods.vacation_start and current_date <= periods.vacation_end)
+        ):
             # Si no hay clase programada este día
             assistance_summary.append({
                 'date': date_str,

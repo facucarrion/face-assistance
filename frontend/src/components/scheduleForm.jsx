@@ -29,10 +29,6 @@ const SchedulesForm = () => {
   }, [])
 
   useEffect(() => {
-    console.log(newException)
-  }, [newException])
-
-  useEffect(() => {
     if (selectedGroup) {
       fetchSchedules(selectedGroup)
       fetchScheduleExceptions(selectedGroup)
@@ -69,9 +65,7 @@ const SchedulesForm = () => {
   }
 
   const fetchSchedules = async id_group => {
-    const response = await fetch(
-      `http://127.0.0.1:8000/schedules/${id_group}`
-    )
+    const response = await fetch(`http://127.0.0.1:8000/schedules/${id_group}`)
     if (response.ok) {
       const schedulesData = await response.json()
       setSchedules(schedulesData)
@@ -158,16 +152,13 @@ const SchedulesForm = () => {
 
   const handleExceptionSubmit = async event => {
     event.preventDefault()
-    const response = await fetch(
-      'http://127.0.0.1:8000/schedule_exceptions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newException)
-      }
-    )
+    const response = await fetch('http://127.0.0.1:8000/schedule_exceptions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newException)
+    })
     console.log(newException)
     if (response.ok) {
       setNewException({
@@ -299,8 +290,8 @@ const SchedulesForm = () => {
                 ? 'Editar Excepciones'
                 : 'Agregar Excepciones'
               : scheduleToEdit
-                ? 'Editar Horario'
-                : 'Crear Horario'}
+              ? 'Editar Horario'
+              : 'Crear Horario'}
           </h3>
           {isExceptionMode ? (
             <form

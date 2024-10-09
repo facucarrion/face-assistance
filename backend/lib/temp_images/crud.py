@@ -6,7 +6,8 @@ from models.Devices import Devices
 from lib.people.crud import get_person_by_id
 from lib.devices.crud import get_device_by_person
 
-
+def get_temp_image(db: Session, id_temp_images: int):
+    return db.query(TempImages).filter(TempImages.id_temp_images == id_temp_images).first()
 
 def can_upload_temp(db: Session, id_person: int):
     user_temp_images = db.query(TempImages).filter(TempImages.id_person == id_person).all()
@@ -50,3 +51,15 @@ def delete_temp_image(db: Session, id_temp_images: int):
     db.delete(db_temp_image)
     db.commit()
     return db_temp_image
+
+def get_temp_image_person_by_device(db: Session, id_config: int):
+    db_temp_image = (db
+        .query(TempImages)
+        .join(People, TempImages.id_person == People.id_person)
+        .join(Groups, Groups.id_group == People.id_group)
+        .join(Devices, Groups.id_device == Devices.id_device)
+        .filter(Devices.id_config == id_config)
+        .first()
+    )
+
+    return str(db_temp_image.id_person) if db_temp_image else "no temp"

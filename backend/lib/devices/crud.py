@@ -60,11 +60,25 @@ def delete_devices(db: Session, id_device: int):
   return db_device
 
 def get_device_by_person(db: Session, id_person: int):
-  return (
+  db_device = (
       db.query(Devices)
       .join(Groups, Groups.id_device == Devices.id_device)
       .join(People, People.id_group == Groups.id_group)
       .filter(People.id_person == id_person)
       .first()
     )
+  return db_device if db_device else Devices(id_device=0)
+
+def get_status_by_device(db: Session, id_config: int):
+  device = db.query(Devices, States).join(States, Devices.id_state == States.id_state).filter(Devices.id_config == id_config).first()
   
+  [device, state] = device
+
+  return state.state
+
+def change_status_by_device(db: Session, id_config: int, id_state: int):
+  db_device = db.query(Devices).filter(Devices.id_config == id_config).first()
+  db_device.id_state = id_state
+  db.commit()
+  db.refresh(db_device)
+  return db_device
