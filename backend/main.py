@@ -24,7 +24,8 @@ from models.Devices import Devices
 from models.TempImages import TempImages
 from models.Groups import Groups
 
-from lib.images.recognition import recognize_and_crop_image
+from lib.images.recognition import recognize_and_crop_image, compare_images
+from lib.devices.crud import get_device_by_id
 
 os.makedirs("public/uploads", exist_ok=True)
 os.makedirs("temp/uploads", exist_ok=True)
@@ -94,6 +95,63 @@ async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
             "temp_file": temp_file,
             "message": "Image uploaded and face detected",
             "success": True
+        }
+    else:
+        os.remove(temp_file)
+        return {
+            "message": "No face detected in the image",
+            "success": False
+        }
+    
+@app.post("/assistance/new", response_model=dict)
+async def new_assistance(request: dict, db: Session = Depends(get_db)):
+    imgdata = base64.b64decode(request.image)
+    filename = f"{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    temp_file = f"temp/{filename}"
+
+    with open(temp_file, "wb") as file:
+        file.write(imgdata)
+
+    # Llama a la función para reconocer y recortar la imagen
+    new_image = recognize_and_crop_image(f"temp/{filename}", f"temp/uploads/{filename}")
+
+    # Verifica si se detectó una cara
+    if new_image["face_detected"]:
+        get_device_by_id(db, id_device=request.id_person)
+
+        db_people = (db
+            .query(People)
+            .join(Groups, Groups.id_group == People.id_group).join(Devices, Devices.id_device == Groups.id_device)
+            .filter(Devices.id_config == request.id_config)
+            .first()
+        )
+
+        is_coincident = False
+
+        for people in db_people:
+            coincidence = compare_images(people.image, temp_file)
+
+            if (coincidence > 0.7):
+                is_coincident = True
+                break
+
+        os.remove(temp_file)
+
+        if (is_coincident):
+            db_assistance = TempImages(id_person=request.id_person, image=temp_file)
+            db.add(db_assistance)
+            db.commit()
+
+            return {
+                "message": "Assistance registered",
+                "success": True,
+                "coincidence": coincidence,
+                "assistance": db_assistance
+            }
+        
+        return {
+            "message": "Face not recognized",
+            "success": False
         }
     else:
         os.remove(temp_file)

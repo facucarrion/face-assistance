@@ -35,3 +35,28 @@ def recognize_and_crop_image(image_to_crop, destine_path):
         'cropped_face': cropped_face,
         'face_detected': face_detected  # Devuelve si se detectó una cara o no
     }
+
+def compare_images(db_img, input_img):
+  orb = cv2.ORB_create()
+
+  db_img = cv2.imread(db_img)
+  input_img = cv2.imread(input_img)
+
+  # Creamos descriptor 1 y extraemos puntos claves
+  kpa, descr_a = orb.detectAndCompute(db_img, None)
+  kpb, descr_b = orb.detectAndCompute(input_img, None)
+
+  comp = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+  matches = comp.match(descr_a, descr_b)
+
+  # Extraemos las regiones similares en base a los puntos claves
+  regiones_similares = [i for i in matches if i.distance < 70]
+
+  if len(matches) == 0:
+    return 0
+
+  msg = f"{(len(regiones_similares) / len(matches)) * 100}%"
+
+  print(msg)
+  return msg
