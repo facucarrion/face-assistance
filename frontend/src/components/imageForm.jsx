@@ -26,7 +26,7 @@ const ImageForm = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (tempImage || !tempImage.image) {
+      if (tempImage && !tempImage.image) {
         fetchTempImage(tempImage.id_temp_images)
         clearInterval(interval)
       }
@@ -57,6 +57,22 @@ const ImageForm = () => {
     const data = await response.json()
     setIsUploading(true)
     setTempImage(data)
+  }
+
+  const handleConfirmImage = async id_temp_images => {
+    const response = await fetch(
+      `http://localhost:8000/temp_images/${id_temp_images}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    const data = await response.json()
+    console.log(data)
+    setIsUploading(false)
+    setTempImage(null)
   }
 
   const handleDeclineImage = async id_temp_images => {
@@ -137,7 +153,11 @@ const ImageForm = () => {
           >
             Rechazar
           </button>
-          <button className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'>
+          <button
+            className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'
+            onClick={() => handleConfirmImage(tempImage.id_temp_images)}
+            disabled={!tempImage?.image}
+          >
             Confirmar
           </button>
         </div>

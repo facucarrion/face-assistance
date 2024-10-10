@@ -52,6 +52,22 @@ def delete_temp_image(db: Session, id_temp_images: int):
     db.commit()
     return db_temp_image
 
+
+def confirm_temp_image(db: Session, id_temp_images: int):
+    db_temp_image = db.query(TempImages).filter(TempImages.id_temp_images == id_temp_images).first()
+    db_person = get_person_by_id(db, id_person=db_temp_image.id_person)
+    old_image = {
+        "id_temp_images": db_temp_image.id_temp_images,
+        "id_person": db_person.id_person,
+        "image": db_person.image
+    }
+
+    db_person.image = db_temp_image.image
+    db.delete(db_temp_image)
+    db.commit()
+    db.refresh(db_person)
+    return old_image
+
 def get_temp_image_person_by_device(db: Session, id_config: int):
     db_temp_image = (db
         .query(TempImages)

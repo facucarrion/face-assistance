@@ -5,6 +5,9 @@ class TempImagesBase(BaseModel):
   id_person: int
   image: str
 
+  class Config:
+    from_attributes = True
+
 class TempImagesCreate(BaseModel):
   id_person: int
 
