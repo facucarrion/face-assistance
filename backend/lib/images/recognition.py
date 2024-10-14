@@ -56,7 +56,6 @@ def compare_images(db_img, input_img):
   if len(matches) == 0:
     return 0
 
-  msg = f"{(len(regiones_similares) / len(matches)) * 100}%"
+  coincidence = (len(regiones_similares) / len(matches)) * 100
 
-  print(msg)
-  return msg
+  return coincidence

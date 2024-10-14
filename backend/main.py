@@ -19,13 +19,17 @@ from routes.DevicesRouter import devices_router
 from routes.StatesRouter import states_router
 from routes.TempImagesRouter import temp_images_router
 from schemas.ImageSchema import ImageBase
+from schemas.AssistanceSchema import AssistanceCreate
 from models.People import People
 from models.Devices import Devices
 from models.TempImages import TempImages
 from models.Groups import Groups
+from models.Assistance import Assistance
+
 
 from lib.images.recognition import recognize_and_crop_image, compare_images
 from lib.devices.crud import get_device_by_id
+from lib.periods.crud import get_period_by_year
 
 os.makedirs("public/uploads", exist_ok=True)
 os.makedirs("temp/uploads", exist_ok=True)
@@ -104,9 +108,9 @@ async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
         }
     
 @app.post("/assistance/new", response_model=dict)
-async def new_assistance(request: dict, db: Session = Depends(get_db)):
+async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db)):
     imgdata = base64.b64decode(request.image)
-    filename = f"{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
     temp_file = f"temp/{filename}"
 
     with open(temp_file, "wb") as file:
@@ -117,28 +121,40 @@ async def new_assistance(request: dict, db: Session = Depends(get_db)):
 
     # Verifica si se detectó una cara
     if new_image["face_detected"]:
-        get_device_by_id(db, id_device=request.id_person)
+        cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
 
         db_people = (db
             .query(People)
             .join(Groups, Groups.id_group == People.id_group).join(Devices, Devices.id_device == Groups.id_device)
             .filter(Devices.id_config == request.id_config)
-            .first()
+            .all()
         )
 
         is_coincident = False
+        coincident_person = None
 
         for people in db_people:
-            coincidence = compare_images(people.image, temp_file)
+            if (people.image == None):
+                continue
 
-            if (coincidence > 0.7):
+            # change /temp/image to /temp/uploads/image
+            image_to_compare = people.image.replace("temp", "temp/uploads")
+            coincidence = compare_images(image_to_compare, new_image['destine_path'])
+
+            if (coincidence > 80):
                 is_coincident = True
+                coincident_person = people
                 break
 
         os.remove(temp_file)
 
         if (is_coincident):
-            db_assistance = TempImages(id_person=request.id_person, image=temp_file)
+            db_assistance = Assistance(
+                id_person = coincident_person.id_person,
+                id_period = get_period_by_year(db, datetime.now().year)["id_period"],
+                date = datetime.now().strftime("%Y-%m-%d"),
+                time = datetime.now().strftime("%H:%M:%S")
+            )
             db.add(db_assistance)
             db.commit()
 
@@ -146,15 +162,15 @@ async def new_assistance(request: dict, db: Session = Depends(get_db)):
                 "message": "Assistance registered",
                 "success": True,
                 "coincidence": coincidence,
-                "assistance": db_assistance
+                "assistance": db_assistance.id_assistance
             }
         
         return {
-            "message": "Face not recognized",
-            "success": False
+            "message": "No",
+            "success": False,
+            "coincidence": coincidence
         }
     else:
-        os.remove(temp_file)
         return {
             "message": "No face detected in the image",
             "success": False

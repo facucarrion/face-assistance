@@ -57,3 +57,17 @@ def delete_periods(db: Session, id_period: int):
     db.delete(db_periods)
     db.commit()
     return db_periods
+
+def get_period_by_year(db: Session, year: int):
+    period = db.query(Periods).filter(Periods.year == year).first()
+
+    period = {
+        "id_period": period.id_period,
+        "start_date": str(period.start_date),
+        "end_date": str(period.end_date),
+        "vacation_start": str(period.vacation_start),
+        "vacation_end": str(period.vacation_end),
+        "year": period.year
+    }
+
+    return period
