@@ -85,7 +85,8 @@ async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
             .query(Devices)
             .join(Groups, Groups.id_device == Devices.id_device)
             .join(People, People.id_group == Groups.id_group)
-            .filter(People.id_person == request.id_person).first())
+            .filter(People.id_person == request.id_person).first()
+        )
         db_device.id_state = 1
         db.commit()
 
@@ -125,50 +126,66 @@ async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db
 
         db_people = (db
             .query(People)
-            .join(Groups, Groups.id_group == People.id_group).join(Devices, Devices.id_device == Groups.id_device)
+            .join(Groups, Groups.id_group == People.id_group)
+            .join(Devices, Devices.id_device == Groups.id_device)
             .filter(Devices.id_config == request.id_config)
             .all()
         )
 
         is_coincident = False
+        max_coincidence = 0
         coincident_person = None
 
-        for people in db_people:
-            if (people.image == None):
+        for person in db_people:
+            if (person.image == None):
+                continue
+
+            db_assistance = (db
+                .query(Assistance)
+                .filter(Assistance.id_person == person.id_person)
+                .filter(Assistance.date == datetime.now().strftime("%Y-%m-%d"))
+                .first()
+            )
+
+            if (db_assistance):
                 continue
 
             # change /temp/image to /temp/uploads/image
-            image_to_compare = people.image.replace("temp", "temp/uploads")
+            image_to_compare = person.image.replace("temp", "temp/uploads")
             coincidence = compare_images(image_to_compare, new_image['destine_path'])
 
-            if (coincidence > 80):
+            print(f"Coincidence: {coincidence}")
+            if (coincidence > 0.8):
                 is_coincident = True
-                coincident_person = people
-                break
+
+                if (coincidence > max_coincidence):
+                    coincident_person = person
+                    max_coincidence = coincidence
 
         os.remove(temp_file)
 
         if (is_coincident):
-            db_assistance = Assistance(
+            new_assistance = Assistance(
                 id_person = coincident_person.id_person,
                 id_period = get_period_by_year(db, datetime.now().year)["id_period"],
                 date = datetime.now().strftime("%Y-%m-%d"),
                 time = datetime.now().strftime("%H:%M:%S")
             )
-            db.add(db_assistance)
+            db.add(new_assistance)
             db.commit()
 
             return {
                 "message": "Assistance registered",
                 "success": True,
-                "coincidence": coincidence,
-                "assistance": db_assistance.id_assistance
+                "id_person": new_assistance.id_person,
+                "coincidence": max_coincidence,
+                "assistance": new_assistance.id_assistance
             }
         
         return {
             "message": "No",
             "success": False,
-            "coincidence": coincidence
+            "coincidence": max_coincidence
         }
     else:
         return {
