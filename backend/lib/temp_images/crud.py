@@ -59,7 +59,7 @@ def confirm_temp_image(db: Session, id_temp_images: int):
     old_image = {
         "id_temp_images": db_temp_image.id_temp_images,
         "id_person": db_person.id_person,
-        "image": db_person.image
+        "image": db_person.image if db_person.image else "no image"
     }
 
     db_person.image = db_temp_image.image

@@ -77,12 +77,9 @@ const PeopleForm = () => {
   }
 
   const handleDeletePeople = async id_person => {
-    const response = await fetch(
-      `http://127.0.0.1:8000/people/${id_person}`,
-      {
-        method: 'DELETE'
-      }
-    )
+    const response = await fetch(`http://127.0.0.1:8000/people/${id_person}`, {
+      method: 'DELETE'
+    })
 
     if (response.ok) {
       alert('¡Alumno eliminado exitosamente!')
@@ -106,7 +103,7 @@ const PeopleForm = () => {
       lastname: people.lastname,
       document: people.document,
       email: people.email,
-      phone_number: people.phone_number,
+      phone_number: people.phone_number
     })
     setEditPeopleId(people.id_person)
   }

@@ -68,6 +68,12 @@ const GroupsForm = () => {
   }
 
   const handleDeleteGroup = async id_group => {
+    if (
+      !confirm(
+        '¿Está seguro de eliminar el curso? Esto eliminará a todos los alumnos y todos sus registros de asistencia.'
+      )
+    )
+      return
     const response = await fetch(`http://127.0.0.1:8000/groups/${id_group}`, {
       method: 'DELETE'
     })
@@ -141,9 +147,12 @@ const GroupsForm = () => {
   return (
     <>
       <div className='w-full'>
-
         <h2 className='text-2xl font-bold mb-4'>
-          {showTransferForm ? "Desplazar alumnos" : editGroupId ? 'Editar Curso' : 'Crear Curso'}
+          {showTransferForm
+            ? 'Desplazar Alumnos'
+            : editGroupId
+            ? 'Editar Curso'
+            : 'Crear Curso'}
         </h2>
 
         {showTransferForm ? (
@@ -274,7 +283,6 @@ const GroupsForm = () => {
             </div>
           </form>
         )}
-
       </div>
 
       <div className='w-full'>
@@ -292,7 +300,6 @@ const GroupsForm = () => {
               {groups.map(group => (
                 <tr key={group.id_group}>
                   <td className='py-2 px-4 border-b'>{group.name}</td>
-
 
                   <td className='py-2 px-4 border-b'>
                     <button
@@ -313,7 +320,6 @@ const GroupsForm = () => {
               ))}
             </tbody>
           </table>
-
         </div>
         <button
           onClick={() => setShowTransferForm(!showTransferForm)}
@@ -322,8 +328,6 @@ const GroupsForm = () => {
           {showTransferForm ? 'Cancelar' : 'Desplazar Alumnos'}
         </button>
       </div>
-
-
     </>
   )
 }

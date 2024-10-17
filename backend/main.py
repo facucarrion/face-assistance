@@ -188,6 +188,8 @@ async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db
             "coincidence": max_coincidence
         }
     else:
+        os.remove(temp_file)
+        
         return {
             "message": "No face detected in the image",
             "success": False

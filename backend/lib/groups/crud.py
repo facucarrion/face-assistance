@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from models.Groups import Groups
 from models.People import People
 from models.UsersGroup import UsersGroup
+from models.Assistance import Assistance
 from schemas.GroupsSchemas import GroupCreate, GroupUpdate
 from lib.assistance.crud import get_today_assistance
 from lib.auth.crud import get_user_by_id
@@ -68,10 +69,10 @@ def update_group(db: Session, id_group: int, group_update: GroupUpdate):
 
 def delete_group(db: Session, id_group: int):
   db_group = db.query(Groups).filter(Groups.id_group == id_group).first()
-  if db_group is None:
-    return None
+
   db.delete(db_group)
   db.commit()
+  
   return db_group
 
 
