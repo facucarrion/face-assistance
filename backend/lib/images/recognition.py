@@ -46,7 +46,7 @@ def recognize_and_crop_image(image_to_crop, destine_path):
 
 def compare_images(db_img, input_img):
   orb = cv2.ORB_create(nfeatures=1000)
-  
+
 
   db_img = cv2.imread(db_img)
   input_img = cv2.imread(input_img)
