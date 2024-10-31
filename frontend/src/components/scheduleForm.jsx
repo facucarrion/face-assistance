@@ -41,6 +41,10 @@ const SchedulesForm = () => {
     }
   }, [isExceptionMode])
 
+  useEffect(() => {
+    console.log(newException)
+  }, [newException])
+
   const fetchGroups = async () => {
     const response = await fetch('http://127.0.0.1:8000/groups/')
     if (response.ok) {
@@ -162,7 +166,7 @@ const SchedulesForm = () => {
     console.log(newException)
     if (response.ok) {
       setNewException({
-        id_group: '',
+        id_group: selectedGroup,
         date: '',
         is_class: false,
         start_time: '',
@@ -241,18 +245,18 @@ const SchedulesForm = () => {
       fetchSchedules(selectedGroup)
       console.log('Horario eliminado')
     }
+  }
 
-    const handleDeleteSchedulesExceptions = async id_schedule_exception => {
-      const response = await fetch(
-        `http://127.0.0.1:8000/schedule_exceptions/${id_schedule_exception}`,
-        {
-          method: 'DELETE'
-        }
-      )
-      if (response.ok) {
-        fetchSchedules(selectedGroup)
-        console.log('Excepcion eliminado')
+  const handleDeleteSchedulesExceptions = async id_schedule_exception => {
+    const response = await fetch(
+      `http://127.0.0.1:8000/schedule_exceptions/${id_schedule_exception}`,
+      {
+        method: 'DELETE'
       }
+    )
+    if (response.ok) {
+      fetchSchedules(selectedGroup)
+      console.log('Excepcion eliminado')
     }
   }
 
