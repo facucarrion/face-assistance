@@ -135,26 +135,28 @@ const ImageForm = () => {
 
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Previsualización</h2>
-        <div className='w-full border-2 h-full'>
+        <div className='w-full border-2 h-full border-gray-300 rounded-lg p-4 shadow-md bg-white flex items-center justify-center'>
           {tempImage?.image ? (
             <img
               src={`http://localhost:8000/${tempImage.image}`}
-              className='w-48'
+              className='w-48 h-auto rounded-md shadow-lg'
               alt=''
             />
           ) : (
-            <p>No</p>
+            <p className='text-gray-500 text-center'>
+              No hay imagen disponible.
+            </p>
           )}
         </div>
         <div className='w-full grid grid-cols-2 gap-4'>
           <button
-            className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'
+            className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             onClick={() => handleDeclineImage(tempImage.id_temp_images)}
           >
             Rechazar
           </button>
           <button
-            className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'
+            className='bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             onClick={() => handleConfirmImage(tempImage.id_temp_images)}
             disabled={!tempImage?.image}
           >

@@ -34,7 +34,7 @@ def get_device_by_id(db: Session, id_device: int = 0):
   }
 
 def create_device(db: Session, device):
-  db_device = Devices(name=device.name, id_state=device.id_state, id_config=device.id_config)
+  db_device = Devices(name=device.name, id_state=1, id_config=device.id_config)
   db.add(db_device)
   db.commit()
   db.refresh(db_device)
