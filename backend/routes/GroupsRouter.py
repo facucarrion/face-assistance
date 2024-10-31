@@ -7,6 +7,8 @@ from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id,
 from lib.people.crud import delete_people_by_group
 from lib.schedule_exceptions.crud import delete_schedule_exception_by_group
 from lib.schedules.crud import delete_schedule_by_group
+from lib.assistance.crud import delete_assistance_by_group
+from lib.users_group.crud import delete_usergroup_by_group
 
 groups_router = APIRouter(
     prefix="/groups",
@@ -33,9 +35,11 @@ async def update_existing_group(id_group: int, group_update: GroupUpdate, db: Se
 
 @groups_router.delete("/{id_group}", response_model=GroupsBase)
 async def delete_existing_group(id_group: int, db: Session = Depends(get_db)):
+    db_assistance = delete_assistance_by_group(db, id_group)
     db_people = delete_people_by_group(db, id_group)
     db_schedules = delete_schedule_by_group(db, id_group)
     db_schedules_exceptions = delete_schedule_exception_by_group(db, id_group)
+    db_user_group = delete_usergroup_by_group(db, id_group)
     db_group = delete_group(db, id_group)
     return db_group
 

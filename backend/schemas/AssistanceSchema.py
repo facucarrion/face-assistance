@@ -11,9 +11,8 @@ class AssistanceBase(BaseModel):
       from_attributes = True
 
 class AssistanceCreate(BaseModel):
-    id_person: int
-    date: str
-    time: str
+  image: str
+  id_config: int
 
 class AssistanceUpdate(BaseModel):
     id_person: int

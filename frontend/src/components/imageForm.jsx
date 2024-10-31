@@ -12,13 +12,32 @@ const ImageForm = () => {
     setPeople(peopleData)
   }
 
+  const fetchTempImage = async id_temp_images => {
+    const response = await fetch(
+      `http://localhost:8000/temp_images/${id_temp_images}`
+    )
+    const data = await response.json()
+    setTempImage(data)
+  }
+
   useEffect(() => {
     fetchPeople()
   }, [])
 
   useEffect(() => {
-    console.log(people)
-  }, [people])
+    const interval = setInterval(() => {
+      if (tempImage && !tempImage.image) {
+        fetchTempImage(tempImage.id_temp_images)
+        clearInterval(interval)
+      }
+    }, 5000) // Ejecutar cada 5 segundos
+
+    return () => clearInterval(interval) // Limpiar el intervalo al desmontar el componente
+  }, [tempImage])
+
+  useEffect(() => {
+    console.log(tempImage)
+  }, [tempImage])
 
   const handleUploadImage = async id_person => {
     const response = await fetch(
@@ -38,6 +57,22 @@ const ImageForm = () => {
     const data = await response.json()
     setIsUploading(true)
     setTempImage(data)
+  }
+
+  const handleConfirmImage = async id_temp_images => {
+    const response = await fetch(
+      `http://localhost:8000/temp_images/${id_temp_images}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    const data = await response.json()
+    console.log(data)
+    setIsUploading(false)
+    setTempImage(null)
   }
 
   const handleDeclineImage = async id_temp_images => {
@@ -101,7 +136,15 @@ const ImageForm = () => {
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>Previsualización</h2>
         <div className='w-full border-2 h-full'>
-          {isUploading ? <p>Si</p> : <p>No</p>}
+          {tempImage?.image ? (
+            <img
+              src={`http://localhost:8000/${tempImage.image}`}
+              className='w-48'
+              alt=''
+            />
+          ) : (
+            <p>No</p>
+          )}
         </div>
         <div className='w-full grid grid-cols-2 gap-4'>
           <button
@@ -110,7 +153,11 @@ const ImageForm = () => {
           >
             Rechazar
           </button>
-          <button className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'>
+          <button
+            className='py-2 border-2 bg-gray-500 text-white flex items-center justify-center'
+            onClick={() => handleConfirmImage(tempImage.id_temp_images)}
+            disabled={!tempImage?.image}
+          >
             Confirmar
           </button>
         </div>

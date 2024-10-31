@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from models.Assistance import Assistance
 from models.Periods import Periods
+from models.People import People
+from models.Groups import Groups
 from lib.people.crud import get_person_by_id
 from lib.schedules.crud import get_schedule_by_group_and_day
 from lib.schedule_exceptions.crud import get_schedule_exception_by_group_and_date
@@ -156,7 +158,12 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
         schedule = get_schedule_by_group_and_day(db, person.id_group, weekday)
         schedule_exception = get_schedule_exception_by_group_and_date(db, person.id_group, date_str)
 
-        if not schedule or (schedule_exception and not schedule_exception.is_class) or (current_date > datetime.today().date()) or (current_date >= periods.vacation_start and current_date <= periods.vacation_end):
+        if (   
+          not schedule
+          or (schedule_exception and not schedule_exception.is_class)
+          or (current_date > datetime.today().date())
+          or (current_date >= periods.vacation_start and current_date <= periods.vacation_end)
+        ):
             # Si no hay clase programada este día
             assistance_summary.append({
                 'date': date_str,
@@ -197,3 +204,19 @@ def get_monthly_assistance_summary(db: Session, id_person: int, year: int, month
         current_date += timedelta(days = 1)
     
     return assistance_summary
+
+def delete_assistance_by_group(db: Session, id_group: int):
+    db_assistance = (
+        db.query(Assistance)
+        .join(People, People.id_person == Assistance.id_person)
+        .join(Groups, Groups.id_group == People.id_group)
+        .filter(People.id_group == id_group)
+        .all()
+    )
+
+    for assistance in db_assistance:
+        db.delete(assistance)
+
+    db.commit()
+    
+    return db_assistance

@@ -19,9 +19,17 @@ from routes.DevicesRouter import devices_router
 from routes.StatesRouter import states_router
 from routes.TempImagesRouter import temp_images_router
 from schemas.ImageSchema import ImageBase
+from schemas.AssistanceSchema import AssistanceCreate
 from models.People import People
+from models.Devices import Devices
+from models.TempImages import TempImages
+from models.Groups import Groups
+from models.Assistance import Assistance
 
-from lib.images.recognition import recognize_and_crop_image
+
+from lib.images.recognition import recognize_and_crop_image, compare_images
+from lib.devices.crud import get_device_by_id
+from lib.periods.crud import get_period_by_year
 
 os.makedirs("public/uploads", exist_ok=True)
 os.makedirs("temp/uploads", exist_ok=True)
@@ -54,31 +62,135 @@ app.include_router(temp_images_router)
 async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
     imgdata = base64.b64decode(request.image)
     filename = f"{request.id_person}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
-    temp_file = f"temp/uploads/{filename}"
-
-    print(filename)
-    print(temp_file)
+    temp_file = f"temp/{filename}"
 
     with open(temp_file, "wb") as file:
         file.write(imgdata)
 
-    new_image = recognize_and_crop_image(f"temp/uploads/{filename}", f"public/uploads/{filename}")
+    # Llama a la función para reconocer y recortar la imagen
+    new_image = recognize_and_crop_image(f"temp/{filename}", f"temp/uploads/{filename}")
 
-    print(new_image["destine_path"])
+    # Verifica si se detectó una cara
+    if new_image["face_detected"]:
+        cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
 
-    cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
+        db_temp_image = (db
+            .query(TempImages)
+            .filter(TempImages.id_person == request.id_person).first())
+        old_image = db_temp_image.image
+        db_temp_image.image = f"temp/{filename}"
+        db.commit()
 
-    person = db.query(People).filter(People.id_person == request.id_person).first()
-    old_image = person.image
-    person.image = f"uploads/{filename}"
-    db.commit()
+        db_device = (db
+            .query(Devices)
+            .join(Groups, Groups.id_device == Devices.id_device)
+            .join(People, People.id_group == Groups.id_group)
+            .filter(People.id_person == request.id_person).first()
+        )
+        db_device.id_state = 1
+        db.commit()
 
-    if old_image:
-        os.remove(f"public/{old_image}")
+        if old_image:
+            os.remove(old_image)
 
-    os.remove(temp_file)
+        os.remove(temp_file)
 
-    return {
-        "filename": filename,
-        "temp_file": temp_file
-    }
+        return {
+            "filename": filename,
+            "temp_file": temp_file,
+            "message": "Image uploaded and face detected",
+            "success": True
+        }
+    else:
+        os.remove(temp_file)
+        return {
+            "message": "No face detected in the image",
+            "success": False
+        }
+    
+@app.post("/assistance/new", response_model=dict)
+async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db)):
+    imgdata = base64.b64decode(request.image)
+    filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpeg"
+    temp_file = f"temp/{filename}"
+
+    with open(temp_file, "wb") as file:
+        file.write(imgdata)
+
+    # Llama a la función para reconocer y recortar la imagen
+    new_image = recognize_and_crop_image(f"temp/{filename}", f"temp/uploads/{filename}")
+
+    # Verifica si se detectó una cara
+    if new_image["face_detected"]:
+        cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
+
+        db_people = (db
+            .query(People)
+            .join(Groups, Groups.id_group == People.id_group)
+            .join(Devices, Devices.id_device == Groups.id_device)
+            .filter(Devices.id_config == request.id_config)
+            .all()
+        )
+
+        is_coincident = False
+        max_coincidence = 0
+        coincident_person = None
+
+        for person in db_people:
+            if (person.image == None):
+                continue
+
+            db_assistance = (db
+                .query(Assistance)
+                .filter(Assistance.id_person == person.id_person)
+                .filter(Assistance.date == datetime.now().strftime("%Y-%m-%d"))
+                .first()
+            )
+
+            if (db_assistance):
+                continue
+
+            # change /temp/image to /temp/uploads/image
+            image_to_compare = person.image.replace("temp", "temp/uploads")
+            coincidence = compare_images(image_to_compare, new_image['destine_path'])
+
+            print(f"Coincidence: {coincidence}")
+            if (coincidence > 0.8):
+                is_coincident = True
+
+                if (coincidence > max_coincidence):
+                    coincident_person = person
+                    max_coincidence = coincidence
+
+        os.remove(temp_file)
+
+        if (is_coincident):
+            new_assistance = Assistance(
+                id_person = coincident_person.id_person,
+                id_period = get_period_by_year(db, datetime.now().year)["id_period"],
+                date = datetime.now().strftime("%Y-%m-%d"),
+                time = datetime.now().strftime("%H:%M:%S")
+            )
+            db.add(new_assistance)
+            db.commit()
+
+            return {
+                "message": "Assistance registered",
+                "success": True,
+                "id_person": new_assistance.id_person,
+                "coincidence": max_coincidence,
+                "assistance": new_assistance.id_assistance
+            }
+        
+        return {
+            "message": "No",
+            "success": False,
+            "coincidence": max_coincidence
+        }
+    else:
+        os.remove(temp_file)
+        
+        return {
+            "message": "No face detected in the image",
+            "success": False
+        }

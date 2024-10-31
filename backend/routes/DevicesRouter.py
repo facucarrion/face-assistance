@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from schemas.DevicesSchema import DevicesBase, DevicesCreate, DevicesUpdate
 from config.database import get_db
-from lib.devices.crud import get_devices, get_device_by_id, create_device, update_device, delete_devices
+from lib.devices.crud import get_devices, get_device_by_id, create_device, update_device, delete_devices, get_status_by_device
 
 devices_router = APIRouter(
     prefix="/devices",
@@ -17,6 +17,10 @@ async def read_devices(skip: int = 0, limit: int = 100, db: Session = Depends(ge
 @devices_router.get("/{id_device}", response_model=DevicesBase)
 async def get_device_by_id(id_device: int, db: Session = Depends(get_db)):
     return get_device_by_id(db, id_device)
+
+@devices_router.get("/{id_config}/state", response_model=str)
+async def get_status(id_config: int, db: Session = Depends(get_db)):
+    return get_status_by_device(db, id_config)
 
 @devices_router.post("/")
 async def create_new_device(device: DevicesCreate, db: Session = Depends(get_db)):

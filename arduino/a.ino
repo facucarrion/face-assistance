@@ -5,9 +5,6 @@
 #include <ArduinoJson.h>
 #include "esp_camera.h" // Librería necesaria para la cámara
 #include "base64.h" // Para convertir la imagen a base64
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 
 #define DEVICE_ID 1
 
@@ -15,46 +12,25 @@
 #define CAMERA_MODEL_AI_THINKER
 #include "camera_pins.h"
 
-// Definición de pines para la pantalla OLED
-#define SCREEN_WIDTH 128 // Ancho de la pantalla
-#define SCREEN_HEIGHT 64  // Alto de la pantalla
-#define OLED_RESET -1     // No se usa reset en este modelo
-
-// Definición de pines SDA y SCL
-#define SDA_PIN 3
-#define SCL_PIN 1
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
 Preferences preferences;
 
 WebServer server(80);
 
-const char* base_url = "http://192.168.2.104:8000";
-
+const char* base_url = "http://192.168.2.158:8000";
 String ssid;
 String password;
 
 unsigned long wifiTimeout = 15000;
 
 String captureImageToBase64() {
-  digitalWrite(FLASH_GPIO_NUM, HIGH);
-  delay(100);
-
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
   esp_camera_fb_return(fb);
   fb = NULL;
   fb = esp_camera_fb_get();
 
-  digitalWrite(FLASH_GPIO_NUM, LOW);
-
   if (!fb) {
     Serial.println("Error al capturar la imagen");
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    display.print("Error al capturar\nimagen");
-    display.display();
     return "";
   }
 
@@ -66,6 +42,7 @@ String captureImageToBase64() {
 JsonDocument parseJson(String json) {
   JsonDocument doc;
   deserializeJson(doc, json);
+
   return doc;
 }
 
@@ -97,6 +74,7 @@ String fetch(String endpoint, String method, String body = "") {
       Serial.println(response);
 
       http.end();
+
       return response;
     } else {
       Serial.print("Error en la solicitud HTTP, código: ");
@@ -111,7 +89,7 @@ String fetch(String endpoint, String method, String body = "") {
   }
 }
 
-String uploadTempImage(String id_person) {
+String uploadImage(String id_person) {
   String imageBase64 = captureImageToBase64();
 
   if (imageBase64 == "") {
@@ -120,27 +98,9 @@ String uploadTempImage(String id_person) {
   }
 
   String jsonBody = "{\"id_person\": " + id_person + ", \"image\": \"" + imageBase64 + "\"}";
-
+  
   String response = fetch("/image/upload", "POST", jsonBody);
-
-  Serial.println("Respuesta del servidor: " + response);
-
-  return response;
-}
-
-String uploadAssistanceImage() {
-  String imageBase64 = captureImageToBase64();
-
-  if (imageBase64 == "") {
-    Serial.println("Error al obtener la imagen en base64");
-    return "Error";
-  }
-
-  String idConfig = getConfigId();  // Llama a la función para obtener el id_config
-  String jsonBody = "{\"image\": \"" + imageBase64 + "\", \"id_config\": \"" + idConfig + "\"}";
-
-  String response = fetch("/assistance/new", "POST", jsonBody);
-
+  
   Serial.println("Respuesta del servidor: " + response);
 
   return response;
@@ -150,6 +110,7 @@ String getIP() {
   if (WiFi.status() == WL_CONNECTED) {
     return "<h2>IP Actual: " + WiFi.localIP().toString() + "</h2>";
   }
+
   return "";
 }
 
@@ -178,7 +139,7 @@ void handleRoot() {
   html += "<form action='/reset' method='POST'>";
   html += "<input type='submit' value='Restablecer WiFi'>";
   html += "</form>";
-
+  
   server.send(200, "text/html", html);
 }
 
@@ -207,11 +168,6 @@ void connectToWiFi() {
 
   if (ssid != "") {
     Serial.printf("Conectando a WiFi: %s\n", ssid.c_str());
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    display.print("Conectando a WiFi...");
-    display.display();
-
     WiFi.begin(ssid.c_str(), password.c_str());
 
     unsigned long startAttemptTime = millis();
@@ -223,20 +179,11 @@ void connectToWiFi() {
 
     if (WiFi.status() == WL_CONNECTED) {
       Serial.println("\nConectado a Wi-Fi con éxito");
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Conectado a WiFi\n");
-      display.print(ssid);  // Mostrar el SSID
-      display.print("\nIP: ");
-      display.println(WiFi.localIP());
-      display.display();
+      Serial.print("Dirección IP: ");
+      Serial.println(WiFi.localIP());
       startWebServer();
     } else {
       Serial.println("\nError: No se pudo conectar a Wi-Fi.");
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Error: No se pudo\nconectar a WiFi");
-      display.display();
       createAP();
     }
   } else {
@@ -246,15 +193,10 @@ void connectToWiFi() {
 
 void createAP() {
   Serial.println("Creando punto de acceso para configuración...");
-  WiFi.softAP("WiFi Face Assistance");
+  WiFi.softAP("ESP32Cam Grupo10");
 
   Serial.print("Punto de acceso creado. Dirección IP: ");
   Serial.println(WiFi.softAPIP());
-
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.printf("Punto de acceso:\nWiFi Face Assistance\nIP: 192.168.4.1");
-  display.display();
 
   server.on("/", handleRoot);
   server.on("/save", HTTP_POST, handleSave);
@@ -275,17 +217,7 @@ void startWebServer() {
 
 void setup() {
   Serial.begin(115200);
-  
-  // Inicializar Wire
-  Wire.begin(SDA_PIN, SCL_PIN);
 
-  // Inicialización de la pantalla OLED
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3c); // Dirección I2C de la pantalla OLED
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-
-  // Configuración de la cámara
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -308,8 +240,8 @@ void setup() {
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
 
-  config.frame_size = FRAMESIZE_VGA;
-  config.jpeg_quality = 5;
+  config.frame_size = FRAMESIZE_QVGA;
+  config.jpeg_quality = 10;
   config.fb_count = 1;
 
   esp_err_t err = esp_camera_init(&config);
@@ -318,11 +250,7 @@ void setup() {
     return;
   }
 
-  pinMode(FLASH_GPIO_NUM, OUTPUT);
-
   preferences.begin("wifi-config", false);
-
-  delay(1000);
 
   connectToWiFi();
 }
@@ -333,93 +261,41 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     String state = getState();
     state.replace("\"", "");
-
+    
     Serial.print("Valor de state: '");
     Serial.print(state);
     Serial.println("'");
-
+  
     state.trim();
-
+  
     if (state == "Error") {
       Serial.println("❌ ERROR");
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Estado: ERROR");
-      display.display();
     }
-
+  
     if (state == "uploading") {
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Subiendo imagen...");
-      display.display();
-
       String temp = getTempImagePerson();
       bool success = false;
       Serial.print("Valor de temp_image: ");
       Serial.println(temp);
-
+  
       if (temp != "No image") {
-        while (!success) {
-          String result = uploadTempImage(temp);
+        while (success == false) {
+          String result = uploadImage(temp);
           JsonDocument parsedResult = parseJson(result);
-
+  
           if (parsedResult["success"] == true) {
             success = true;
-            display.clearDisplay();
-            display.setCursor(0, 0);
-            display.print("Imagen subida\ncon éxito");
-            display.display();
-          } else {
-            display.clearDisplay();
-            display.setCursor(0, 0);
-            display.print("No se detectó\nninguna cara");
-            display.display();
           }
-
+  
           delay(5000);
         }
-      } else {
-        display.clearDisplay();
-        display.setCursor(0, 0);
-        display.print("No hay imagen\ndisponible");
-        display.display();
       }
     } else if (state == "capturing") {
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Capturando...");
-      display.display();
-
-      String result = uploadAssistanceImage();
-      JsonDocument parsedResult = parseJson(result);
-      bool success = false;
-
-      if (parsedResult["success"] == true) {
-        success = true;
-        display.clearDisplay();
-        display.setCursor(0, 0);
-        display.print("Asistencia\ncargada");
-        display.display();
-      } else {
-        if (parsedResult["face_detected"] == true) {
-          display.clearDisplay();
-          display.setCursor(0, 0);
-          display.print("No hubo\ncoincidencia");
-          display.display();
-        } else {
-          display.clearDisplay();
-          display.setCursor(0, 0);
-          display.print("No se detecto\nninguna cara");
-          display.display();
-        }
-      }
-
-      delay(5000);
+      
     }
   } else {
     Serial.println("WiFi Disconnected");
   }
 
-  delay(5000);
+  delay(10000);
 }
