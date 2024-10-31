@@ -318,45 +318,9 @@ const SchedulesForm = () => {
                 name='date'
                 value={newException.date}
                 onChange={handleExceptionChange}
-                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                className='shadow appearance-none mb-4 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                 required
               />
-
-              <div className='mb-4'>
-                <label
-                  htmlFor='start_time'
-                  className='block text-gray-700 text-sm font-bold mb-2'
-                >
-                  Hora de inicio:
-                </label>
-                <input
-                  type='time'
-                  id='start_time'
-                  name='start_time'
-                  value={newException.start_time}
-                  onChange={handleExceptionChange}
-                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                  required
-                />
-              </div>
-
-              <div className='mb-4'>
-                <label
-                  htmlFor='end_time'
-                  className='block text-gray-700 text-sm font-bold mb-2'
-                >
-                  Hora de fin:
-                </label>
-                <input
-                  type='time'
-                  id='end_time'
-                  name='end_time'
-                  value={newException.end_time}
-                  onChange={handleExceptionChange}
-                  className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                  required
-                />
-              </div>
 
               <div className='mb-4 flex items-center gap-1'>
                 <input
@@ -374,6 +338,46 @@ const SchedulesForm = () => {
                   ¿Hay clase?
                 </label>
               </div>
+
+              {newException.is_class && (
+                <>
+                  <div className='mb-4'>
+                    <label
+                      htmlFor='start_time'
+                      className='block text-gray-700 text-sm font-bold mb-2'
+                    >
+                      Hora de inicio:
+                    </label>
+                    <input
+                      type='time'
+                      id='start_time'
+                      name='start_time'
+                      value={newException.start_time}
+                      onChange={handleExceptionChange}
+                      className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                      required
+                    />
+                  </div>
+
+                  <div className='mb-4'>
+                    <label
+                      htmlFor='end_time'
+                      className='block text-gray-700 text-sm font-bold mb-2'
+                    >
+                      Hora de fin:
+                    </label>
+                    <input
+                      type='time'
+                      id='end_time'
+                      name='end_time'
+                      value={newException.end_time}
+                      onChange={handleExceptionChange}
+                      className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
               <div className='grid w-full grid-cols-2 gap-2'>
                 <button
@@ -507,10 +511,12 @@ const SchedulesForm = () => {
                       <p>
                         <strong>Fecha:</strong> {exception.date}
                       </p>
-                      <p>
-                        <strong>Horario:</strong> {exception.start_time} -{' '}
-                        {exception.end_time}
-                      </p>
+                      {exception.is_class && (
+                        <p>
+                          <strong>Horario:</strong> {exception.start_time} -{' '}
+                          {exception.end_time}
+                        </p>
+                      )}
                       <p>
                         <strong>¿Hay Clase?:</strong>{' '}
                         {exception.is_class ? 'Sí' : 'No'}{' '}
