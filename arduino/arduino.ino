@@ -30,7 +30,7 @@ Preferences preferences;
 
 WebServer server(80);
 
-const char* base_url = "http://192.168.2.104:8000";
+const char* base_url = "http://192.168.0.221:8000";
 
 String ssid;
 String password;
@@ -354,6 +354,7 @@ void loop() {
       display.print("Subiendo imagen...");
       display.display();
 
+
       String temp = getTempImagePerson();
       bool success = false;
       Serial.print("Valor de temp_image: ");
@@ -373,7 +374,7 @@ void loop() {
           } else {
             display.clearDisplay();
             display.setCursor(0, 0);
-            display.print("No se detectó\nninguna cara");
+            display.print("Error en la\nsubida de imagen");
             display.display();
           }
 
