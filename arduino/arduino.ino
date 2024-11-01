@@ -38,16 +38,11 @@ String password;
 unsigned long wifiTimeout = 15000;
 
 String captureImageToBase64() {
-  digitalWrite(FLASH_GPIO_NUM, HIGH);
-  delay(100);
-
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
   esp_camera_fb_return(fb);
   fb = NULL;
   fb = esp_camera_fb_get();
-
-  digitalWrite(FLASH_GPIO_NUM, LOW);
 
   if (!fb) {
     Serial.println("Error al capturar la imagen");
@@ -222,7 +217,7 @@ void connectToWiFi() {
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-      Serial.println("\nConectado a Wi-Fi con éxito");
+      Serial.println("\nConectado a Wi-Fi con exito");
       display.clearDisplay();
       display.setCursor(0, 0);
       display.print("Conectado a WiFi\n");
