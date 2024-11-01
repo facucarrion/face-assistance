@@ -46,16 +46,16 @@ def create_empty_temp_image(db: Session, id_person: int):
 
 def delete_temp_image(db: Session, id_temp_images: int):
     db_temp_image = db.query(TempImages).filter(TempImages.id_temp_images == id_temp_images).first()
-    if not db_temp_image:
-        return None
+    old_image = db_temp_image
     db.delete(db_temp_image)
     db.commit()
-    return db_temp_image
+    return old_image
 
 
 def confirm_temp_image(db: Session, id_temp_images: int):
     db_temp_image = db.query(TempImages).filter(TempImages.id_temp_images == id_temp_images).first()
     db_person = get_person_by_id(db, id_person=db_temp_image.id_person)
+
     old_image = {
         "id_temp_images": db_temp_image.id_temp_images,
         "id_person": db_person.id_person,

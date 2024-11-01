@@ -86,17 +86,25 @@ def filter_people(db: Session, q: str, id_user: int):
     filtered_people = []
 
     if id_user == 0 or user is None or (user is not None and user.rol == "admin"):
-        filtered_people = db.query(People, Groups.name).join(Groups, People.id_group == Groups.id_group).filter(
-        (People.firstname.like(f"%{q}%")) |
-        (People.lastname.like(f"%{q}%")) |
-        (People.document.like(f"%{q}%"))
-    ).all()
+        filtered_people = (db.query(People, Groups.name)
+            .join(Groups, People.id_group == Groups.id_group)
+            .filter(
+                (People.firstname.like(f"%{q}%")) |
+                (People.lastname.like(f"%{q}%")) |
+                (People.document.like(f"%{q}%"))
+            ).all()
+        )
 
     else:
-        filtered_people = db.query(People, Groups.name).join(Groups, People.id_group == Groups.id_group).join(UsersGroup, UsersGroup.id_group == Groups.id_group).filter(
-        ((People.firstname.like(f"%{q}%")) |
-        (People.lastname.like(f"%{q}%")) |
-        (People.document.like(f"%{q}%")))).filter(UsersGroup.id_user == user.id_user).all()
+        filtered_people = (db.query(People, Groups.name)
+            .join(Groups, People.id_group == Groups.id_group)
+            .join(UsersGroup, UsersGroup.id_group == Groups.id_group)
+            .filter(
+                ((People.firstname.like(f"%{q}%")) |
+                (People.lastname.like(f"%{q}%")) |
+                (People.document.like(f"%{q}%"))))
+            .filter(UsersGroup.id_user == user.id_user).all()
+        )
 
     # Convertir los resultados en una lista de diccionarios
     result = [

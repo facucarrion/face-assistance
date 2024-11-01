@@ -6,8 +6,7 @@ const DeviceForm = () => {
   const [editDeviceId, setEditDeviceId] = useState(null)
   const [formData, setFormData] = useState({
     id_config: '',
-    name: '',
-    id_state: 1
+    name: ''
   })
 
   const fetchDevices = async () => {
@@ -61,7 +60,7 @@ const DeviceForm = () => {
           ? 'Dispositivo actualizado exitosamente!'
           : 'Dispositivo creado exitosamente!'
       )
-      setFormData({ id_config: '', name: '', id_state: 1 })
+      setFormData({ id_config: '', name: '' })
       setEditDeviceId(null)
       fetchDevices()
     }
@@ -72,11 +71,10 @@ const DeviceForm = () => {
   }
 
   const handleEditDevice = device => {
-    console.log (device)
+    console.log(device)
     setFormData({
       id_config: device.id_config,
-      name: device.name,
-      id_state: device.id_state
+      name: device.name
     })
     setEditDeviceId(device.id_device)
   }
@@ -142,29 +140,6 @@ const DeviceForm = () => {
             />
           </div>
 
-          <div className='mb-4'>
-            <label
-              htmlFor='id_state'
-              className='block text-gray-700 text-sm font-bold mb-2'
-            >
-              Estado:
-            </label>
-            <select
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              name='id_state'
-              id='id_state'
-              value={formData.id_state}
-              onChange={handleChange}
-              required
-            >
-              {states.map(state => (
-                <option key={state.id_state} value={state.id_state} checked={formData.id_state == state.id_state}>
-                  {state.state}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div className='w-full grid grid-cols-2'>
             <button
               type='submit'
@@ -180,8 +155,7 @@ const DeviceForm = () => {
                   setEditDeviceId(null)
                   setFormData({
                     id_config: '',
-                    name: '',
-                    id_state: 1
+                    name: ''
                   })
                 }}
               >

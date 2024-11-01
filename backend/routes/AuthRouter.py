@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas.AuthSchema import LoginSchema, RegisterSchema
+from schemas.AuthSchema import LoginSchema
 from schemas.ApiMessages import ApiMessageSchema
 from config.database import get_db
 from lib.auth.crud import get_user_by_username
@@ -43,16 +43,5 @@ async def login(user: LoginSchema, db: Session = Depends(get_db)):
         "data": {
             "id_user": user_dict["id_user"],
             "token": create_access_token(user_dict)
-        }
-    }
-
-@auth_router.post("/register", response_model=ApiMessageSchema)
-async def register(newUserData: RegisterSchema):
-    return {
-        "success": True,
-        "status": 200,
-        "message": "User registered successfully",
-        "data": {
-            "password": hash_password(newUserData.password)
         }
     }

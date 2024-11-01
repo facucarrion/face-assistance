@@ -13,12 +13,10 @@ class DevicesBase(BaseModel):
 class DevicesCreate(BaseModel):
   name: str
   id_config: int
-  id_state: int
 
 class DevicesUpdate(BaseModel):
     name: str
     id_config: int
-    id_state: int
 
     class Config:
         from_attributes = True
