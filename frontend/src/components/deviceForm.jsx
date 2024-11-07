@@ -176,7 +176,6 @@ const DeviceForm = () => {
                   Id del Dispositivo
                 </th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
-                <th className='py-2 px-4 bg-gray-200 text-left'>Estado</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
               </tr>
             </thead>
@@ -186,7 +185,6 @@ const DeviceForm = () => {
                 <tr key={device.id_device}>
                   <td className='py-2 px-4 border-b'>{device.id_config}</td>
                   <td className='py-2 px-4 border-b'>{device.name}</td>
-                  <td className='py-2 px-4 border-b'>{device.state}</td>
                   <td className='py-2 px-4 border-b'>
                     <button
                       onClick={() => handleDeleteDevice(device.id_device)}

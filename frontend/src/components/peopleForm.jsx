@@ -180,14 +180,14 @@ const PeopleForm = () => {
               htmlFor='document'
               className='block text-gray-700 text-sm font-bold mb-2'
             >
-              Correo Electrónico:
+              Correo Electrónico del Adulto Responsable:
             </label>
             <input
               className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
               type='text'
               name='email'
               id='email'
-              placeholder='Ingrese el correo electrónico del padre'
+              placeholder='Ingrese el correo electrónico del padre o tutor'
               required
               value={formData.email}
               onChange={handleChange}
@@ -199,14 +199,14 @@ const PeopleForm = () => {
               htmlFor='document'
               className='block text-gray-700 text-sm font-bold mb-2'
             >
-              Número Telefónico:
+              Número Telefónico del Adulto Responsable:
             </label>
             <input
               className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
               type='text'
               name='phone_number'
               id='phone_number'
-              placeholder='Ingrese el número de teléfono del padre'
+              placeholder='Ingrese el número de teléfono del padre o tutor'
               required
               value={formData.phone_number}
               onChange={handleChange}

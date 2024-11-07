@@ -8,7 +8,7 @@ def preprocess_image(image):
 
 def recognize_and_crop_image(image_to_crop, destine_path):
     image = cv2.imread(image_to_crop)
-    image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    image = cv2.rotate(image, cv2.ROTATE_180)
     processed_image = preprocess_image(image)
     
     face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')

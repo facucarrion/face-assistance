@@ -87,3 +87,12 @@ def update_people_group(db: Session, from_group_id: int, to_group_id: int):
         db.add(person)
     db.commit()
     return people_in_group
+
+def delete_devices_relations(db: Session, id_device: int):
+    groups = db.query(Groups).filter(Groups.id_device == id_device).all()
+
+    for group in groups:
+        group.id_device = None
+        db.add(group)
+    db.commit()
+    return groups
