@@ -150,13 +150,14 @@ const ImageForm = () => {
         </div>
         <div className='w-full grid grid-cols-2 gap-4'>
           <button
-            className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-400 disabled:hover:bg-gray-400'
             onClick={() => handleDeclineImage(tempImage.id_temp_images)}
+            disabled={!tempImage?.image}
           >
             Rechazar
           </button>
           <button
-            className='bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            className='bg-green-300 hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-gray-400 disabled:hover:bg-gray-400'
             onClick={() => handleConfirmImage(tempImage.id_temp_images)}
             disabled={!tempImage?.image}
           >

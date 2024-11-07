@@ -364,16 +364,16 @@ void loop() {
             success = true;
             display.clearDisplay();
             display.setCursor(0, 0);
-            display.print("Imagen subida\ncon éxito");
+            display.print("Imagen subida\ncon exito");
             display.display();
           } else {
             display.clearDisplay();
             display.setCursor(0, 0);
-            display.print("Error en la\nsubida de imagen");
+            display.print("No se detecto\nninguna cara");
             display.display();
           }
 
-          delay(5000);
+          delay(2000);
         }
       } else {
         display.clearDisplay();
@@ -411,11 +411,11 @@ void loop() {
         }
       }
 
-      delay(5000);
+      delay(2000);
     }
   } else {
     Serial.println("WiFi Disconnected");
   }
 
-  delay(5000);
+  delay(2000);
 }
