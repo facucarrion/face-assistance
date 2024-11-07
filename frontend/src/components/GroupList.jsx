@@ -15,7 +15,9 @@ export const GroupList = () => {
     fetchGroups()
   }, [])
 
-  return (
+  return groups.length == 0 ? (
+    <p className='w-full text-center text-lg'>No Existen Cursos</p>
+  ) : (
     <ul id='groups-list' className='grid grid-cols-3 gap-4'>
       {groups.map(group => {
         return (
