@@ -28,7 +28,7 @@ async def delete_existing_schedule(id_schedule: int, db: Session = Depends(get_d
 
 @schedules_router.put("/{id_schedule}", response_model=SchedulesBase)
 async def update_existing_schedules(id_schedule: int, schedules_update: SchedulesUpdate, db: Session = Depends(get_db)):
-    if can_update_schedule_by_group_day(db, id_schedule, schedules_update.id_day, schedules_update.id_group) == False:
+    if can_update_schedule_by_group_day(db, id_day=schedules_update.id_day, id_group=schedules_update.id_group, id_schedule=id_schedule) == False:
         raise HTTPException(status_code=401, detail="Schedule already exists")
     
     db_schedules = update_schedules(db, id_schedule, schedules_update)
