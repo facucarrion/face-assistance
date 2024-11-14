@@ -41,10 +41,6 @@ const SchedulesForm = () => {
     }
   }, [isExceptionMode])
 
-  useEffect(() => {
-    console.log(newException)
-  }, [newException])
-
   const fetchGroups = async () => {
     const response = await fetch('http://127.0.0.1:8000/groups/')
     if (response.ok) {
@@ -82,7 +78,6 @@ const SchedulesForm = () => {
     )
     if (response.ok) {
       const scheduleExceptionsData = await response.json()
-      console.log(scheduleExceptionsData)
       setScheduleExceptions(scheduleExceptionsData)
     }
   }
@@ -150,7 +145,6 @@ const SchedulesForm = () => {
         end_time: ''
       })
       fetchSchedules(selectedGroup)
-      console.log(await response.json())
     }
   }
 
@@ -163,7 +157,6 @@ const SchedulesForm = () => {
       },
       body: JSON.stringify(newException)
     })
-    console.log(newException)
     if (response.ok) {
       setNewException({
         id_group: selectedGroup,
@@ -174,7 +167,6 @@ const SchedulesForm = () => {
       })
       fetchScheduleExceptions(selectedGroup)
       const data = await response.json()
-      console.log(data)
     }
   }
 
@@ -243,7 +235,6 @@ const SchedulesForm = () => {
     )
     if (response.ok) {
       fetchSchedules(selectedGroup)
-      console.log('Horario eliminado')
     }
   }
 
@@ -256,7 +247,6 @@ const SchedulesForm = () => {
     )
     if (response.ok) {
       fetchSchedules(selectedGroup)
-      console.log('Excepcion eliminado')
     }
   }
 

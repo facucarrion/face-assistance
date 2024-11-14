@@ -153,17 +153,19 @@ const UserForm = () => {
     }
   }, [userPermissions])
 
-  const fetchUserPermissions = async (id_user) => {
-    const response = await fetch(`http://127.0.0.1:8000/users/${id_user}/permissions`)
+  const fetchUserPermissions = async id_user => {
+    const response = await fetch(
+      `http://127.0.0.1:8000/users/${id_user}/permissions`
+    )
     if (!response.ok) {
       throw new Error('Error al obtener los permisos del usuario')
     }
     const permissionsData = await response.json()
-    const userGroupsIds = permissionsData.map(permission => permission.id_group) // Cambiar a id_group
+    const userGroupsIds = permissionsData.map(permission => permission.id_group)
     setSelectedGroups(userGroupsIds)
   }
 
-  const handleGroupsChange = (event) => {
+  const handleGroupsChange = event => {
     const groupsId = parseInt(event.target.value)
     if (event.target.checked) {
       setSelectedGroups([...selectedGroups, groupsId])
@@ -172,17 +174,19 @@ const UserForm = () => {
     }
   }
 
-  // Manejador para guardar permisos
-  const handleSavePermissions = async (event) => {
+  const handleSavePermissions = async event => {
     event.preventDefault()
 
-    const response = await fetch(`http://127.0.0.1:8000/users/${userPermissions.id_user}/permissions/`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ groups: selectedGroups })
-    })
+    const response = await fetch(
+      `http://127.0.0.1:8000/users/${userPermissions.id_user}/permissions/`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ groups: selectedGroups })
+      }
+    )
 
     if (response.ok) {
       alert('Permisos actualizados exitosamente!')
@@ -190,7 +194,11 @@ const UserForm = () => {
       setSelectedGroups([])
     } else {
       const errorData = await response.json()
-      alert(`No se pudo actualizar los permisos: ${errorData.detail || 'Error desconocido'}`)
+      alert(
+        `No se pudo actualizar los permisos: ${
+          errorData.detail || 'Error desconocido'
+        }`
+      )
     }
   }
 
@@ -198,7 +206,11 @@ const UserForm = () => {
     <>
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>
-          {!userPermissions ? (userToEdit ? 'Editar Usuario' : 'Crear Usuario') : `Permisos para ${userPermissions.username}`}
+          {!userPermissions
+            ? userToEdit
+              ? 'Editar Usuario'
+              : 'Crear Usuario'
+            : `Permisos para ${userPermissions.username}`}
         </h2>
         {!userPermissions ? (
           <form
@@ -312,8 +324,10 @@ const UserForm = () => {
             </div>
           </form>
         ) : (
-          // Formulario de Permisos
-          <form onSubmit={handleSavePermissions} className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'>
+          <form
+            onSubmit={handleSavePermissions}
+            className='bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4'
+          >
             <div className='mb-6'>
               {groups.length > 0 ? (
                 groups.map(group => (
@@ -325,15 +339,18 @@ const UserForm = () => {
                       value={group.id_group}
                       checked={selectedGroups.includes(group.id_group)}
                       onChange={handleGroupsChange}
-                      className="mr-3 h-5 w-5 accent-blue-400 border-gray-300 rounded"
+                      className='mr-3 h-5 w-5 accent-blue-400 border-gray-300 rounded'
                     />
-                    <label htmlFor={`group-${group.id_group}`} className='text-gray-700'>
+                    <label
+                      htmlFor={`group-${group.id_group}`}
+                      className='text-gray-700'
+                    >
                       {group.name}
                     </label>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600">No hay cursos disponibles.</p>
+                <p className='text-gray-600'>No hay cursos disponibles.</p>
               )}
             </div>
             <div className='grid grid-cols-2 gap-4'>
@@ -354,8 +371,6 @@ const UserForm = () => {
           </form>
         )}
       </div>
-
-
 
       <div className='w-full'>
         <h2 className='text-lg font-bold mb-2'>Lista de Usuarios</h2>
@@ -397,8 +412,8 @@ const UserForm = () => {
                     {user.id_rol !== 1 && (
                       <button
                         onClick={() => {
-                          setUserPermissions(user);
-                          fetchUserPermissions(user.id_user);
+                          setUserPermissions(user)
+                          fetchUserPermissions(user.id_user)
                         }}
                         className='bg-green-300 hover:bg-green-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                       >

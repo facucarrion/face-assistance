@@ -106,7 +106,6 @@ def filter_people(db: Session, q: str, id_user: int):
             .filter(UsersGroup.id_user == user.id_user).all()
         )
 
-    # Convertir los resultados en una lista de diccionarios
     result = [
         {
             'id_person': person.id_person,

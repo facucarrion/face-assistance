@@ -54,15 +54,12 @@ async def update_user_permissions(id_user: int, permissions: UserPermissionsUpda
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    # Verificar que todos los grupos (cursos) existen
     valid_groups = db.query(Groups).filter(Groups.id_group.in_(permissions.groups)).all()
     if len(valid_groups) != len(permissions.groups):
         raise HTTPException(status_code=400, detail="Algunos grupos (cursos) no existen")
 
-    # Eliminar asociaciones existentes
     delete_usergroup_by_user(db, id_user)
 
-    # Añadir nuevas asociaciones
     for group_id in permissions.groups:
         user_group = UsersGroup(id_user=id_user, id_group=group_id)
         db.add(user_group)

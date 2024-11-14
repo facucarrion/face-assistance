@@ -3,7 +3,7 @@ import cv2
 def preprocess_image(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-    gray_image = cv2.equalizeHist(gray_image)  # Mejorar el contraste
+    gray_image = cv2.equalizeHist(gray_image) 
     return gray_image
 
 def recognize_and_crop_image(image_to_crop, destine_path):
@@ -21,12 +21,11 @@ def recognize_and_crop_image(image_to_crop, destine_path):
         processed_image, scaleFactor=1.1, minNeighbors=5
     )
 
-    # Itera sobre las caras detectadas y elige la más grande
     for (x, y, w, h) in faces:
-        if w < 100 or h < 100:  # Ignora caras demasiado pequeñas
+        if w < 100 or h < 100:
             continue
 
-        face_detected = True  # Si entra en el bucle, se ha detectado al menos una cara
+        face_detected = True
         area = w * h
 
         if area > max_area:
@@ -36,12 +35,12 @@ def recognize_and_crop_image(image_to_crop, destine_path):
             
 
     if cropped_face is None:
-        cropped_face = processed_image  # Si no se detecta ninguna cara, usa la imagen completa
+        cropped_face = processed_image 
 
     return {
         'destine_path': destine_path,
         'cropped_face': cropped_face,
-        'face_detected': face_detected  # Devuelve si se detectó una cara o no
+        'face_detected': face_detected 
     }
 
 def compare_images(db_img, input_img):
@@ -55,9 +54,9 @@ def compare_images(db_img, input_img):
     if db_img is None or input_img is None:
         return 0
 
-    # Detect keypoints and compute descriptors
-    kpa, descr_a = orb.detectAndCompute(db_img, None)
-    kpb, descr_b = orb.detectAndCompute(input_img, None)
+
+  kpa, descr_a = orb.detectAndCompute(db_img, None)
+  kpb, descr_b = orb.detectAndCompute(input_img, None)
 
     # Check if descriptors are valid
     if descr_a is None or descr_b is None:
@@ -69,8 +68,9 @@ def compare_images(db_img, input_img):
     # Match descriptors
     matches = comp.match(descr_a, descr_b)
 
-    # Filter matches based on distance
-    regiones_similares = [i for i in matches if i.distance < 57.5]
+
+    regiones_similares = [i for i in matches if i.distance < 50]
+
 
     # Avoid division by zero
     if len(matches) == 0:

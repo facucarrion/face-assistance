@@ -30,13 +30,9 @@ const ImageForm = () => {
         fetchTempImage(tempImage.id_temp_images)
         clearInterval(interval)
       }
-    }, 5000) // Ejecutar cada 5 segundos
+    }, 5000)
 
     return () => clearInterval(interval) // Limpiar el intervalo al desmontar el componente
-  }, [tempImage])
-
-  useEffect(() => {
-    console.log(tempImage)
   }, [tempImage])
 
   const handleUploadImage = async id_person => {
@@ -70,7 +66,6 @@ const ImageForm = () => {
       }
     )
     const data = await response.json()
-    console.log(data)
     setIsUploading(false)
     setTempImage(null)
   }
@@ -86,7 +81,6 @@ const ImageForm = () => {
       }
     )
     const data = await response.json()
-    console.log(data)
     setIsUploading(false)
     setTempImage(null)
   }

@@ -8,8 +8,6 @@ const COLORS = {
   'not-assisted': '#EF4444'
 }
 
-//'#10B981', '#EF4444', '#F59E0B'
-
 const AnnualCalendar = ({ id_person }) => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [monthlyAssistance, setMonthlyAssistance] = useState([
@@ -92,10 +90,6 @@ const AnnualCalendar = ({ id_person }) => {
 
     fetchMonthly()
   }, [currentDate])
-
-  useEffect(() => {
-    console.log(monthlyAssistance)
-  }, [monthlyAssistance])
 
   const prevMonth = () => {
     setCurrentDate(

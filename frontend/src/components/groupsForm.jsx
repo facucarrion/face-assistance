@@ -33,10 +33,6 @@ const GroupsForm = () => {
     fetchDevices()
   }, [])
 
-  useEffect(() => {
-    console.log(groups)
-  }, [groups])
-
   const handleCreateOrUpdateGroup = async event => {
     event.preventDefault()
 

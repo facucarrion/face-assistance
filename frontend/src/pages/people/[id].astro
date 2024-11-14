@@ -10,13 +10,11 @@ export const prerender = false
 const { id } = Astro.params
 const year = new Date().getFullYear()
 
-const person = await getPerson(id)
+const person = await getPerson(id as string)
 const response = await fetch(
   `http://localhost:8000/people/${id}/assistance/${year}`
 )
 const yearly_assistance = await response.json()
-
-console.log(yearly_assistance)
 ---
 
 <Layout>

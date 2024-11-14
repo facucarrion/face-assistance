@@ -16,10 +16,6 @@ const DeviceForm = () => {
   }
 
   useEffect(() => {
-    console.log(formData)
-  }, [formData])
-
-  useEffect(() => {
     const fetchStates = async () => {
       const response = await fetch('http://localhost:8000/states')
       const statesData = await response.json()
@@ -71,7 +67,6 @@ const DeviceForm = () => {
   }
 
   const handleEditDevice = device => {
-    console.log(device)
     setFormData({
       id_config: device.id_config,
       name: device.name
