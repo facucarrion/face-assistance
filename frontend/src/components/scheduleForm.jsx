@@ -123,6 +123,8 @@ const SchedulesForm = () => {
         end_time: ''
       })
       fetchSchedules(selectedGroup)
+    } else {
+      alert('¡Hubo un error al agregar el horario!')
     }
   }
 
@@ -145,6 +147,8 @@ const SchedulesForm = () => {
         end_time: ''
       })
       fetchSchedules(selectedGroup)
+    } else {
+      alert('¡Hubo un error al agregar el horario!')
     }
   }
 
@@ -167,6 +171,8 @@ const SchedulesForm = () => {
       })
       fetchScheduleExceptions(selectedGroup)
       const data = await response.json()
+    } else {
+      alert('¡Hubo un error al agregar la excepción!')
     }
   }
 
@@ -223,6 +229,8 @@ const SchedulesForm = () => {
         end_time: ''
       })
       fetchScheduleExceptions(selectedGroup)
+    } else {
+      alert('¡Hubo un error al agregar la excepción!')
     }
   }
 
@@ -459,28 +467,30 @@ const SchedulesForm = () => {
                   required
                 />
               </div>
-              <button
-                type='submit'
-                className='bg-blue-300 hover:bg-blue-500 text-white font-bold w-1/2 py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-              >
-                {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
-              </button>
-              {scheduleToEdit && (
+              <div className='w-full grid grid-cols-2 gap-4'>
                 <button
-                  type='button'
+                  type='submit'
                   className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                  onClick={() => {
-                    setScheduleToEdit(null)
-                    setNewSchedule({
-                      id_day: '',
-                      start_time: '',
-                      end_time: ''
-                    })
-                  }}
                 >
-                  Limpiar
+                  {scheduleToEdit ? 'Actualizar Horario' : 'Agregar Horario'}
                 </button>
-              )}
+                {scheduleToEdit && (
+                  <button
+                    type='button'
+                    className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                    onClick={() => {
+                      setScheduleToEdit(null)
+                      setNewSchedule({
+                        id_day: '',
+                        start_time: '',
+                        end_time: ''
+                      })
+                    }}
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
             </form>
           )}
         </div>

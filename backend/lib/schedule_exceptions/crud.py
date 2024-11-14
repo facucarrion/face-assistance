@@ -35,6 +35,17 @@ def get_schedule_exceptions_by_group(db: Session, id_group: int):
 
     return exceptions
 
+def can_create_schedule_exception_by_group_date(db: Session, date: str, id_group: int):
+    schedule_exception_by_group_date = (db.query(ScheduleExceptions)
+    .filter(ScheduleExceptions.date == date)
+    .filter(ScheduleExceptions.id_group == id_group)
+    .all())
+
+    if len(schedule_exception_by_group_date) > 0:
+        return False
+
+    return True
+
 def create_exceptions(db: Session, schedules_exceptions: ExceptionsCreate):
     db_schedules_exceptions = ScheduleExceptions(
         id_group=schedules_exceptions.id_group,

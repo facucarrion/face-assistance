@@ -37,7 +37,18 @@ def delete_schedule_by_group(db: Session, id_group: int):
 def get_all_days(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Days).offset(skip).limit(limit).all()
 
-def create_schedules(db: Session, schedules: SchedulesCreate):
+def can_create_schedule_by_group_day(db: Session, id_day: int, id_group: int):
+    schedule_by_group_day = (db.query(Schedules)
+    .filter(Schedules.id_day == id_day)
+    .filter(Schedules.id_group == id_group)
+    .all())
+
+    if len(schedule_by_group_day) > 0:
+        return False
+
+    return True
+
+def create_schedules(db: Session, schedules: SchedulesCreate):    
     db_schedules = Schedules(
         id_group=schedules.id_group,
         id_day=schedules.id_day,

@@ -92,7 +92,7 @@ const GroupsForm = () => {
   const handleEditGroup = group => {
     setFormData({
       name: group.name,
-      id_device: group.id_device
+      id_device: group.id_device?.toString()
     })
     setEditGroupId(group.id_group)
   }
