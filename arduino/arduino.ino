@@ -30,7 +30,7 @@ Preferences preferences;
 
 WebServer server(80);
 
-const char* base_url = "http://192.168.0.221:8000";
+const char* base_url = "http://192.168.2.104:8000";
 
 String ssid;
 String password;
@@ -38,16 +38,11 @@ String password;
 unsigned long wifiTimeout = 15000;
 
 String captureImageToBase64() {
-  digitalWrite(FLASH_GPIO_NUM, HIGH);
-  delay(100);
-
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
   esp_camera_fb_return(fb);
   fb = NULL;
   fb = esp_camera_fb_get();
-
-  digitalWrite(FLASH_GPIO_NUM, LOW);
 
   if (!fb) {
     Serial.println("Error al capturar la imagen");
@@ -222,7 +217,7 @@ void connectToWiFi() {
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-      Serial.println("\nConectado a Wi-Fi con éxito");
+      Serial.println("\nConectado a Wi-Fi con exito");
       display.clearDisplay();
       display.setCursor(0, 0);
       display.print("Conectado a WiFi\n");
@@ -369,16 +364,16 @@ void loop() {
             success = true;
             display.clearDisplay();
             display.setCursor(0, 0);
-            display.print("Imagen subida\ncon éxito");
+            display.print("Imagen subida\ncon exito");
             display.display();
           } else {
             display.clearDisplay();
             display.setCursor(0, 0);
-            display.print("Error en la\nsubida de imagen");
+            display.print("No se detecto\nninguna cara");
             display.display();
           }
 
-          delay(5000);
+          delay(2000);
         }
       } else {
         display.clearDisplay();
@@ -416,11 +411,11 @@ void loop() {
         }
       }
 
-      delay(5000);
+      delay(2000);
     }
   } else {
     Serial.println("WiFi Disconnected");
   }
 
-  delay(5000);
+  delay(2000);
 }

@@ -24,7 +24,7 @@ def get_group_by_id(db: Session, id_group: int = 0):
 
 def get_group_with_people_by_id(db: Session, id_group: int = 0):
   groups = db.query(Groups).filter(Groups.id_group == id_group).first()
-  people = db.query(People).filter(People.id_group == id_group).all()
+  people = db.query(People).filter(People.id_group == id_group).order_by(People.lastname).all()
 
   people = [
       {
@@ -87,3 +87,12 @@ def update_people_group(db: Session, from_group_id: int, to_group_id: int):
         db.add(person)
     db.commit()
     return people_in_group
+
+def delete_devices_relations(db: Session, id_device: int):
+    groups = db.query(Groups).filter(Groups.id_device == id_device).all()
+
+    for group in groups:
+        group.id_device = None
+        db.add(group)
+    db.commit()
+    return groups

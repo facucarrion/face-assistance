@@ -4,6 +4,7 @@ from typing import List
 from schemas.DevicesSchema import DevicesBase, DevicesCreate, DevicesUpdate
 from config.database import get_db
 from lib.devices.crud import get_devices, get_device_by_id, create_device, update_device, delete_devices, get_status_by_device
+from lib.groups.crud import delete_devices_relations
 
 devices_router = APIRouter(
     prefix="/devices",
@@ -33,5 +34,6 @@ async def update_devices(id_device: int, device_update: DevicesUpdate, db: Sessi
 
 @devices_router.delete("/{id_device}")
 async def delete_device(id_device: int, db: Session = Depends(get_db)):
+    relations = delete_devices_relations(db, id_device)
     devices = delete_devices(db, id_device)
     return devices
