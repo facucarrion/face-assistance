@@ -10,18 +10,19 @@ const { id } = Astro.params
 
 const group = await getGroup(id)
 
-console.log(group)
 const people = group.people
 
-const isClass = people.some(person => person.assistance == 'no-schedule')
+const isClass = people.some((person: any) => person.assistance == 'no-schedule')
 
 const assistance = {
-  assisted: people.filter(person => person.assistance.status == 'assisted')
-    .length,
-  'not-assisted': people.filter(
-    person => person.assistance.status == 'no-assisted'
+  assisted: people.filter(
+    (person: any) => person.assistance.status == 'assisted'
   ).length,
-  late: people.filter(person => person.assistance.status == 'late').length
+  'not-assisted': people.filter(
+    (person: any) => person.assistance.status == 'no-assisted'
+  ).length,
+  late: people.filter((person: any) => person.assistance.status == 'late')
+    .length
 }
 
 const COLOR_CODE = {
@@ -56,10 +57,9 @@ const COLOR_CODE = {
 
         <ul class='w-full flex flex-col gap-2'>
           {
-            group.people.map(person => {
-              const color = COLOR_CODE[person.assistance.status]
-
-              console.log(person.assistance)
+            group.people.map((person: any) => {
+              const color =
+                COLOR_CODE[person.assistance.status as keyof typeof COLOR_CODE]
 
               return (
                 <li class='p-2 border-2 text-xl font-medium rounded-md flex items-center justify-between'>

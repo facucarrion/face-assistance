@@ -11,13 +11,10 @@ def format_timedelta(td):
     return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 def get_schedule_exceptions_by_group(db: Session, id_group: int):
-    # Obtener la fecha actual
     today = datetime.today()
 
-    # Calcular la fecha límite de los próximos 30 días
     thirty_days_from_now = today + timedelta(days=30)
 
-    # Filtrar por grupo y excepciones dentro de los próximos 30 días
     exceptions = db.query(ScheduleExceptions).filter(
         ScheduleExceptions.id_group == id_group,
         ScheduleExceptions.date >= today,

@@ -37,7 +37,7 @@ const search = url.searchParams.get('q') || ''
 
 <script>
   const form = document.getElementById('searchform')
-  const handleSubmit = event => {
+  const handleSubmit = (event: any) => {
     event.preventDefault()
     const search = event.target.searchinput.value
     const query = search.toLowerCase().replace(' ', '%20')

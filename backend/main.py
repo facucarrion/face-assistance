@@ -67,10 +67,8 @@ async def upload_image(request: ImageBase, db: Session = Depends(get_db)):
     with open(temp_file, "wb") as file:
         file.write(imgdata)
 
-    # Llama a la función para reconocer y recortar la imagen
     new_image = recognize_and_crop_image(f"temp/{filename}", f"temp/uploads/{filename}")
 
-    # Verifica si se detectó una cara
     if new_image["face_detected"]:
         cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
 
@@ -117,10 +115,8 @@ async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db
     with open(temp_file, "wb") as file:
         file.write(imgdata)
 
-    # Llama a la función para reconocer y recortar la imagen
     new_image = recognize_and_crop_image(f"temp/{filename}", f"temp/uploads/{filename}")
 
-    # Verifica si se detectó una cara
     if new_image["face_detected"]:
         cv2.imwrite(new_image['destine_path'], new_image['cropped_face'])
 
@@ -150,7 +146,6 @@ async def new_assistance(request: AssistanceCreate, db: Session = Depends(get_db
             if (db_assistance):
                 continue
 
-            # change /temp/image to /temp/uploads/image
             image_to_compare = person.image.replace("temp", "temp/uploads")
             coincidence = compare_images(image_to_compare, new_image['destine_path'])
 

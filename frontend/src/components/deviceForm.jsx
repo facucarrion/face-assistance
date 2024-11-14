@@ -16,10 +16,6 @@ const DeviceForm = () => {
   }
 
   useEffect(() => {
-    console.log(formData)
-  }, [formData])
-
-  useEffect(() => {
     const fetchStates = async () => {
       const response = await fetch('http://localhost:8000/states')
       const statesData = await response.json()
@@ -71,7 +67,6 @@ const DeviceForm = () => {
   }
 
   const handleEditDevice = device => {
-    console.log(device)
     setFormData({
       id_config: device.id_config,
       name: device.name
@@ -176,7 +171,6 @@ const DeviceForm = () => {
                   Id del Dispositivo
                 </th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
-                <th className='py-2 px-4 bg-gray-200 text-left'>Estado</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
               </tr>
             </thead>
@@ -186,7 +180,6 @@ const DeviceForm = () => {
                 <tr key={device.id_device}>
                   <td className='py-2 px-4 border-b'>{device.id_config}</td>
                   <td className='py-2 px-4 border-b'>{device.name}</td>
-                  <td className='py-2 px-4 border-b'>{device.state}</td>
                   <td className='py-2 px-4 border-b'>
                     <button
                       onClick={() => handleDeleteDevice(device.id_device)}
