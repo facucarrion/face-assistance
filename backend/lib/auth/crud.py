@@ -44,6 +44,27 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def hash_password(password: str) -> str:
     return pwd_context.hash(password) 
 
+def can_create_users(db: Session, username: str):
+    user = (db.query(User)
+    .filter(User.username == username)
+    .all())
+
+    if len(user) > 0:
+        return False
+
+    return True
+
+def can_update_users(db: Session, username: str, id_user: int):
+    user = (db.query(User)
+    .filter(User.username == username)
+    .filter(User.id_user != id_user)
+    .first())
+
+    if user is not None:
+        return False 
+
+    return True
+
 def create_user(db: Session, user: UserCreate):
     if user.password != user.repeat_password:
         return None

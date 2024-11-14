@@ -48,6 +48,20 @@ def can_create_schedule_by_group_day(db: Session, id_day: int, id_group: int):
 
     return True
 
+def can_update_schedule_by_group_day(db: Session, id_day: int, id_group: int, id_schedule: int):
+    schedules = (db.query(Schedules)
+    .filter(Schedules.id_day == id_day)
+    .filter(Schedules.id_group == id_group)
+    .filter(Schedules.id_schedule != id_schedule)
+    .first())
+
+    print(schedules.id_schedule)
+
+    if schedules is not None:
+        return False 
+
+    return True
+
 def create_schedules(db: Session, schedules: SchedulesCreate):    
     db_schedules = Schedules(
         id_group=schedules.id_group,

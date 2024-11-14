@@ -20,6 +20,27 @@ def get_periods(db: Session, skip: int = 0, limit: int = 100):
 
     return periods
 
+def can_create_periods(db: Session, year: str):
+    periods = (db.query(Periods)
+    .filter(Periods.year == year)
+    .all())
+    
+    if len(periods) > 0:
+        return False
+
+    return True
+
+def can_update_periods(db: Session, year: str, id_period: int):
+    periods = (db.query(Periods)
+    .filter(Periods.year == year)
+    .filter(Periods.id_period != id_period)
+    .first())
+
+    if periods is not None:
+        return False 
+
+    return True
+
 def create_periods(db: Session, periods: PeriodsCreate):
     db_periods = Periods(
         start_date=periods.start_date,

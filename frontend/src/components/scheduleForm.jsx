@@ -29,6 +29,10 @@ const SchedulesForm = () => {
   }, [])
 
   useEffect(() => {
+    console.log(newSchedule)
+  })
+
+  useEffect(() => {
     if (selectedGroup) {
       fetchSchedules(selectedGroup)
       fetchScheduleExceptions(selectedGroup)

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.GroupsSchemas import GroupsBase, GroupCreate, GroupUpdate, GroupsWithPeople, GroupTransfer
 from schemas.PeopleSchema import PeopleBase
 from config.database import get_db
-from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group, update_people_group
+from lib.groups.crud import get_groups, get_group_by_id as crud_get_group_by_id, get_group_with_people_by_id, create_group, update_group, delete_group, get_people_in_group, update_people_group, can_create_groups, can_update_groups
 from lib.people.crud import delete_people_by_group
 from lib.schedule_exceptions.crud import delete_schedule_exception_by_group
 from lib.schedules.crud import delete_schedule_by_group
@@ -26,10 +26,14 @@ async def get_group_by_id(id_group: int, db: Session = Depends(get_db)):
 
 @groups_router.post("/", response_model=GroupsBase)
 async def create_new_group(group: GroupCreate, db: Session = Depends(get_db)):
+  if can_create_groups(db, group.name) == False:
+        raise HTTPException(status_code=400, detail="Groups already exists")
   return create_group(db, group)
 
 @groups_router.put("/{id_group}", response_model=GroupsBase)
 async def update_existing_group(id_group: int, group_update: GroupUpdate, db: Session = Depends(get_db)):
+  if can_update_groups(db, group_update.name, id_group) == False:
+        raise HTTPException(status_code=400, detail="Groups already exists")
   db_group = update_group(db, id_group, group_update)
   return db_group
 

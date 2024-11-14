@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from schemas.SchedulesSchema import SchedulesBase, SchedulesCreate, SchedulesUpdate
 from config.database import get_db
-from lib.schedules.crud import create_schedules, get_schedules_by_group as crud_get_schedules_by_group, delete_schedules, update_schedules, can_create_schedule_by_group_day
+from lib.schedules.crud import create_schedules, get_schedules_by_group as crud_get_schedules_by_group, delete_schedules, update_schedules, can_create_schedule_by_group_day, can_update_schedule_by_group_day
 
 schedules_router = APIRouter(
     prefix="/schedules",
@@ -28,6 +28,8 @@ async def delete_existing_schedule(id_schedule: int, db: Session = Depends(get_d
 
 @schedules_router.put("/{id_schedule}", response_model=SchedulesBase)
 async def update_existing_schedules(id_schedule: int, schedules_update: SchedulesUpdate, db: Session = Depends(get_db)):
+    if can_update_schedule_by_group_day(db, id_schedule, schedules_update.id_day, schedules_update.id_group) == False:
+        raise HTTPException(status_code=401, detail="Schedule already exists")
     
     db_schedules = update_schedules(db, id_schedule, schedules_update)
     return db_schedules

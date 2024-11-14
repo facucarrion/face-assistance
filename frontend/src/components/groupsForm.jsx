@@ -85,14 +85,19 @@ const GroupsForm = () => {
   const handleChange = event => {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value
+      [event.target.name]:
+        event.target.value === 'null' ? null : event.target.value
     })
   }
+
+  useEffect(() => {
+    console.log(formData)
+  }, [formData])
 
   const handleEditGroup = group => {
     setFormData({
       name: group.name,
-      id_device: group.id_device?.toString()
+      id_device: group.id_device?.toString() ?? null
     })
     setEditGroupId(group.id_group)
   }
@@ -245,7 +250,7 @@ const GroupsForm = () => {
                 onChange={handleChange}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
               >
-                <option value=''>Selecciona un Dispositivo</option>
+                <option value='null'>Selecciona un Dispositivo</option>
                 {devices.map(device => (
                   <option key={device.id_device} value={device.id_device}>
                     {device.name}

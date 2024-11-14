@@ -16,10 +16,14 @@ async def read_periods(skip: int = 0, limit: int = 100, db: Session = Depends(ge
 
 @periods_router.post("/")
 async def create_new_periods(periods: PeriodsCreate, db: Session = Depends(get_db)):
+    if PeriodsCrud.can_create_periods(db, periods.year) == False:
+        raise HTTPException(status_code=400, detail="Period already exists")
     return PeriodsCrud.create_periods(db, periods)
 
 @periods_router.put("/{id_period}")
 async def update_periods(id_period: int, periods_update: PeriodsUpdate, db: Session = Depends(get_db)):
+    if PeriodsCrud.can_update_periods(db, periods_update.year, id_period) == False:
+        raise HTTPException(status_code=400, detail="Period already exists")
     periods = PeriodsCrud.update_periods(db, id_period, periods_update)
     return periods
 
