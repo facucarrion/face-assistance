@@ -44,27 +44,39 @@ def recognize_and_crop_image(image_to_crop, destine_path):
     }
 
 def compare_images(db_img, input_img):
-  orb = cv2.ORB_create(nfeatures=1000)
+    orb = cv2.ORB_create(nfeatures=1000)
 
-
-  db_img = cv2.imread(db_img)
-  input_img = cv2.imread(input_img)
+    # Read the images
+    db_img = cv2.imread(db_img)
+    input_img = cv2.imread(input_img)
   
-  if db_img is None or input_img is None:
-    return 0
+    # Check if images are loaded properly
+    if db_img is None or input_img is None:
+        return 0
+
 
   kpa, descr_a = orb.detectAndCompute(db_img, None)
   kpb, descr_b = orb.detectAndCompute(input_img, None)
 
-  comp = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    # Check if descriptors are valid
+    if descr_a is None or descr_b is None:
+        return 0
 
-  matches = comp.match(descr_a, descr_b)
+    # Create a Brute Force Matcher with Hamming distance
+    comp = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    
+    # Match descriptors
+    matches = comp.match(descr_a, descr_b)
 
-  regiones_similares = [i for i in matches if i.distance < 50]
 
-  if len(matches) == 0:
-    return 0
+    regiones_similares = [i for i in matches if i.distance < 50]
 
-  coincidence = len(regiones_similares) / len(matches)
 
-  return coincidence
+    # Avoid division by zero
+    if len(matches) == 0:
+        return 0
+
+    # Calculate the coincidence ratio
+    coincidence = len(regiones_similares) / len(matches)
+
+    return coincidence
