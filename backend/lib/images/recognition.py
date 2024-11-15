@@ -55,9 +55,9 @@ def compare_images(db_img, input_img):
         return 0
 
 
-  kpa, descr_a = orb.detectAndCompute(db_img, None)
-  kpb, descr_b = orb.detectAndCompute(input_img, None)
-
+    kpa, descr_a = orb.detectAndCompute(db_img, None)
+    kpb, descr_b = orb.detectAndCompute(input_img, None)
+ 
     # Check if descriptors are valid
     if descr_a is None or descr_b is None:
         return 0

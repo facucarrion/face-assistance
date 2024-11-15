@@ -46,6 +46,26 @@ def get_group_with_people_by_id(db: Session, id_group: int = 0):
       "people": people
   }
 
+def can_create_groups(db: Session, name: str):
+    groups = (db.query(Groups)
+    .filter(Groups.name == name)
+    .all())
+
+    if len(groups) > 0:
+        return False
+
+    return True
+
+def can_update_groups(db: Session, name: str, id_group: int):
+    groups = (db.query(Groups)
+    .filter(Groups.name == name)
+    .filter(Groups.id_group != id_group)
+    .first())
+
+    if groups is not None:
+        return False 
+
+    return True
 
 def create_group(db: Session, group: GroupCreate):
   db_group = Groups(name=group.name,
