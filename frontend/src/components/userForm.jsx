@@ -195,8 +195,7 @@ const UserForm = () => {
     } else {
       const errorData = await response.json()
       alert(
-        `No se pudo actualizar los permisos: ${
-          errorData.detail || 'Error desconocido'
+        `No se pudo actualizar los permisos: ${errorData.detail || 'Error desconocido'
         }`
       )
     }

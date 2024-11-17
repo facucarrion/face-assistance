@@ -152,8 +152,8 @@ const GroupsForm = () => {
           {showTransferForm
             ? 'Desplazar Alumnos'
             : editGroupId
-            ? 'Editar Curso'
-            : 'Crear Curso'}
+              ? 'Editar Curso'
+              : 'Crear Curso'}
         </h2>
 
         {showTransferForm ? (
@@ -299,20 +299,20 @@ const GroupsForm = () => {
 
             <tbody>
               {groups.map(group => (
-                <tr key={group.id_group}>
-                  <td className='py-2 px-4 border-b'>{group.name}</td>
+                <tr key={group.id_group} className='border-b'>
+                  <td className='py-2 px-4'>{group.name}</td>
 
-                  <td className='py-2 px-4 border-b'>
+                  <td className='py-2 px-4 flex space-x-2'>
                     <button
                       onClick={() => handleDeleteGroup(group.id_group)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Eliminar
                     </button>
 
                     <button
                       onClick={() => handleEditGroup(group)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
                     </button>
