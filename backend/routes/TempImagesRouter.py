@@ -32,4 +32,3 @@ async def confirm_temp_image_route(id_temp_images: int, db = Depends(get_db)):
 async def get_temp_image_person(id_config: int, db = Depends(get_db)):
   temp_image = get_temp_image_person_by_device(db, id_config)
   return temp_image
-

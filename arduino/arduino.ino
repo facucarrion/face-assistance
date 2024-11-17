@@ -3,24 +3,21 @@
 #include <Preferences.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include "esp_camera.h" // Librería necesaria para la cámara
-#include "base64.h" // Para convertir la imagen a base64
+#include "esp_camera.h" 
+#include "base64.h" 
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
 #define DEVICE_ID 1
 
-// Configuración de la cámara
 #define CAMERA_MODEL_AI_THINKER
 #include "camera_pins.h"
 
-// Definición de pines para la pantalla OLED
-#define SCREEN_WIDTH 128 // Ancho de la pantalla
-#define SCREEN_HEIGHT 64  // Alto de la pantalla
-#define OLED_RESET -1     // No se usa reset en este modelo
+#define SCREEN_WIDTH 128 
+#define SCREEN_HEIGHT 64  
+#define OLED_RESET -1 
 
-// Definición de pines SDA y SCL
 #define SDA_PIN 3
 #define SCL_PIN 1
 
@@ -131,7 +128,7 @@ String uploadAssistanceImage() {
     return "Error";
   }
 
-  String idConfig = getConfigId();  // Llama a la función para obtener el id_config
+  String idConfig = getConfigId();  
   String jsonBody = "{\"image\": \"" + imageBase64 + "\", \"id_config\": \"" + idConfig + "\"}";
 
   String response = fetch("/assistance/new", "POST", jsonBody);
@@ -221,7 +218,7 @@ void connectToWiFi() {
       display.clearDisplay();
       display.setCursor(0, 0);
       display.print("Conectado a WiFi\n");
-      display.print(ssid);  // Mostrar el SSID
+      display.print(ssid); 
       display.print("\nIP: ");
       display.println(WiFi.localIP());
       display.display();
@@ -271,16 +268,13 @@ void startWebServer() {
 void setup() {
   Serial.begin(115200);
   
-  // Inicializar Wire
   Wire.begin(SDA_PIN, SCL_PIN);
 
-  // Inicialización de la pantalla OLED
   display.begin(SSD1306_SWITCHCAPVCC, 0x3c); // Dirección I2C de la pantalla OLED
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
 
-  // Configuración de la cámara
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;

@@ -51,7 +51,6 @@ def delete_temp_image(db: Session, id_temp_images: int):
     db.commit()
     return old_image
 
-
 def confirm_temp_image(db: Session, id_temp_images: int):
     db_temp_image = db.query(TempImages).filter(TempImages.id_temp_images == id_temp_images).first()
     db_person = get_person_by_id(db, id_person=db_temp_image.id_person)

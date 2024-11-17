@@ -40,8 +40,8 @@ const PeriodForm = () => {
     if (response.ok) {
       alert(
         editPeriodsId
-          ? 'Ciclo lectivo actualizado exitosamente!'
-          : 'Ciclo lectivo exitosamente!'
+          ? 'Año lectivo actualizado exitosamente!'
+          : 'Año lectivo exitosamente!'
       )
 
       setNewPeriods({
@@ -54,7 +54,7 @@ const PeriodForm = () => {
       setEditPeriodsId(null)
       fetchPeriods()
     } else {
-      alert('No se pudo crear/actualizar el ciclo lectivo')
+      alert('No se pudo crear o actualizar el año lectivo')
     }
   }
 
@@ -75,10 +75,10 @@ const PeriodForm = () => {
     })
 
     if (response.ok) {
-      alert('¡Ciclo lectivo eliminado exitosamente!')
+      alert('¡Año lectivo eliminado exitosamente!')
       fetchPeriods()
     } else {
-      alert('No se pudo eliminar el ciclo lectivo')
+      alert('No se pudo eliminar el año lectivo')
     }
   }
 
@@ -93,7 +93,7 @@ const PeriodForm = () => {
     <>
       <div className='w-full'>
         <h2 className='text-2xl font-bold mb-4'>
-          {editPeriodsId ? 'Editar Ciclo Lectivo' : 'Crear Ciclo Lectivo'}
+          {editPeriodsId ? 'Editar Año Lectivo' : 'Crear Año Lectivo'}
         </h2>
         <form
           onSubmit={handleCreateOrUpdatePeriods}
@@ -176,12 +176,13 @@ const PeriodForm = () => {
               htmlFor='year'
               className='block text-gray-700 text-sm font-bold mb-2'
             >
-              Ciclo Lectivo:
+              Año Lectivo:
             </label>
             <input
               type='text'
               id='year'
               name='year'
+              placeholder='Ingrese el año lectivo'
               value={newPeriods.year}
               onChange={handleChange}
               className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
@@ -195,8 +196,8 @@ const PeriodForm = () => {
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             >
               {editPeriodsId
-                ? 'Actualizar Ciclo Lectivo'
-                : 'Crear Ciclo Lectivo'}
+                ? 'Actualizar Año Lectivo'
+                : 'Crear Año Lectivo'}
             </button>
             {editPeriodsId && (
               <button
@@ -222,7 +223,7 @@ const PeriodForm = () => {
 
       <div className=''>
         <div>
-          <h2 className='text-lg font-bold mb-2'>Ciclos Lectivos</h2>
+          <h2 className='text-lg font-bold mb-2'>Años Lectivos</h2>
           <div className='grid grid-cols-1 gap-4'></div>
           {periods.length > 0 ? (
             periods.map(period => (
@@ -264,12 +265,11 @@ const PeriodForm = () => {
               </div>
             ))
           ) : (
-            <p>No hay ciclos lectivos disponibles.</p>
+            <p>No hay años lectivos disponibles.</p>
           )}
         </div>
       </div>
     </>
   )
 }
-
 export default PeriodForm

@@ -5,7 +5,6 @@ from schemas.DaysSchema import DaysBase
 from config.database import get_db
 from lib.schedules.crud import create_schedules, get_all_days
 
-
 days_router = APIRouter(
     prefix="/days",
 )

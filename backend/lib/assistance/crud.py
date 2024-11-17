@@ -57,8 +57,7 @@ def delete_assistance_by_person(db: Session, id_person: int):
 def get_periods(db: Session, year: int):
     return db.query(Periods).filter(Periods.year == year).first()
 
-def get_yearly_assistance_summary(db: Session, id_person: int, year: int):
-    
+def get_yearly_assistance_summary(db: Session, id_person: int, year: int):    
     periods = get_periods(db, year)
     start_of_year = periods.start_date
     end_of_year = datetime.today().date()

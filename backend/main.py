@@ -26,7 +26,6 @@ from models.TempImages import TempImages
 from models.Groups import Groups
 from models.Assistance import Assistance
 
-
 from lib.images.recognition import recognize_and_crop_image, compare_images
 from lib.devices.crud import get_device_by_id
 from lib.periods.crud import get_period_by_year
