@@ -282,21 +282,21 @@ const PeopleForm = () => {
 
             <tbody>
               {people.map(people => (
-                <tr key={people.id_person}>
-                  <td className='py-2 px-4 border-b'>{people.firstname}</td>
-                  <td className='py-2 px-4 border-b'>{people.lastname}</td>
-                  <td className='py-2 px-4 border-b'>{people.document}</td>
-                  <td className='py-2 px-4 border-b'>
+                <tr key={people.id_person} className='border-b'>
+                  <td className='py-2 px-4'>{people.firstname}</td>
+                  <td className='py-2 px-4'>{people.lastname}</td>
+                  <td className='py-2 px-4'>{people.document}</td>
+                  <td className='py-2 px-4 flex space-x-2'>
                     <button
                       onClick={() => handleDeletePeople(people.id_person)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Eliminar
                     </button>
 
                     <button
                       onClick={() => handleEditPeople(people)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
                     </button>

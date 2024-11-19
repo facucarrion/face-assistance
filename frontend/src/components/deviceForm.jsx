@@ -164,12 +164,10 @@ const DeviceForm = () => {
       <div>
         <h2 className='text-lg font-bold mb-2'>Lista de Dispositivos</h2>
         <div className='max-h-96 overflow-y-auto relative'>
-          <table className='min-w-full bg-white shadow-md rounded mb-4'>
-            <thead className='sticky top-0'>
+        <table className='min-w-full bg-white shadow-md rounded mb-4'>
+        <thead className='sticky top-0'>
               <tr>
-                <th className='py-2 px-4 bg-gray-200 text-left'>
-                  Id del Dispositivo
-                </th>
+              <th className='py-2 px-4 bg-gray-200 text-left'>Id del Dispositivo</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Nombre</th>
                 <th className='py-2 px-4 bg-gray-200 text-left'>Acciones</th>
               </tr>
@@ -177,20 +175,20 @@ const DeviceForm = () => {
 
             <tbody>
               {devices.map(device => (
-                <tr key={device.id_device}>
-                  <td className='py-2 px-4 border-b'>{device.id_config}</td>
-                  <td className='py-2 px-4 border-b'>{device.name}</td>
-                  <td className='py-2 px-4 border-b'>
+                <tr key={device.id_device} className='border-b'>
+                  <td className='py-2 px-4'>{device.id_config}</td>
+                  <td className='py-2 px-4'>{device.name}</td>
+                  <td className='py-2 px-4 flex space-x-2'>
                     <button
                       onClick={() => handleDeleteDevice(device.id_device)}
-                      className='bg-red-300 hover:bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-red-300 hover:bg-red-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Eliminar
                     </button>
 
                     <button
                       onClick={() => handleEditDevice(device)}
-                      className='bg-yellow-300 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                      className='bg-yellow-300 hover:bg-yellow-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
                     >
                       Editar
                     </button>

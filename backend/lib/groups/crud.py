@@ -7,7 +7,6 @@ from schemas.GroupsSchemas import GroupCreate, GroupUpdate
 from lib.assistance.crud import get_today_assistance
 from lib.auth.crud import get_user_by_id
 
-
 def get_groups(db: Session, skip: int = 0, limit: int = 100, id_user: int = 0):
   user = get_user_by_id(db, id_user)
 
@@ -16,11 +15,8 @@ def get_groups(db: Session, skip: int = 0, limit: int = 100, id_user: int = 0):
   else:
     return db.query(Groups).join(UsersGroup, UsersGroup.id_group == Groups.id_group).filter(UsersGroup.id_user == user.id_user).offset(skip).limit(limit).all()
 
-
-
 def get_group_by_id(db: Session, id_group: int = 0):
   return db.query(Groups).filter(Groups.id_group == id_group).first()
-
 
 def get_group_with_people_by_id(db: Session, id_group: int = 0):
   groups = db.query(Groups).filter(Groups.id_group == id_group).first()
@@ -75,7 +71,6 @@ def create_group(db: Session, group: GroupCreate):
   db.refresh(db_group)
   return db_group
 
-
 def update_group(db: Session, id_group: int, group_update: GroupUpdate):
   db_group = db.query(Groups).filter(Groups.id_group == id_group).first()
   if db_group is None:
@@ -86,7 +81,6 @@ def update_group(db: Session, id_group: int, group_update: GroupUpdate):
   db.refresh(db_group)
   return db_group
 
-
 def delete_group(db: Session, id_group: int):
   db_group = db.query(Groups).filter(Groups.id_group == id_group).first()
 
@@ -94,7 +88,6 @@ def delete_group(db: Session, id_group: int):
   db.commit()
   
   return db_group
-
 
 def get_people_in_group(db: Session, id_group: int):
   return db.query(People).filter(People.id_group == id_group).all()

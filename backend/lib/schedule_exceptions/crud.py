@@ -46,6 +46,18 @@ def can_create_schedule_exception_by_group_date(db: Session, date: str, id_group
 
     return True
 
+def can_update_schedule_exception_by_group_date(db: Session, date: str, id_group: int, id_schedule_exception: int):
+    schedules_exception = (
+        db.query(SchedulesExceptions)
+        .filter(SchedulesExceptions.date == date, SchedulesExceptions.id_group == id_group, SchedulesExceptions.id_schedule_exception != id_schedule_exception)
+        .first()
+    )
+
+    if schedules_exception is not None:
+        return False 
+
+    return True
+
 def create_exceptions(db: Session, schedules_exceptions: ExceptionsCreate):
     db_schedules_exceptions = ScheduleExceptions(
         id_group=schedules_exceptions.id_group,

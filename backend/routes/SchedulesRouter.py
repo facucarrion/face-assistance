@@ -12,8 +12,7 @@ schedules_router = APIRouter(
 @schedules_router.post("/")
 async def create_new_schedules(schedules: SchedulesCreate, db: Session = Depends(get_db)):
     if can_create_schedule_by_group_day(db, schedules.id_day, schedules.id_group) == False:
-        raise HTTPException(status_code=400, detail="Schedule already exists")
-    
+        raise HTTPException(status_code=400, detail="Schedule already exists")    
     return create_schedules(db, schedules)
 
 @schedules_router.get("/{id_group}")
@@ -30,6 +29,5 @@ async def delete_existing_schedule(id_schedule: int, db: Session = Depends(get_d
 async def update_existing_schedules(id_schedule: int, schedules_update: SchedulesUpdate, db: Session = Depends(get_db)):
     if can_update_schedule_by_group_day(db, id_day=schedules_update.id_day, id_group=schedules_update.id_group, id_schedule=id_schedule) == False:
         raise HTTPException(status_code=401, detail="Schedule already exists")
-    
     db_schedules = update_schedules(db, id_schedule, schedules_update)
     return db_schedules

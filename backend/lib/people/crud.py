@@ -8,7 +8,6 @@ from models.Devices import Devices
 from schemas.PeopleSchema import PeopleCreate, PeopleUpdate
 from lib.auth.crud import get_user_by_id
 
-
 def get_people(db: Session, skip: int = 0, limit: int = 100):
     db_people = (
         db.query(People, Groups, Devices)
