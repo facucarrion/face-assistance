@@ -33,21 +33,20 @@ def get_device_by_id(db: Session, id_device: int = 0):
     "state": state
   }
 
-def can_create_devices_by_group_date(db: Session, name: str, id_config: int):
+def can_create_device(db: Session, name: str, id_config: int):
     devices = (db.query(Devices)
-    .filter(Devices.name == name)
-    .filter(Devices.id_config == id_config)
-    .all())
+      .filter((Devices.name == name) | (Devices.id_config == id_config))
+      .first())
 
-    if len(devices) > 0:
+    if devices is not None:
         return False
 
     return True
 
-def can_update_devices_by_group_date(db: Session, name: str, id_config: int, id_device: int):
+def can_update_device(db: Session, name: str, id_config: int, id_device: int):
     devices = (
         db.query(Devices)
-        .filter(Devices.name == name, Devices.id_config == id_config, Devices.id_device != id_device)
+        .filter((Devices.name == name) | (Devices.id_config == id_config), Devices.id_device != id_device)
         .first()
     )
 

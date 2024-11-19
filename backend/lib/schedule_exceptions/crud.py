@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.ScheduleExceptions import ScheduleExceptions
-from schemas.SchedulesExceptionsSchema import SchedulesExceptionsBase, ExceptionsCreate, ExceptionsUpdate
+from schemas.SchedulesExceptionsSchema import ExceptionsCreate, ExceptionsUpdate
 from datetime import datetime, timedelta
 
 def format_timedelta(td):
@@ -25,8 +25,8 @@ def get_schedule_exceptions_by_group(db: Session, id_group: int):
         {
             "id_schedule_exception": exception.id_schedule_exception,
             "id_group": exception.id_group,
-            "start_time": format_timedelta(exception.start_time),
-            "end_time": format_timedelta(exception.end_time),
+            "start_time": format_timedelta(exception.start_time) if exception.start_time is not None else None,
+            "end_time": format_timedelta(exception.end_time) if exception.end_time is not None else None,
             "is_class": exception.is_class,
             "date": exception.date
         }
@@ -48,8 +48,8 @@ def can_create_schedule_exception_by_group_date(db: Session, date: str, id_group
 
 def can_update_schedule_exception_by_group_date(db: Session, date: str, id_group: int, id_schedule_exception: int):
     schedules_exception = (
-        db.query(SchedulesExceptions)
-        .filter(SchedulesExceptions.date == date, SchedulesExceptions.id_group == id_group, SchedulesExceptions.id_schedule_exception != id_schedule_exception)
+        db.query(ScheduleExceptions)
+        .filter(ScheduleExceptions.date == date, ScheduleExceptions.id_group == id_group, ScheduleExceptions.id_schedule_exception != id_schedule_exception)
         .first()
     )
 

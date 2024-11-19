@@ -190,14 +190,12 @@ const PeriodForm = () => {
             />
           </div>
 
-          <div className='w-full grid grid-cols-2'>
+          <div className='w-full grid grid-cols-2 gap-4'>
             <button
               type='submit'
               className='bg-blue-300 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             >
-              {editPeriodsId
-                ? 'Actualizar Año Lectivo'
-                : 'Crear Año Lectivo'}
+              {editPeriodsId ? 'Actualizar Año Lectivo' : 'Crear Año Lectivo'}
             </button>
             {editPeriodsId && (
               <button

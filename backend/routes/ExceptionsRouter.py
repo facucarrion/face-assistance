@@ -21,7 +21,7 @@ async def get_schedule_exceptions_by_group(id_group: int, db: Session = Depends(
 
 @schedule_exceptions_router.put("/{id_schedule_exception}")
 async def update_existing_schedules_exception(id_schedule_exception: int, schedules_exception_update: ExceptionsUpdate, db: Session = Depends(get_db)):
-    if ExceptionsCrud.can_update_schedule_exception_by_group_date(db, schedules_exception.date, schedules_exception.id_group) == False:
+    if ExceptionsCrud.can_update_schedule_exception_by_group_date(db, schedules_exception_update.date, schedules_exception_update.id_group, id_schedule_exception) == False:
         raise HTTPException(status_code=400, detail="Schedule exception already exists")
     schedules_exception = ExceptionsCrud.update_schedules_exceptions(db, id_schedule_exception, schedules_exception_update)
     return schedules_exception

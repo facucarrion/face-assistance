@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from schemas.DevicesSchema import DevicesBase, DevicesCreate, DevicesUpdate
 from config.database import get_db
-from lib.devices.crud import get_devices, get_device_by_id, create_device, update_device, delete_devices, get_status_by_device, can_create_devices_by_group_date, can_update_devices_by_group_date
+from lib.devices.crud import get_devices, get_device_by_id, create_device, update_device, delete_devices, get_status_by_device, can_create_device, can_update_device
 from lib.groups.crud import delete_devices_relations
 
 devices_router = APIRouter(
@@ -25,13 +25,13 @@ async def get_status(id_config: int, db: Session = Depends(get_db)):
 
 @devices_router.post("/")
 async def create_new_device(device: DevicesCreate, db: Session = Depends(get_db)):
-    if can_create_devices_by_group_date(db, device.name, device.id_config) == False:
+    if can_create_device(db, device.name, device.id_config) == False:
         raise HTTPException(status_code=400, detail="Device already exists")
     return create_device(db, device)
 
 @devices_router.put("/{id_device}")
 async def update_devices(id_device: int, device_update: DevicesUpdate, db: Session = Depends(get_db)):
-    if can_update_devices_by_group_date(db, device_update.name, device_update.id_config) == False:
+    if can_update_device(db, device_update.name, device_update.id_config, id_device) == False:
         raise HTTPException(status_code=400, detail="Device already exists")
     devices = update_device(db, id_device, device_update)
     return devices

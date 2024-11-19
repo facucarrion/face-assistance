@@ -23,8 +23,8 @@ class ExceptionsUpdate(BaseModel):
     id_group: int
     date: str
     is_class: bool
-    start_time: str
-    end_time: str
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
 
     class Config:
         from_attributes = True

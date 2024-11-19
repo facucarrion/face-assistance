@@ -29,8 +29,8 @@ const SchedulesForm = () => {
   }, [])
 
   useEffect(() => {
-    console.log(newSchedule)
-  })
+    console.log(newException)
+  }, [newException])
 
   useEffect(() => {
     if (selectedGroup) {
@@ -203,8 +203,14 @@ const SchedulesForm = () => {
       id_schedule_exception: scheduleException.id_schedule_exception,
       date: scheduleException.date,
       is_class: scheduleException.is_class,
-      start_time: scheduleException.start_time,
-      end_time: scheduleException.end_time
+      start_time:
+        scheduleException.start_time == '00:00:00'
+          ? null
+          : scheduleException.start_time,
+      end_time:
+        scheduleException.end_time == '00:00:00'
+          ? null
+          : scheduleException.start_time
     })
   }
 
@@ -228,7 +234,7 @@ const SchedulesForm = () => {
       setScheduleExceptionsEdit(null)
       setNewException({
         date: '',
-        is_class: '',
+        is_class: false,
         start_time: '',
         end_time: ''
       })
@@ -258,7 +264,7 @@ const SchedulesForm = () => {
       }
     )
     if (response.ok) {
-      fetchSchedules(selectedGroup)
+      fetchScheduleExceptions(selectedGroup)
     }
   }
 
