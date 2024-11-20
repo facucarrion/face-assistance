@@ -270,7 +270,7 @@ void setup() {
   
   Wire.begin(SDA_PIN, SCL_PIN);
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3c); // Dirección I2C de la pantalla OLED
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c); 
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
@@ -343,9 +343,9 @@ void loop() {
       display.print("Subiendo imagen...");
       display.display();
 
-
       String temp = getTempImagePerson();
       bool success = false;
+
       Serial.print("Valor de temp_image: ");
       Serial.println(temp);
 

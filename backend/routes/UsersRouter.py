@@ -58,10 +58,6 @@ async def update_user_permissions(id_user: int, permissions: UserPermissionsUpda
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    valid_groups = db.query(Groups).filter(Groups.id_group.in_(permissions.groups)).all()
-    if len(valid_groups) != len(permissions.groups):
-        raise HTTPException(status_code=400, detail="Algunos grupos (cursos) no existen")
-
     delete_usergroup_by_user(db, id_user)
 
     for group_id in permissions.groups:
