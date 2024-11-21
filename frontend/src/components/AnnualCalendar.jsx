@@ -54,6 +54,7 @@ const AnnualCalendar = ({ id_person }) => {
         week = []
         dayOfWeek = 1
       }
+
       week.push(
         <td
           key={day}
@@ -80,12 +81,12 @@ const AnnualCalendar = ({ id_person }) => {
 
   useEffect(() => {
     async function fetchMonthly() {
-      const monthlyAssistance = await getMonthlyAssistance(
+      const fetchedMonthlyAssistance = await getMonthlyAssistance(
         id_person,
         currentDate.getMonth() + 1,
         currentDate.getFullYear()
       )
-      setMonthlyAssistance(monthlyAssistance)
+      setMonthlyAssistance(fetchedMonthlyAssistance)
     }
 
     fetchMonthly()

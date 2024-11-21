@@ -59,8 +59,6 @@ const UserForm = () => {
   }, [userToEdit])
 
   const handleCreateUser = async event => {
-    event.preventDefault()
-
     if (!formData.password) {
       alert('La contraseña es obligatoria al crear un usuario')
       return
@@ -195,7 +193,8 @@ const UserForm = () => {
     } else {
       const errorData = await response.json()
       alert(
-        `No se pudo actualizar los permisos: ${errorData.detail || 'Error desconocido'
+        `No se pudo actualizar los permisos: ${
+          errorData.detail || 'Error desconocido'
         }`
       )
     }
